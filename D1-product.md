@@ -91,26 +91,26 @@ The user will make changes to the canvas by adding stickies to different section
 
 **Decision 1: General search v.s. Tag search**
 
- 	Originally, we decided to implement basic search function on the stickies. As in, once we searched for a particular phrase, all the stickies containing that phrase would show up in the search list.
+Originally, we decided to implement basic search function on the stickies. As in, once we searched for a particular phrase, all the stickies containing that phrase would show up in the search list.
 
-​	However, we realized that even though we searched for a particular phrase, the stickies might not have the content we were looking for because it may simply contain that phrase by coincidence without being closely tied to the content. We then decided to add a tag search based on hashtags each sticky may include. As a side note, we would give admin of the website the authority to search for stickies of all users’ canvases.
+However, we realized that even though we searched for a particular phrase, the stickies might not have the content we were looking for because it may simply contain that phrase by coincidence without being closely tied to the content. We then decided to add a tag search based on hashtags each sticky may include. As a side note, we would give admin of the website the authority to search for stickies of all users’ canvases.
 
-​	We believe implementing both general search and tag search optimizes user experience. When users need to find particular topics of stickies, tag search solves the problem. While users want to search by specific phrases in a broad sense or to edit previous untagged stickies, general search is there to help.
+We believe implementing both general search and tag search optimizes user experience. When users need to find particular topics of stickies, tag search solves the problem. While users want to search by specific phrases in a broad sense or to edit previous untagged stickies, general search is there to help.
 
 
 
 **Decision 2: Comment system v.s. Chat system**
 
-​	We were arguing about whether to use a chat system between users, or have a comment system under each sticky.
+We were arguing about whether to use a chat system between users, or have a comment system under each sticky.
 
-​	For chat system, we were thinking that it would be useful if we can have users being able to communicate with each other through our website. We then quickly discovered that it is inefficient to build such a system. To begin with, suppose we do have a chat system working, when users communicate, they still need to tell which sticky they are talking about to their colleagues, or to describe which part of the canvas they want to insert another sticky, etc, which is absurd. 
+For chat system, we were thinking that it would be useful if we can have users being able to communicate with each other through our website. We then quickly discovered that it is inefficient to build such a system. To begin with, suppose we do have a chat system working, when users communicate, they still need to tell which sticky they are talking about to their colleagues, or to describe which part of the canvas they want to insert another sticky, etc, which is absurd. 
 
-​	For comment system, in contrast, users can make necessary comments under the stickies and we will pop out a notification to others so that it will draw their attention to the subject. This option makes the most sense because it prevents users from struggling to understand which specific part of the canvas their colleagues are talking about and can quickly engage to the argument through this one-to-multiple communication.
+For comment system, in contrast, users can make necessary comments under the stickies and we will pop out a notification to others so that it will draw their attention to the subject. This option makes the most sense because it prevents users from struggling to understand which specific part of the canvas their colleagues are talking about and can quickly engage to the argument through this one-to-multiple communication.
 
 
 
 **Decision 3: Resizing v.s. Pop out window**
 
-​	We were deciding if we should automatically adjust the size of the canvas when there are too many stickies or some stickies containing too much content, versus, display summarized and shortened version of the stickies on the canvas and only when you double click on that part of the canvas, expand all the hidden detailed information in a pop up window.
+We were deciding if we should automatically adjust the size of the canvas when there are too many stickies or some stickies containing too much content, versus, display summarized and shortened version of the stickies on the canvas and only when you double click on that part of the canvas, expand all the hidden detailed information in a pop up window.
 
-​	After debating, we reached a consensus that it is better to implement the pop out window rather than resizing since resizing changes layout specifications which may potentially cause different canvases appear disorganized.
+After debating, we reached a consensus that it is better to implement the pop out window rather than resizing since resizing changes layout specifications which may potentially cause different canvases appear disorganized.
