@@ -244,7 +244,13 @@ function exportPng() {
 
 // toPDF
 function exportPdf() {
-
+    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+    const pdf = new jsPDF({
+        orientation: 'portrait', // or 'landscape'
+        format: 'letter', // or 'a4'
+      });
+    pdf.addImage(imgData, 'JPEG', 0, 0);
+    pdf.save($('#canvasTitle').innerText + ".pdf");
 }
 
 // Deserialization of a canvas from JSON
