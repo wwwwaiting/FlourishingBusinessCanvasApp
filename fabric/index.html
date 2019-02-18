@@ -8,16 +8,24 @@
         <script type="text/javascript" src="fabric.min.js"></script>
     </head>
     <body>
-        <h1>Canvas</h1>
+        <h1 id="canvasTitle">Canvas</h1>
         <hr>
         <div>
             <button id="createBtn" onclick="createSticky()">New Sticky</button>
             <button id="removeAllBtn" onclick="removeAll()">Remove All</button>
+            <button id="importBtn" onclick="importJson()">Import JSON</button>
         </div>
         <div id="infoBarContainer">
         </div>
         <br>
         <canvas id="mainCanvas" width="800" height="600"></canvas>
+        <br>
+        <div>
+            <button id="exportJson" onclick="exportJson()">Export as JSON</button>
+            <button id="exportSvg" onclick="exportSvg()">Export as SVG</button>
+            <button id="exportPng" onclick="exportPng()">Export as PNG</button>
+            <button id="exportPdf" onclick="exportPdf()">Export as PDF</button>
+        </div>
         <!-- Page render script here -->
         <script type="text/javascript" src="canvas.js"></script>
         <script type="text/javascript" src="page.js"></script>

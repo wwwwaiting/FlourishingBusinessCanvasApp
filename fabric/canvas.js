@@ -1,5 +1,11 @@
 const log = console.log;
 const canvas = this.__canvas = new fabric.Canvas('mainCanvas');
+canvas.setBackgroundColor('lightgrey');
+canvas.selection = false; // disable group selection
+
+window.onload = function () {
+    canvas.renderAll();
+}
 
 const $ = function(selector) {return document.querySelector(selector)};
 
@@ -9,6 +15,7 @@ const ogLeft = 100;
 let currLeft = ogLeft;
 const ogTop = 150;
 let currTop = ogTop;
+const stickyRadius = 5;
 
 const Sticky = function() {
     this.shape = getShape();
@@ -16,25 +23,70 @@ const Sticky = function() {
     numberOfStickies++;
 }
 
-const shapeJson = function() {
-    const shapeJson = {
-        left: currLeft,
-        top: currTop, // position
+const getBackgroundJson = function() {
+    const backgroundJson = {
+        left: 0,
+        top: 0, // position offset the center
+        originX: 'center',
+        originY: 'center', // centered within the group
         fill: 'red',
+        strokeWidth: 3,
+        stroke: 'rgba(100,200,200,0.5)',
         width: 200,
         height: 200, // size
+        rx: stickyRadius,
+        ry: stickyRadius,
         // angle: 45,
         // opacity: 0.5,
         // selectable: false
     };
+    return backgroundJson;
+}
+
+const getContentJson = function() {
+    const contentJson = {
+        // content box position offset & size
+        left: 0,
+        top: 0, // position offset the center
+        originX: 'center',
+        originY: 'center',
+
+        // font styling
+        fontFamily: 'Roboto',
+        fontSize: 20,
+        fontWeight: 'normal', // or 'bold'
+        fontStyle: 'normal', // or 'italic'
+        underline: false,
+        linethrough: false,
+        overline: false,
+        // fill: 'rgba(100,200,200,0.5)',
+
+        // paragraph & alignment
+        textAlign: 'left', // or 'center', 'right'
+        lineHeight: 1.2,
+
+        // other properties
+        editable: true,
+        // selectable: false
+    };
+    return contentJson;
+}
+
+const getStickyObjJson = function() {
+    const stickyObjJson = {
+        left: currLeft,
+        top: currTop,
+    };
     currLeft += 10;
     currTop += 10;
-    return shapeJson;
+    return stickyObjJson;
 }
 
 function getShape () {
-    const shape = new fabric.Rect(new shapeJson());
-    return shape;
+    const stickyBackground = new fabric.Rect(new getBackgroundJson());
+    const stickyContent = new fabric.Textbox("Example\nsentence.", new getContentJson());
+    const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
+    return stickyObj;
 }
 
 function createSticky() {
@@ -47,6 +99,7 @@ function createSticky() {
 
 function removeAll() {
     canvas.clear();
+    canvas.setBackgroundColor('lightgrey');
     $('#infoBarContainer').innerHTML = "";
     stickyList = [];
     currLeft = ogLeft;
@@ -87,6 +140,12 @@ function createControl(sticky) {
     bringFront.onclick = function() {
         log("bring to front");
     }
+    const editText = document.createElement('button');
+    editText.id = 'editText';
+    editText.innerText = 'Edit';
+    editText.onclick = function() {
+        sticky.shape.item(1).enterEditing();
+    }
     const goRight = document.createElement('button');
     goRight.id = 'goRight';
     goRight.innerText = 'Go Right';
@@ -125,6 +184,7 @@ function createControl(sticky) {
     stickyInfo.appendChild(leftPosText);
     stickyInfo.appendChild(zIndexText);
     stickyInfo.appendChild(bringFront);
+    stickyInfo.appendChild(editText);
     stickyInfo.appendChild(goRight);
     stickyInfo.appendChild(goLeft);
     stickyInfo.appendChild(goUp);
@@ -150,3 +210,68 @@ canvas.on({
 'object:rotating': updateInfoText,
 'object:skewing': updateInfoText
 });
+
+// Serialization of the canvas
+
+// download popup helper function
+function downloadPopup(href, extension) {
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = $('#canvasTitle').innerText + extension;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// toJSON
+function exportJson() {
+    log(JSON.stringify(canvas));
+    const href = 'data:text/plain;charset=utf-u,' + JSON.stringify(canvas);
+    downloadPopup(href, '.json');
+}
+
+// toSVG
+function exportSvg() {
+    const href = 'data:image/svg+xml,' + canvas.toSVG();
+    downloadPopup(href, '.svg');
+}
+
+// toPNG
+function exportPng() {
+    const href = canvas.toDataURL("image/png");
+    downloadPopup(href, '.png');
+}
+
+// toPDF
+function exportPdf() {
+
+}
+
+// Deserialization of a canvas from JSON
+function importJson() {
+    const fileInput = document.createElement('input');
+    fileInput.type = "file";
+    fileInput.accept = ".json,application/json";
+    fileInput.style = "display:none";
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    fileInput.onchange = function() {
+        const importedJson = fileInput.files[0];
+        const reader = new FileReader();
+        if (importedJson) {
+            reader.readAsText(importedJson);
+        }
+        if (importedJson.size > 10485760) { // > 10MB
+            alert("File too large. Maximum upload size is 10MB.");
+        } else {
+            reader.addEventListener("load", function () {
+                loadJsonToCanvas(reader.result);
+            }, false);
+        }
+    }
+    document.body.removeChild(fileInput);
+}
+
+function loadJsonToCanvas(jsonOutput) {
+    canvas.loadFromJSON(jsonOutput);
+}
