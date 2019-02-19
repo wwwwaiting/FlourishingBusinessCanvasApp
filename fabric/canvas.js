@@ -1,6 +1,15 @@
 const log = console.log;
 const canvas = this.__canvas = new fabric.Canvas('mainCanvas');
-canvas.setBackgroundColor('lightgrey');
+// canvas.setBackgroundColor('lightgrey');
+var imageUrl = "../canvas/img/fbc.png";
+
+//Define
+canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
+    // Optionally add an opacity lvl to the image
+    backgroundImageOpacity: 1,
+    // should the image be resized to fit the container?
+    backgroundImageStretch: true
+});
 canvas.selection = false; // disable group selection
 
 window.onload = function () {
