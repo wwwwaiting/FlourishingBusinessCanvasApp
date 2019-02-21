@@ -93,7 +93,9 @@ const getStickyObjJson = function() {
 
 function getShape () {
     const stickyBackground = new fabric.Rect(new getBackgroundJson());
-    const stickyContent = new fabric.Textbox("Example\nsentence.", new getContentJson());
+    const textboxValue = $('#textInputBox').value;
+    const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
+    $('#textInputBox').value = "";
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
     return stickyObj;
 }
@@ -140,21 +142,21 @@ function createControl(sticky) {
     const leftPosText = document.createElement('span');
     leftPosText.id = 'leftPosText';
     leftPosText.innerHTML = "Left: "+ sticky.shape.left;
-    const zIndexText = document.createElement('span');
-    zIndexText.id = 'zIndexText';
-    zIndexText.innerHTML = "Z-Index: "+ "??";
-    const bringFront = document.createElement('button');
-    bringFront.id = 'bringFront';
-    bringFront.innerText = 'To Front';
-    bringFront.onclick = function() {
-        log("bring to front");
-    }
-    const editText = document.createElement('button');
-    editText.id = 'editText';
-    editText.innerText = 'Edit';
-    editText.onclick = function() {
-        sticky.shape.item(1).enterEditing();
-    }
+    // const zIndexText = document.createElement('span');
+    // zIndexText.id = 'zIndexText';
+    // zIndexText.innerHTML = "Z-Index: "+ "??";
+    // const bringFront = document.createElement('button');
+    // bringFront.id = 'bringFront';
+    // bringFront.innerText = 'To Front';
+    // bringFront.onclick = function() {
+    //     log("bring to front");
+    // }
+    // const editText = document.createElement('button');
+    // editText.id = 'editText';
+    // editText.innerText = 'Edit';
+    // editText.onclick = function() {
+    //     sticky.shape.item(1).enterEditing();
+    // }
     const goRight = document.createElement('button');
     goRight.id = 'goRight';
     goRight.innerText = 'Go Right';
@@ -201,9 +203,9 @@ function createControl(sticky) {
     stickyInfo.appendChild(idText);
     stickyInfo.appendChild(topPosText);
     stickyInfo.appendChild(leftPosText);
-    stickyInfo.appendChild(zIndexText);
-    stickyInfo.appendChild(bringFront);
-    stickyInfo.appendChild(editText);
+    // stickyInfo.appendChild(zIndexText);
+    // stickyInfo.appendChild(bringFront);
+    // stickyInfo.appendChild(editText);
     stickyInfo.appendChild(goLeft);
     stickyInfo.appendChild(goRight);
     stickyInfo.appendChild(goUp);
