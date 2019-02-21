@@ -140,9 +140,9 @@ function createControl(sticky) {
     const leftPosText = document.createElement('span');
     leftPosText.id = 'leftPosText';
     leftPosText.innerHTML = "Left: "+ sticky.shape.left;
-    const zIndexText = document.createElement('span');
-    zIndexText.id = 'zIndexText';
-    zIndexText.innerHTML = "Z-Index: "+ "??";
+    // const zIndexText = document.createElement('span');
+    // zIndexText.id = 'zIndexText';
+    // zIndexText.innerHTML = "Z-Index: "+ "??";
     const bringFront = document.createElement('button');
     bringFront.id = 'bringFront';
     bringFront.innerText = 'To Front';
@@ -153,7 +153,23 @@ function createControl(sticky) {
     editText.id = 'editText';
     editText.innerText = 'Edit';
     editText.onclick = function() {
-        sticky.shape.item(1).enterEditing();
+        // sticky.shape.item(1).enterEditing();
+        const textInput = document.createElement('input')
+        textInput.id = 'textInput';
+        textInput.className = 'input'
+        textInput.type = 'text';
+        const submit = document.createElement('input')
+        submit.id = 'submitInput'
+        submit.type = 'submit';
+        submit.className = 'input'
+        submit.value = 'Done Editing'
+        submit.onsubmit = function() {
+            const textValue = $('#textInput').value
+            console.log(textValue);
+        }
+        const edit = $('#editPop')
+        edit.appendChild(textInput);
+        edit.appendChild(submit);
     }
     const goRight = document.createElement('button');
     goRight.id = 'goRight';
@@ -201,7 +217,7 @@ function createControl(sticky) {
     stickyInfo.appendChild(idText);
     stickyInfo.appendChild(topPosText);
     stickyInfo.appendChild(leftPosText);
-    stickyInfo.appendChild(zIndexText);
+    // stickyInfo.appendChild(zIndexText);
     stickyInfo.appendChild(bringFront);
     stickyInfo.appendChild(editText);
     stickyInfo.appendChild(goLeft);

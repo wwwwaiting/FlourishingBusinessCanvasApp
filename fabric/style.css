@@ -5,3 +5,21 @@
 #infoBarContainer span, #infoBarContainer button {
     margin-right: 10px;
 }
+
+#editPop {
+    position: fixed;
+    top: 400px;
+    left: 400px;
+    width: 100px;
+}
+#textInput {
+    border: none;
+}
+
+.input {
+    display: block;
+}
+
+#submit {
+    margin: 0 auto;
+}
