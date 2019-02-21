@@ -38,11 +38,11 @@ const getBackgroundJson = function() {
         top: 0, // position offset the center
         originX: 'center',
         originY: 'center', // centered within the group
-        fill: 'yellow',
+        fill: 'red',
         strokeWidth: 3,
         stroke: 'rgba(100,200,200,0.5)',
-        width: 100,
-        height: 100, // size
+        width: 200,
+        height: 200, // size
         rx: stickyRadius,
         ry: stickyRadius,
         // angle: 45,
@@ -183,16 +183,6 @@ function createControl(sticky) {
         sticky.shape.set('top', sticky.shape.top + 10);
         canvas.renderAll();
     }
-    const changeColor = document.createElement('button');
-    changeColor.id = 'changeColor';
-    changeColor.innerText = 'Color';
-    changeColor.onclick = function() {
-        const colors = ['maroon', 'red', 'purple', 'lime', 'yellow', 'teal', 'aqua'];
-        const colorDict = {'maroon':0, 'red':1, 'purple':2, 'lime':3, 'yellow':4, 'teal':5, 'aqua':6};
-        const newColor = colors[(colorDict[sticky.shape._objects[0].fill] + 1) % 7]
-        sticky.shape._objects[0].set('fill', newColor)
-        canvas.renderAll();
-    }
     const removeBtn = document.createElement('button');
     removeBtn.id = 'removeBtn';
     removeBtn.innerText = 'Remove';
@@ -204,11 +194,10 @@ function createControl(sticky) {
     stickyInfo.appendChild(zIndexText);
     stickyInfo.appendChild(bringFront);
     stickyInfo.appendChild(editText);
-    stickyInfo.appendChild(goLeft);
     stickyInfo.appendChild(goRight);
+    stickyInfo.appendChild(goLeft);
     stickyInfo.appendChild(goUp);
     stickyInfo.appendChild(goDown);
-    stickyInfo.appendChild(changeColor);
     stickyInfo.appendChild(removeBtn);
     $('#infoBarContainer').appendChild(stickyInfo);
 }
@@ -218,7 +207,7 @@ function updateInfoText() {
         const shape = stickyList[i].shape;
         const id = stickyList[i].stickyId;
         const infoBarId = '#sticky' + id;
-        $(infoBarId + ' #leftPosText').innerHTML = "Left: "+ shape.left;
+        $(infoBarId + ' #leftPosText').innerHTML = "Top: "+ shape.left;
         $(infoBarId + ' #topPosText').innerHTML = "Top: "+ shape.top;
     }
 }
