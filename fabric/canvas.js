@@ -1,18 +1,21 @@
 const log = console.log;
 const canvas = this.__canvas = new fabric.Canvas('mainCanvas');
 // canvas.setBackgroundColor('lightgrey');
-var imageUrl = "../canvas/img/fbc.png";
+const imageUrl = "../canvas/img/fbc.png";
 
 //Define
-canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
-    // Optionally add an opacity lvl to the image
-    backgroundImageOpacity: 1,
-    // should the image be resized to fit the container?
-    backgroundImageStretch: true
-});
+function setCanvasBgImg() {
+    canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
+        // Optionally add an opacity lvl to the image
+        backgroundImageOpacity: 1,
+        // should the image be resized to fit the container?
+        backgroundImageStretch: true
+    });
+}
 canvas.selection = false; // disable group selection
 
 window.onload = function () {
+    setCanvasBgImg();
     canvas.renderAll();
 }
 
@@ -92,8 +95,8 @@ const getStickyObjJson = function() {
 }
 
 function getShape () {
-    const stickyBackground = new fabric.Rect(new getBackgroundJson());
     const textboxValue = $('#textInputBox').value;
+    const stickyBackground = new fabric.Rect(new getBackgroundJson());
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
     $('#textInputBox').value = "";
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
@@ -102,6 +105,9 @@ function getShape () {
 
 function createSticky() {
     const newSticky = new Sticky();
+    newSticky.shape.on('moving', function() {
+        log(this.left + ', ' + this.top);
+    })
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     createControl(newSticky);
@@ -110,7 +116,8 @@ function createSticky() {
 
 function removeAll() {
     canvas.clear();
-    canvas.setBackgroundColor('lightgrey');
+    // canvas.setBackgroundColor('lightgrey');
+    setCanvasBgImg();
     $('#infoBarContainer').innerHTML = "";
     stickyList = [];
     currLeft = ogLeft;
