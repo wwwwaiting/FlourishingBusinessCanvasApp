@@ -108,9 +108,9 @@ function getShape () {
 
 function createSticky() {
     const newSticky = new Sticky();
-    newSticky.shape.on('moving', function() {
-        log(this.left + ', ' + this.top);
-    })
+    // newSticky.shape.on('moving', function() {
+    //     log(this.left + ', ' + this.top);
+    // })
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     createControl(newSticky);

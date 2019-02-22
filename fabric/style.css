@@ -6,20 +6,20 @@
     margin-right: 10px;
 }
 
-#editPop {
+#editDiv {
     position: fixed;
-    top: 400px;
-    left: 400px;
-    width: 100px;
-}
-#textInput {
-    border: none;
+    top: 50%;
+    left: 50%;
+    width: 330px;
+    min-height: 100px;
+    margin-top: -100px;
+    margin-left: -250px;
+    text-align: center;
+    background-color: yellow;
+    display: none;
 }
 
-.input {
-    display: block;
-}
-
-#submit {
-    margin: 0 auto;
+textarea {
+    background-color: yellow;
+    min-height: 100px;
 }
