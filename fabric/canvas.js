@@ -108,12 +108,13 @@ function getShape () {
 
 function createSticky() {
     const newSticky = new Sticky();
-    // newSticky.shape.on('moving', function() {
-    //     log(this.left + ', ' + this.top);
-    // })
+    newSticky.shape.on('moving', function() {
+        log(this.left + ', ' + this.top);
+    })
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     createControl(newSticky);
+    canvas.add(textasd)
     canvas.renderAll();
 }
 
@@ -360,13 +361,14 @@ function displayEditForm(obj) {
             const text = new fabric.Textbox($('#newText').value, {
                 left: obj.left,
                 top: obj.top,
-                fontSize: 20
+                fontSize: 20,
+                fontFamily: 'Roboto'
             })
             
             obj.addWithUpdate(text);
             canvas.renderAll();
             const editDiv = $('#editDiv')
-            editDiv.removeChild(editDiv.firstChild);
+            editDiv.removeChild(editDiv.children[0]);
             editDiv.style.display = 'none';
             
         }
