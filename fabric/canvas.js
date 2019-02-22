@@ -29,6 +29,9 @@ const stickyRadius = 5;
 const Sticky = function() {
     this.shape = getShape();
     this.stickyId = numberOfStickies;
+    this.shape.on('mousedown', doubleClicked(this.shape, function (obj) {
+        displayEditForm(obj)
+    }));
     numberOfStickies++;
 }
 
@@ -336,3 +339,47 @@ function importJson() {
 function loadJsonToCanvas(jsonOutput) {
     canvas.loadFromJSON(jsonOutput);
 }
+
+function displayEditForm(obj) {
+
+    const textarea = document.createElement('textarea');
+    textarea.rows = '4';
+    textarea.cols = '40';
+    textarea.id = 'newText';
+    textarea.onkeydown = function(e) {
+        let key = e.keyCode;
+        if (key == '13') {
+            obj.remove(obj.item(1));
+            const text = new fabric.Textbox($('#newText').value, {
+                left: obj.left,
+                top: obj.top,
+                fontSize: 20
+            })
+            
+            obj.addWithUpdate(text);
+            canvas.renderAll();
+            const editDiv = $('#editDiv')
+            editDiv.removeChild(editDiv.firstChild);
+            editDiv.style.display = 'none';
+            
+        }
+    }
+
+    const editDiv = $('#editDiv')
+    editDiv.appendChild(textarea);
+    editDiv.style.display = 'block';
+
+}
+
+function doubleClicked(obj, handler) {
+    return function () {
+        if (obj.clicked) handler(obj);
+        else {
+            obj.clicked = true;
+            setTimeout(function () {
+                obj.clicked = false;
+            }, 500);
+        }
+    };
+};
+
