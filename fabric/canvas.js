@@ -371,12 +371,13 @@ function displayEditForm(obj) {
             canvas.renderAll();
             const editDiv = $('#editDiv')
             editDiv.removeChild(editDiv.children[0]);
+            editDiv.removeChild(editDiv.children[0]);
             editDiv.style.display = 'none';
 
         }
     }
     const editRemoveBtn = document.createElement('button');
-    editRemoveBtn.id = 'removeBtn';
+    editRemoveBtn.id = 'editRemoveBtn';
     editRemoveBtn.innerText = 'Remove';
     editRemoveBtn.onclick = function() {
         // remove sticky in canvas
@@ -384,20 +385,22 @@ function displayEditForm(obj) {
         const stickyToRemove = stickyList.find(s => s.stickyId == stickyId).shape;
         canvas.remove(stickyToRemove);
         canvas.discardActiveObject();
-
-        const editDiv = $('#editDiv')
-        editDiv.removeChild(editDiv.children[0]);
-        editDiv.style.display = 'none';
-
         // remove stickyInfo
         $('#infoBarContainer').removeChild( $('#sticky' + stickyId) );
         // remove sticky in list
         stickyList.splice(indexToRemove, 1);
+
+        const editDiv = $('#editDiv')
+        editDiv.removeChild(editDiv.children[0]);
+        editDiv.removeChild(editDiv.children[0]);
+        editDiv.style.display = 'none';
     };
 
     const editDiv = $('#editDiv')
-    editDiv.appendChild(textarea);
-    editDiv.appendChild(editRemoveBtn);
+    if ( $('#editRemoveBtn') == undefined){
+      editDiv.appendChild(textarea);
+      editDiv.appendChild(editRemoveBtn);
+    }
     editDiv.style.display = 'block';
 
 }
