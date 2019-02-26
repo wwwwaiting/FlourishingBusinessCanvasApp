@@ -32,7 +32,7 @@ const stickyRadius = 5;
 const Sticky = function() {
     this.shape = getShape();
     this.stickyId = numberOfStickies;
-    this.shape.on('mousedown', doubleClicked(this.shape, function (obj) {
+    this.shape.on('mousedown', doubleClicked([this.shape,this.stickyId], function (obj) {
         displayEditForm(obj)
     }));
     numberOfStickies++;
@@ -114,7 +114,7 @@ function createSticky() {
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     createControl(newSticky);
-    canvas.add(textasd)
+    // canvas.add(textasd)
     canvas.renderAll();
 }
 
@@ -349,6 +349,8 @@ function loadJsonToCanvas(jsonOutput) {
 }
 
 function displayEditForm(obj) {
+    shape = obj[0]
+    stickyId = obj[1]
 
     const textarea = document.createElement('textarea');
     textarea.rows = '4';
@@ -357,25 +359,45 @@ function displayEditForm(obj) {
     textarea.onkeydown = function(e) {
         let key = e.keyCode;
         if (key == '13') {
-            obj.remove(obj.item(1));
+            shape.remove(shape.item(1));
             const text = new fabric.Textbox($('#newText').value, {
-                left: obj.left,
-                top: obj.top,
+                left: shape.left,
+                top: shape.top,
                 fontSize: 20,
                 fontFamily: 'Roboto'
             })
-            
-            obj.addWithUpdate(text);
+
+            shape.addWithUpdate(text);
             canvas.renderAll();
             const editDiv = $('#editDiv')
             editDiv.removeChild(editDiv.children[0]);
             editDiv.style.display = 'none';
-            
+
         }
     }
+    const editRemoveBtn = document.createElement('button');
+    editRemoveBtn.id = 'removeBtn';
+    editRemoveBtn.innerText = 'Remove';
+    editRemoveBtn.onclick = function() {
+        // remove sticky in canvas
+        const indexToRemove = stickyList.findIndex(s => s.stickyId == stickyId);
+        const stickyToRemove = stickyList.find(s => s.stickyId == stickyId).shape;
+        canvas.remove(stickyToRemove);
+        canvas.discardActiveObject();
+
+        const editDiv = $('#editDiv')
+        editDiv.removeChild(editDiv.children[0]);
+        editDiv.style.display = 'none';
+
+        // remove stickyInfo
+        $('#infoBarContainer').removeChild( $('#sticky' + stickyId) );
+        // remove sticky in list
+        stickyList.splice(indexToRemove, 1);
+    };
 
     const editDiv = $('#editDiv')
     editDiv.appendChild(textarea);
+    editDiv.appendChild(editRemoveBtn);
     editDiv.style.display = 'block';
 
 }
@@ -391,4 +413,3 @@ function doubleClicked(obj, handler) {
         }
     };
 };
-

@@ -14,8 +14,8 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 330px;
-    min-height: 100px;
+    min-width: 300px; /*pls synchronize with textarea's min-size*/
+    min-height: 100px; /*pls synchronize with textarea's min-size*/
     margin-top: -100px;
     margin-left: -250px;
     text-align: center;
@@ -26,4 +26,5 @@ body {
 textarea {
     background-color: yellow;
     min-height: 100px;
+    min-width: 300px
 }
