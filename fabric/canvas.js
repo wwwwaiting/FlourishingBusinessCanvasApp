@@ -31,10 +31,29 @@ const stickyRadius = 5;
 
 const Sticky = function() {
     this.shape = getShape();
+    // this.shape.hasControls = false;
     this.stickyId = numberOfStickies;
     this.shape.on('mousedown', doubleClicked([this.shape,this.stickyId], function (obj) {
         displayEditForm(obj)
     }));
+    this.shape.on('moving', function() {
+              let left = this.left;
+              let top = this.top;
+              if (top < 240) {top = 240}
+              if (top > 1133 - this.height * this.scaleY) {top = 1133 - this.height * this.scaleY}
+              if (left < 173) {left = 173}
+              if (left > 1865 - this.width * this.scaleX) {left = 1865 - this.width * this.scaleX}
+              this.left = left;
+              this.top = top;
+        log(this.left + ', ' + this.top);
+    })
+    // this.shape.on('scaling', function() {
+    //           this.width = this.width * this.scaleX
+    //           this.height = this.height * this.scaleY
+    //           this.scaleX = 1
+    //           this.scaleY = 1
+    //     log(this.width + ', ' + this.height);
+    // })
     numberOfStickies++;
 }
 
@@ -108,9 +127,6 @@ function getShape () {
 
 function createSticky() {
     const newSticky = new Sticky();
-    newSticky.shape.on('moving', function() {
-        log(this.left + ', ' + this.top);
-    })
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     createControl(newSticky);
