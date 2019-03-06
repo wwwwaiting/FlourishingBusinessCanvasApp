@@ -4,15 +4,12 @@
         <meta charset="utf-8">
         <title>Fabric Playground</title>
         <link rel="stylesheet" type="text/css" href="style.css">
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-        <!-- Library script here -->
-        <script type="text/javascript" src="fabric.min.js"></script>
-        <script src="jspdf.min.js"></script>
-        <!-- <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script> -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">        
     </head>
     <body>
         <h1 id="canvasTitle">Canvas</h1>
         <hr>
+        <input type='file' accept='image/*' onchange='openFile(event)'><br>
         <div>
             <input id='textInputBox' type="text" placeholder="Type">
             <button id="createBtn" onclick="createSticky()">New Sticky</button>
@@ -35,6 +32,13 @@
         </div>
 
         <!-- Page render script here -->
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+        <script type="text/javascript" src="fabric.src.js"></script>
+        <script type="text/javascript" src="jspdf.min.js"></script>
+        <!-- <script type="text/javascript" src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script> -->
         <script type="text/javascript" src="canvas.js"></script>
         <script type="text/javascript" src="page.js"></script>
     </body>

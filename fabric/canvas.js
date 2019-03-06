@@ -1,7 +1,6 @@
-const log = console.log;
 const canvas = this.__canvas = new fabric.Canvas('mainCanvas');
 // canvas.setBackgroundColor('lightgrey');
-const imageUrl = "../canvas/img/fbc.png";
+const imageUrl = "https://i.imgur.com/9J4IpFF.png";
 
 //Define
 function setCanvasBgImg() {
@@ -9,7 +8,8 @@ function setCanvasBgImg() {
         // Optionally add an opacity lvl to the image
         backgroundImageOpacity: 1,
         // should the image be resized to fit the container?
-        backgroundImageStretch: true
+        backgroundImageStretch: true,
+        crossOrigin: 'anonymous'
     });
 }
 canvas.selection = false; // disable group selection
@@ -18,8 +18,6 @@ window.onload = function () {
     setCanvasBgImg();
     canvas.renderAll();
 }
-
-const $ = function(selector) {return document.querySelector(selector)};
 
 let numberOfStickies = 0;
 let stickyList = [];
@@ -45,14 +43,14 @@ const Sticky = function() {
               if (left > 1865 - this.width * this.scaleX) {left = 1865 - this.width * this.scaleX}
               this.left = left;
               this.top = top;
-        log(this.left + ', ' + this.top);
+        console.log(this.left + ', ' + this.top);
     })
     // this.shape.on('scaling', function() {
     //           this.width = this.width * this.scaleX
     //           this.height = this.height * this.scaleY
     //           this.scaleX = 1
     //           this.scaleY = 1
-    //     log(this.width + ', ' + this.height);
+    //     console.log(this.width + ', ' + this.height);
     // })
     numberOfStickies++;
 }
@@ -117,10 +115,10 @@ const getStickyObjJson = function() {
 }
 
 function getShape () {
-    const textboxValue = $('#textInputBox').value;
+    const textboxValue = $('#textInputBox').val();
     const stickyBackground = new fabric.Rect(new getBackgroundJson());
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-    $('#textInputBox').value = "";
+    $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
     return stickyObj;
 }
@@ -138,7 +136,7 @@ function removeAll() {
     canvas.clear();
     // canvas.setBackgroundColor('lightgrey');
     setCanvasBgImg();
-    $('#infoBarContainer').innerHTML = "";
+    $('#infoBarContainer').html("");
     stickyList = [];
     currLeft = ogLeft;
     currTop = ogTop;
@@ -151,7 +149,7 @@ function removeSticky() {
     canvas.remove(stickyToRemove);
     canvas.discardActiveObject();
     // remove stickyInfo
-    $('#infoBarContainer').removeChild(this.parentNode);
+    document.querySelector('#infoBarContainer').removeChild(this.parentNode);
     // remove sticky in list
     stickyList.splice(indexToRemove, 1);
 }
@@ -177,7 +175,7 @@ function createControl(sticky) {
     // bringFront.id = 'bringFront';
     // bringFront.innerText = 'To Front';
     // bringFront.onclick = function() {
-    //     log("bring to front");
+    //     console.log("bring to front");
     // }
     // const editText = document.createElement('button');
     // editText.id = 'editText';
@@ -194,10 +192,10 @@ function createControl(sticky) {
     //     submit.className = 'input'
     //     submit.value = 'Done Editing'
     //     submit.onsubmit = function() {
-    //         const textValue = $('#textInput').value
+    //         const textValue = $('#textInput').val()
     //         console.log(textValue);
     //     }
-    //     const edit = $('#editPop')
+    //     const edit = document.querySelector('#editPop')
     //     edit.appendChild(textInput);
     //     edit.appendChild(submit);
     // }
@@ -206,7 +204,7 @@ function createControl(sticky) {
     // bringFront.id = 'bringFront';
     // bringFront.innerText = 'To Front';
     // bringFront.onclick = function() {
-    //     log("bring to front");
+    //     console.log("bring to front");
     // }
     // const editText = document.createElement('button');
     // editText.id = 'editText';
@@ -272,7 +270,7 @@ function createControl(sticky) {
     stickyInfo.appendChild(goDown);
     stickyInfo.appendChild(changeColor);
     stickyInfo.appendChild(removeBtn);
-    $('#infoBarContainer').appendChild(stickyInfo);
+    document.querySelector('#infoBarContainer').appendChild(stickyInfo);
 }
 
 function updateInfoText() {
@@ -280,8 +278,8 @@ function updateInfoText() {
         const shape = stickyList[i].shape;
         const id = stickyList[i].stickyId;
         const infoBarId = '#sticky' + id;
-        $(infoBarId + ' #leftPosText').innerHTML = "Left: "+ shape.left;
-        $(infoBarId + ' #topPosText').innerHTML = "Top: "+ shape.top;
+        $(infoBarId + ' #leftPosText').html("Left: "+ shape.left);
+        $(infoBarId + ' #topPosText').html("Top: "+ shape.top);
     }
 }
 
@@ -299,7 +297,7 @@ canvas.on({
 function downloadPopup(href, extension) {
     const link = document.createElement('a');
     link.href = href;
-    link.download = $('#canvasTitle').innerText + extension;
+    link.download = $('#canvasTitle').text() + extension;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -307,7 +305,7 @@ function downloadPopup(href, extension) {
 
 // toJSON
 function exportJson() {
-    log(JSON.stringify(canvas));
+    console.log(JSON.stringify(canvas));
     const href = 'data:text/plain;charset=utf-u,' + JSON.stringify(canvas);
     downloadPopup(href, '.json');
 }
@@ -326,13 +324,17 @@ function exportPng() {
 
 // toPDF
 function exportPdf() {
-    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+    const imgData = canvas.toDataURL({
+        format: 'jpeg',
+        quality: 1
+      });
+    console.log(imgData)
     const pdf = new jsPDF({
         orientation: 'portrait', // or 'landscape'
         format: 'letter', // or 'a4'
       });
     pdf.addImage(imgData, 'JPEG', 0, 0);
-    pdf.save($('#canvasTitle').innerText + ".pdf");
+    pdf.save($('#canvasTitle').text() + ".pdf");
 }
 
 // Deserialization of a canvas from JSON
@@ -376,7 +378,7 @@ function displayEditForm(obj) {
         let key = e.keyCode;
         if (key == '13') {
             shape.remove(shape.item(1));
-            const text = new fabric.Textbox($('#newText').value, {
+            const text = new fabric.Textbox($('#newText').val(), {
                 left: shape.left,
                 top: shape.top,
                 fontSize: 20,
@@ -385,7 +387,7 @@ function displayEditForm(obj) {
 
             shape.addWithUpdate(text);
             canvas.renderAll();
-            const editDiv = $('#editDiv')
+            const editDiv = document.querySelector('#editDiv')
             editDiv.removeChild(editDiv.children[0]);
             editDiv.removeChild(editDiv.children[0]);
             editDiv.style.display = 'none';
@@ -402,18 +404,18 @@ function displayEditForm(obj) {
         canvas.remove(stickyToRemove);
         canvas.discardActiveObject();
         // remove stickyInfo
-        $('#infoBarContainer').removeChild( $('#sticky' + stickyId) );
+        document.querySelector('#infoBarContainer').removeChild( document.querySelector('#sticky' + stickyId) );
         // remove sticky in list
         stickyList.splice(indexToRemove, 1);
 
-        const editDiv = $('#editDiv')
+        const editDiv = document.querySelector('#editDiv')
         editDiv.removeChild(editDiv.children[0]);
         editDiv.removeChild(editDiv.children[0]);
         editDiv.style.display = 'none';
     };
 
-    const editDiv = $('#editDiv')
-    if ( $('#editRemoveBtn') == undefined){
+    const editDiv = document.querySelector('#editDiv')
+    if ( document.querySelector('#editRemoveBtn') == undefined){
       editDiv.appendChild(textarea);
       editDiv.appendChild(editRemoveBtn);
     }
