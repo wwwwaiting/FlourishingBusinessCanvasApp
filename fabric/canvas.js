@@ -434,8 +434,9 @@ function loadJsonToCanvas(jsonOutput) {
 }
 
 function displayEditForm(obj) {
-    shape = obj[0]
-    stickyId = obj[1]
+    console.log(obj);
+    const shape = obj[0]
+    const stickyId = obj[1]
 
     const textarea = document.createElement('textarea');
     textarea.rows = '4';
@@ -444,15 +445,11 @@ function displayEditForm(obj) {
     textarea.onkeydown = function (e) {
         let key = e.keyCode;
         if (key == '13') {
-            shape.remove(shape.item(1));
-            const text = new fabric.Textbox($('#newText').val(), {
-                left: shape.left,
-                top: shape.top,
-                fontSize: 20,
-                fontFamily: 'Roboto'
-            })
+            shape.item(1).text = $('#newText').val()
+            const stickyCt = shape.item(1);
+            stickyCt.set('width', shape.width - 20); //20 as padding
+            stickyCt.set('height', shape.height - 20);//20 as padding
 
-            shape.addWithUpdate(text);
             canvas.renderAll();
             const editDiv = document.querySelector('#editDiv')
             editDiv.removeChild(editDiv.children[0]);
