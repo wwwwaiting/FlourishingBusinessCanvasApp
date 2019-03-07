@@ -6,9 +6,9 @@ body {
     overflow: hidden;
 }
 
-#mainCanvas {
+/* #mainCanvas {
     border: 1px solid black;
-}
+} */
 
 #infoBarContainer span, #infoBarContainer button {
     margin-right: 10px;
@@ -44,10 +44,10 @@ textarea {
 
 #canvasTitle input {
     width: 700px;
-    height: 70px;
+    /* height: 70px; */
     border: none;
     color: black;
-    font-size: 40px;
+    /* font-size: 40px; */
 }
 
 #canvasTitle ::placeholder {
@@ -68,5 +68,6 @@ textarea {
 } */
 
 #headerContainer {
+    opacity: 0.95;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }

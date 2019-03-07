@@ -130,6 +130,10 @@ function setCanvasBgImg() {
     });
 }
 
+function checkBoundary(e) {
+    // const stickyGroupObj = 
+}
+
 const Sticky = function () {
     this.shape = getShape();
     // this.shape.hasControls = false;
@@ -307,7 +311,8 @@ function updateInfoText(e) {
 function downloadPopup(href, extension) {
     const link = document.createElement('a');
     link.href = href;
-    link.download = $('#canvasTitle').text() + extension;
+    const canvasTitle = $('#canvasTitle').text().trim();
+    link.download = canvasTitle.length == 0 ? "untitled canvas" : canvasTitle + extension;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -344,7 +349,9 @@ function exportPdf() {
         format: 'letter', // or 'a4'
     });
     pdf.addImage(imgData, 'JPEG', 0, 0);
-    pdf.save($('#canvasTitle').text() + ".pdf");
+    const gotCanvasTitle = $('#canvasTitle').text().trim();
+    const pdfTitle = gotCanvasTitle.length == 0 ? "untitled canvas" : gotCanvasTitle;
+    pdf.save(pdfTitle + ".pdf");
 }
 
 // Deserialization of a canvas from JSON
