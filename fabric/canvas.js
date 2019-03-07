@@ -102,30 +102,19 @@ const Sticky = function () {
         this.top = top;
         console.log(this.left + ', ' + this.top);
     })
-    this.shape.on('scaling', function () {
-    //     this.width = this.width * this.scaleX
-    //     this.height = this.height * this.scaleY
-    //     this.scaleX = 1
-    //     this.scaleY = 1
-    //     this.setCoords()
-    //     const stickyBg = this.item(0);
-    //     stickyBg.width = this.width
-    //     stickyBg.height = this.height
-    //     // stickyBg.scaleX = 1
-    //     // stickyBg.scaleY = 1
-    //     stickyBg.setCoords()
-    //     const newHeight = this.get('height');
-    //     const newWidth = this.get('width');
-    //     const scaleY = stickyOgHeight / newHeight;
-    //     const scaleX = stickyOgWidth / newWidth;
-        // const stickyContent = this.item(1);
-        // stickyContent.set({
-        //     scaleX: scaleX,
-        //     scaleY: scaleY
-        // });
-        // stickyContent.setCoords();
-        // this.setCoords();
-        // canvas.renderAll();
+    this.shape.on('scaling', function() {
+              let width = this.width * this.scaleX;
+              let height = this.height * this.scaleY;
+              this.set('width', width);
+              this.set('height', height);
+              this.set('scaleX', 1);
+              this.set('scaleY', 1);
+              const stickyBg = this.item(0);
+              stickyBg.set('width', width);
+              stickyBg.set('height', height);
+              const stickyCt = this.item(1);
+              stickyCt.set('width', width - 20); //20 as padding
+              stickyCt.set('height', height - 20);//20 as padding
     })
     numberOfStickies++;
 }
@@ -153,11 +142,14 @@ const getContentJson = function () {
         // content box position offset & size
         left: 0,
         top: 0, // position offset the center
+        height: 80,
+        width: 80,
         originX: 'center',
         originY: 'center',
         width: stickyOgWidth,
         height: stickyOgHeight,
 
+        // absolutePositioned: true,
         // font styling
         fontFamily: 'Roboto',
         fontSize: 14,
@@ -200,6 +192,9 @@ function getShape() {
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
     $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
+    const stickyCt = stickyObj.item(1);
+    stickyCt.set('width', stickyObj.width - 20); //20 as padding
+    stickyCt.set('height', stickyObj.height - 20);//20 as padding
     return stickyObj;
 }
 

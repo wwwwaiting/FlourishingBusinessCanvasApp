@@ -4,10 +4,26 @@
         <meta charset="utf-8">
         <title>Fabric Playground</title>
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">        
     </head>
     <body>
-        <h1 id="canvasTitle">Canvas</h1>
+        <div id="canvasHeader">
+            <div id="canvasTitle">
+                <input type="text" placeholder="Flourishing Business Canvas">
+            </div>
+            <div id="canvasInfo">
+                <div class="designInfo">
+                    <input class="form-control-lg" type="text" placeholder="Designed for:">
+                </div>
+                <div class="designInfo">
+                    <input class="form-control-lg" type="text" placeholder="Designed by:">
+                </div>
+                <div class="designInfo">
+                    <input class="form-control-lg" type="text" placeholder="Date:">
+                </div>
+            </div>
+        </div>
         <hr>
         <div>
             <input id='textInputBox' type="text" placeholder="Type">
