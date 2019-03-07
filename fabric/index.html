@@ -5,7 +5,7 @@
         <title>Fabric Playground</title>
         <link rel="stylesheet" type="text/css" href="style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">        
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     </head>
     <body>
         <div id="canvasHeader">
@@ -31,10 +31,6 @@
             <button id="removeAllBtn" onclick="removeAll()">Remove All</button>
             <button id="importBtn" onclick="importJson()">Import JSON</button>
         </div>
-        <div id="infoBarContainer">
-        </div>
-        <br>
-        <canvas id="mainCanvas" width="2040" height="1320"></canvas>
         <br>
         <div>
             <button id="exportJson" onclick="exportJson()">Export as JSON</button>
@@ -42,7 +38,12 @@
             <button id="exportPng" onclick="exportPng()">Export as PNG</button>
             <button id="exportPdf" onclick="exportPdf()">Export as PDF</button>
         </div>
-    
+        <div id="infoBarContainer">
+        </div>
+        <br>
+        <canvas id="mainCanvas" width="2040" height="1320"></canvas>
+
+
         <div id="editDiv">
         </div>
 

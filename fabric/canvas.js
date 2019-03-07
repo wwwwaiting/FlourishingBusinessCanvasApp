@@ -23,6 +23,14 @@ const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(100,200,200,0.1)';
 const imageUrl = "https://i.imgur.com/TROjQTF.png";
 
+$(window).resize(function() {
+    $("canvas").width($(window).width())
+    $("canvas").height($(window).height())
+    $('canvas').attr('width', $(window).width());
+    $('canvas').attr('height', $(window).height());
+    canvas.renderAll()
+});
+
 // Initialize the canvas
 function initialize() {
     if (canvas) {
