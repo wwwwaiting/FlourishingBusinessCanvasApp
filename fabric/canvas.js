@@ -171,9 +171,11 @@ const Sticky = function () {
     this.shape.set('transparentCorners', false);
     this.shape.set('cornerStyle', 'circle');
     this.shape.setControlVisible('tl', false);
+    this.shape.setControlVisible('ml', false);
     this.shape.setControlVisible('bl', false);
     this.shape.setControlVisible('br', false);
     this.shape.setControlVisible('tr', false);
+    this.shape.setControlVisible('mt', false);
     this.shape.setControlVisible('mtr', false);
     this.shape.set('minScaleLimit', 0.5);
     this.stickyId = numberOfStickies;
@@ -192,6 +194,7 @@ const Sticky = function () {
         // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
         this.left = left;
         this.top = top;
+        this.setCoords()
         console.log(this.left + ', ' + this.top);
     })
     this.shape.on('scaling', function () {
@@ -207,12 +210,16 @@ const Sticky = function () {
             const stickyBg = this.item(0);
             stickyBg.set('width', width);
             stickyBg.set('height', height);
+            stickyBg.setCoords();
             const stickyCt = this.item(1);
             stickyCt.set('width', width - stickyPadding); //20 as padding
             stickyCt.set('height', height - stickyPadding); //20 as padding
+            stickyCt.setCoords();
+            this.setCoords();
         }
         this.set('scaleX', 1);
         this.set('scaleY', 1);
+        this.setCoords();
     })
     numberOfStickies++;
 }
