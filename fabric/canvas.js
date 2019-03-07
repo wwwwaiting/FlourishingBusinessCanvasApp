@@ -15,6 +15,7 @@ let currTop = ogTop;
 const stickyRadius = 5;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
+const stickyPadding = 20;
 
 // Define colors
 const fallbackBackgroundColor = 'rgb(236,232,238)';
@@ -142,12 +143,10 @@ const getContentJson = function () {
         // content box position offset & size
         left: 0,
         top: 0, // position offset the center
-        height: 80,
-        width: 80,
         originX: 'center',
         originY: 'center',
-        width: stickyOgWidth,
-        height: stickyOgHeight,
+        width: stickyOgWidth - stickyPadding,
+        height: stickyOgHeight - stickyPadding,
 
         // absolutePositioned: true,
         // font styling
@@ -193,8 +192,8 @@ function getShape() {
     $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
     const stickyCt = stickyObj.item(1);
-    stickyCt.set('width', stickyObj.width - 20); //20 as padding
-    stickyCt.set('height', stickyObj.height - 20);//20 as padding
+    stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
+    stickyCt.set('height', stickyObj.height - stickyPadding);//20 as padding
     return stickyObj;
 }
 
@@ -447,8 +446,8 @@ function displayEditForm(obj) {
         if (key == '13') {
             shape.item(1).text = $('#newText').val()
             const stickyCt = shape.item(1);
-            stickyCt.set('width', shape.width - 20); //20 as padding
-            stickyCt.set('height', shape.height - 20);//20 as padding
+            stickyCt.set('width', shape.width - stickyPadding); //20 as padding
+            stickyCt.set('height', shape.height - stickyPadding);//20 as padding
 
             canvas.renderAll();
             const editDiv = document.querySelector('#editDiv')
