@@ -16,6 +16,7 @@ const stickyRadius = 5;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
+const stickyMinimumWidth = 80;
 
 // Define colors
 const fallbackBackgroundColor = 'rgb(236,232,238)';
@@ -31,7 +32,7 @@ const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
-const imageUrl = "https://i.imgur.com/TROjQTF.png";
+const imageUrl = "https://i.imgur.com/4scrQ34.png";
 
 // Initialize the canvas
 function initialize_canvas() {
@@ -163,14 +164,18 @@ function horizontal_restrict(sticky){
   return left
 }
 
-
-
-
-
 const Sticky = function () {
     this.shape = getShape();
     this.shape.set('lockRotation', true);
-    // this.shape.hasControls = false;
+    this.shape.set('lockScalingFlip', true);
+    this.shape.set('transparentCorners', false);
+    this.shape.set('cornerStyle', 'circle');
+    this.shape.setControlVisible('tl', false);
+    this.shape.setControlVisible('bl', false);
+    this.shape.setControlVisible('br', false);
+    this.shape.setControlVisible('tr', false);
+    this.shape.setControlVisible('mtr', false);
+    this.shape.set('minScaleLimit', 0.5);
     this.stickyId = numberOfStickies;
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
         $('#editDiv').html('')
@@ -192,16 +197,20 @@ const Sticky = function () {
     this.shape.on('scaling', function () {
         let width = this.width * this.scaleX;
         let height = this.height * this.scaleY;
-        this.set('width', width);
-        this.set('height', height);
+        if (width > stickyMinimumWidth && height > stickyMinimumWidth) {
+            this.set('width', width);
+            this.set('height', height);
+            this.set('scaleX', 1);
+            this.set('scaleY', 1);
+            const stickyBg = this.item(0);
+            stickyBg.set('width', width);
+            stickyBg.set('height', height);
+            const stickyCt = this.item(1);
+            stickyCt.set('width', width - stickyPadding); //20 as padding
+            stickyCt.set('height', height - stickyPadding); //20 as padding
+        }
         this.set('scaleX', 1);
         this.set('scaleY', 1);
-        const stickyBg = this.item(0);
-        stickyBg.set('width', width);
-        stickyBg.set('height', height);
-        const stickyCt = this.item(1);
-        stickyCt.set('width', width - stickyPadding); //20 as padding
-        stickyCt.set('height', height - stickyPadding); //20 as padding
     })
     numberOfStickies++;
 }
