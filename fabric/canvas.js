@@ -30,7 +30,7 @@ const stickyBrown = 'rgb(252,215,193)';
 const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
-const stickyStroke = 'rgba(100,200,200,0.1)';
+const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/TROjQTF.png";
 
 
