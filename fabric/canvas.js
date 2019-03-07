@@ -76,7 +76,8 @@ function initialize_canvas() {
     /// Pan and zoom
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
-        if (evt.ctrlKey === true) {
+        if (!canvas.getActiveObject()) {
+        // if (evt.ctrlKey === true) {
             this.isDragging = true;
             this.selection = false;
             this.lastPosX = evt.clientX;
