@@ -1,6 +1,36 @@
-const canvas = this.__canvas = new fabric.Canvas('mainCanvas');
-// canvas.setBackgroundColor('lightgrey');
-const imageUrl = "https://i.imgur.com/9J4IpFF.png";
+"use strict";
+console.log("canvas.js");
+
+// Global vars
+let canvas = new fabric.Canvas('mainCanvas');;
+let stickyCounter;
+const snapGridSize = 30;
+const mainCanvasWidth = 2040;
+const mainCanvasHeight = 1320;
+
+// Define colors
+const fallbackBackgroundColor = 'rgb(236,232,238)';
+const stickyPink = 'rgb(255,230,252)';
+const stickyOrange = 'rgb(255,220,188)';
+const stickyYellow = 'rgb(252,255,197)';
+const stickyGold = 'rgb(251,254,94)';
+const stickyBlue = 'rgb(204,243,255)';
+const stickyOlive = 'rgb(222,225,171)';
+const stickyBrown = 'rgb(252,215,193)';
+const stickyPurple = 'rgb(234,233,253)';
+const stickyColors = [stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
+const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
+const stickyStroke = 'rgba(100,200,200,0.1)';
+const imageUrl = "https://i.imgur.com/TROjQTF.png";
+
+// Initialize the canvas
+function initialize() {
+    if (canvas) {
+        canvas.clear();
+        canvas.dispose();
+    }
+    canvas = new fabric.Canvas('mainCanvas');
+}
 
 //Define
 function setCanvasBgImg() {
@@ -45,13 +75,20 @@ const Sticky = function() {
               this.top = top;
         console.log(this.left + ', ' + this.top);
     })
-    // this.shape.on('scaling', function() {
-    //           this.width = this.width * this.scaleX
-    //           this.height = this.height * this.scaleY
-    //           this.scaleX = 1
-    //           this.scaleY = 1
-    //     console.log(this.width + ', ' + this.height);
-    // })
+    this.shape.on('scaling', function() {
+              this.width = this.width * this.scaleX
+              this.height = this.height * this.scaleY
+              this.scaleX = 1
+              this.scaleY = 1
+              this.setCoords()
+              const stickyBg = this.item(0);
+              stickyBg.width = this.width * this.scaleX
+              stickyBg.height = this.height * this.scaleY
+              stickyBg.scaleX = 1
+              stickyBg.scaleY = 1
+              stickyBg.setCoords()
+        console.log(this.width + ', ' + this.height);
+    })
     numberOfStickies++;
 }
 
@@ -61,9 +98,10 @@ const getBackgroundJson = function() {
         top: 0, // position offset the center
         originX: 'center',
         originY: 'center', // centered within the group
-        fill: 'yellow',
+        fill: stickyYellow,
+        shadow: stickyShadow,
         strokeWidth: 3,
-        stroke: 'rgba(100,200,200,0.5)',
+        stroke: stickyStroke,
         width: 100,
         height: 100, // size
         rx: stickyRadius,
@@ -245,10 +283,10 @@ function createControl(sticky) {
     changeColor.id = 'changeColor';
     changeColor.innerText = 'Color';
     changeColor.onclick = function() {
-        const colors = ['maroon', 'red', 'purple', 'lime', 'yellow', 'teal', 'aqua'];
-        const colorDict = {'maroon':0, 'red':1, 'purple':2, 'lime':3, 'yellow':4, 'teal':5, 'aqua':6};
-        const newColor = colors[(colorDict[sticky.shape._objects[0].fill] + 1) % 7]
-        sticky.shape._objects[0].set('fill', newColor)
+        // const colors = ['maroon', 'red', 'purple', 'lime', 'yellow', 'teal', 'aqua'];
+        // const colorDict = {'maroon':0, 'red':1, 'purple':2, 'lime':3, 'yellow':4, 'teal':5, 'aqua':6};
+        // const newColor = colors[(colorDict[sticky.shape._objects[0].fill] + 1) % 7]
+        sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill)+1)%(stickyColors.length)])
         canvas.renderAll();
     }
     const removeBtn = document.createElement('button');
