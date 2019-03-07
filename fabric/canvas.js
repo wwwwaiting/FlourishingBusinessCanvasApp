@@ -198,6 +198,8 @@ const Sticky = function () {
         let width = this.width * this.scaleX;
         let height = this.height * this.scaleY;
         if (width > stickyMinimumWidth && height > stickyMinimumWidth) {
+            if (width > 185) width = 185;
+            if (height > 175) height = 175;// set scaling boundary so that not stikcy will have size larger than a block
             this.set('width', width);
             this.set('height', height);
             this.set('scaleX', 1);
@@ -318,7 +320,7 @@ function removeSticky() {
 
 // Serialization of the canvas
 function revertTransformation() {
-    canvas.viewportTransform[0] = 1;    
+    canvas.viewportTransform[0] = 1;
     canvas.viewportTransform[3] = 1;
     canvas.viewportTransform[4] = 0;
     canvas.viewportTransform[5] = 0;
@@ -518,7 +520,7 @@ $(window).resize(handleWindowResize);
 $(document).ready(main);
 
 //###################################################3
-// functions that we deleted as we coded. 
+// functions that we deleted as we coded.
 
 // function createControl(sticky) {
 //     const stickyInfo = document.createElement('div');
@@ -554,4 +556,3 @@ $(document).ready(main);
 //         const infoBarId = '#sticky' + id;
 //     }
 // }
-
