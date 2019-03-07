@@ -129,24 +129,61 @@ function setCanvasBgImg() {
     });
 }
 
-function checkBoundary(e) {
-    // was trying to define the on moving function here
+//the fuction restrict moving borders
+function vertical_restrict(sticky){
+  let top = sticky.top;
+  let left = sticky.left;
+  if (top < ogTop) top = ogTop;
+  if (top > 1133 - sticky.height * sticky.scaleY) top = 1133 - sticky.height * sticky.scaleY;
+  if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
+  if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
+  if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2){ //only for the middle part
+    if (top < 330) top = 330;
+  }
+  return top
 }
+
+function horizontal_restrict(sticky){
+  let top = sticky.top;
+  let left = sticky.left;
+  if (left < ogLeft) left = ogLeft;
+  if (left > 1865 - sticky.width * sticky.scaleX) left = 1865 - sticky.width * sticky.scaleX;
+
+  if (top < ((1942 - sticky.height * sticky.scaleY) / 2)){ // only for the upper part
+    if (left > 371 - sticky.width * sticky.scaleX && left < ((796 - sticky.width * sticky.scaleX) / 2)) left = 371 - sticky.width * sticky.scaleX;
+    if (left < 425 && left > ((796 - sticky.width * sticky.scaleX) / 2)) left = 425;
+    if (left > 838 - sticky.width * sticky.scaleX && left < ((1690 - sticky.width * sticky.scaleX) / 2)) left = 838 - sticky.width * sticky.scaleX;
+    if (left < 852 && left > ((1690 - sticky.width * sticky.scaleX) / 2)) left = 852;
+    if (left > 1190 - sticky.width * sticky.scaleX && left < ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1190 - sticky.width * sticky.scaleX;
+    if (left < 1202 && left > ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1202;
+    if (left > 1620 - sticky.width * sticky.scaleX && left < ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1620 - sticky.width * sticky.scaleX;
+    if (left < 1668 && left > ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1668;
+  }
+
+  return left
+}
+
+
+
+
 
 const Sticky = function () {
     this.shape = getShape();
+    this.shape.set('lockRotation', true);
     // this.shape.hasControls = false;
     this.stickyId = numberOfStickies;
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
         displayEditForm(obj)
     }));
-    this.shape.on('moving', function () {
-        let left = this.left;
-        let top = this.top;
-        if (top < ogTop) top = ogTop;
-        if (top > 1133 - this.height * this.scaleY) top = 1133 - this.height * this.scaleY;
-        if (left < ogLeft) left = ogLeft;
-        if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
+    this.shape.on('mouseup', function () {
+        // let left = this.left;
+        // let top = this.top;
+        // if (top < ogTop) top = ogTop;
+        // if (top > 1133 - this.height * this.scaleY) top = 1133 - this.height * this.scaleY;
+        let top = vertical_restrict(this);
+        let left = horizontal_restrict(this);
+        // if (left < ogLeft) left = ogLeft;
+        // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
         this.left = left;
         this.top = top;
         console.log(this.left + ', ' + this.top);
