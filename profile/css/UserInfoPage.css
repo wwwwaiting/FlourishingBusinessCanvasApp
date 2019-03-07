@@ -1,0 +1,31 @@
+.userInfo {
+    padding: 20px;
+    width: 1000px;
+    margin: 50px;
+}
+
+.btnBox {
+    text-align: center;
+}
+
+.detail {
+    display: inline-block;
+    width: 650px;
+}
+
+.profilePicture {
+    display: block;
+    float: right;
+    width: 150px;
+    height: 150px;
+    background: url(../image/uploadIcon.png);
+    background-size: 150px 150px;
+    border: 1px solid black;
+}
+
+#upload {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
