@@ -4,8 +4,8 @@ console.log("canvas.js");
 // Global vars
 let canvas;
 const snapGridSize = 30;
-const mainCanvasWidth = 2040;
-const mainCanvasHeight = 1320;
+// const mainCanvasWidth = 2040;
+// const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
 let stickyList = [];
 const ogLeft = 173;
@@ -106,9 +106,9 @@ function initialize_canvas() {
         const delta = opt.e.deltaY;
         const pointer = canvas.getPointer(opt.e);
         let zoom = canvas.getZoom();
-        zoom = zoom + delta / 600;
+        zoom = zoom + delta / 400;
         if (zoom > 8) zoom = 8;
-        if (zoom < 0.8) zoom = 0.8;
+        if (zoom < 0.5) zoom = 0.5;
         canvas.zoomToPoint({
             x: opt.e.offsetX,
             y: opt.e.offsetY

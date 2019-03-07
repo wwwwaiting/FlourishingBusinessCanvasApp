@@ -8,30 +8,30 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     </head>
     <body>
-        <div id="canvasHeader">
-            <div id="canvasTitle">
-                <input type="text" placeholder="Flourishing Business Canvas">
+        <div class="container-fluid fixed-top bg-light p-3" id="headerContainer">
+        <div class="d-flex" id="canvasHeader">
+            <div class="mb-2" id="canvasTitle">
+                <input class="form-control form-control-lg bg-light" type="text" placeholder="Flourishing Business Canvas">
             </div>
-            <div id="canvasInfo">
-                <div class="designInfo">
-                    <input class="form-control-lg" type="text" placeholder="Designed for:">
+            <div class="ml-auto d-flex" id="canvasInfo">
+                <div class="designInfo ml-2">
+                    <input class="form-control form-control-lg" type="text" placeholder="Designed for:">
                 </div>
-                <div class="designInfo">
-                    <input class="form-control-lg" type="text" placeholder="Designed by:">
+                <div class="designInfo ml-2">
+                    <input class="form-control form-control-lg" type="text" placeholder="Designed by:">
                 </div>
-                <div class="designInfo">
-                    <input class="form-control-lg" type="text" placeholder="Date:">
+                <div class="designInfo ml-2">
+                    <input class="form-control form-control-lg" type="text" placeholder="Date:">
                 </div>
             </div>
         </div>
-        <hr>
+
         <div>
-            <input id='textInputBox' type="text" placeholder="Type">
+            <input id='textInputBox' type="text" placeholder="Type content">
             <button id="createBtn" onclick="createSticky()">New Sticky</button>
             <button id="removeAllBtn" onclick="removeAll()">Remove All</button>
             <button id="importBtn" onclick="importJson()">Import JSON</button>
         </div>
-        <br>
         <div>
             <button id="exportJson" onclick="exportJson()">Export as JSON</button>
             <button id="exportSvg" onclick="exportSvg()">Export as SVG</button>
@@ -40,12 +40,10 @@
         </div>
         <div id="infoBarContainer">
         </div>
-        <br>
-        <canvas id="mainCanvas" width="2040" height="1320"></canvas>
-
-
-        <div id="editDiv">
         </div>
+
+        <canvas id="mainCanvas" width="2040" height="1320"></canvas>
+        <div id="editDiv"></div>
 
         <!-- Page render script here -->
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
