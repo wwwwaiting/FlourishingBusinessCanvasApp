@@ -4,8 +4,8 @@ console.log("canvas.js");
 // Global vars
 let canvas;
 const snapGridSize = 30;
-// const mainCanvasWidth = 2040;
-// const mainCanvasHeight = 1320;
+const mainCanvasWidth = 2040;
+const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
 let stickyList = [];
 const ogLeft = 173;
@@ -32,7 +32,6 @@ const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stick
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/TROjQTF.png";
-
 
 // Initialize the canvas
 function initialize_canvas() {
@@ -131,7 +130,7 @@ function setCanvasBgImg() {
 }
 
 function checkBoundary(e) {
-    // const stickyGroupObj = 
+    // was trying to define the on moving function here
 }
 
 const Sticky = function () {
@@ -306,6 +305,15 @@ function updateInfoText(e) {
 }
 
 // Serialization of the canvas
+function revertTransformation() {
+    canvas.viewportTransform[0] = 1;    
+    canvas.viewportTransform[3] = 1;
+    canvas.viewportTransform[4] = 0;
+    canvas.viewportTransform[5] = 0;
+    canvas.set('width', mainCanvasWidth);
+    canvas.set('height', mainCanvasHeight);
+    canvas.requestRenderAll();
+}
 
 // download popup helper function
 function downloadPopup(href, extension) {
@@ -320,30 +328,33 @@ function downloadPopup(href, extension) {
 
 // toJSON
 function exportJson() {
-    console.log(JSON.stringify(canvas));
+    revertTransformation();
     const href = 'data:text/plain;charset=utf-u,' + JSON.stringify(canvas);
     downloadPopup(href, '.json');
 }
 
 // toSVG
 function exportSvg() {
+    revertTransformation();
     const href = 'data:image/svg+xml,' + canvas.toSVG();
     downloadPopup(href, '.svg');
 }
 
 // toPNG
 function exportPng() {
+    revertTransformation();
     const href = canvas.toDataURL("image/png");
     downloadPopup(href, '.png');
 }
 
 // toPDF
 function exportPdf() {
+    revertTransformation();
     const imgData = canvas.toDataURL({
         format: 'jpeg',
         quality: 1
     });
-    console.log(imgData)
+    // console.log(imgData)
     const pdf = new jsPDF({
         orientation: 'portrait', // or 'landscape'
         format: 'letter', // or 'a4'
