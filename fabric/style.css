@@ -28,3 +28,37 @@ textarea {
     min-height: 100px;
     min-width: 300px
 }
+
+#canvasHeader {
+    margin-top: 30px;
+}
+
+#canvasTitle {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+#canvasTitle input {
+    width: 700px;
+    height: 70px;
+    border: none;
+    color: black;
+    font-size: 40px;
+}
+
+#canvasTitle ::placeholder {
+    color: black;
+    font-size: 40px;
+}
+
+#canvasInfo {
+    display: block;
+    float: right;
+    margin-right: 50px;
+    margin-top: 10px;
+}
+
+.designInfo {
+    float: left;
+    width: 300px;
+}
