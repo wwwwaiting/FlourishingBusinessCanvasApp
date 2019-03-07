@@ -76,18 +76,18 @@ const Sticky = function() {
         console.log(this.left + ', ' + this.top);
     })
     this.shape.on('scaling', function() {
-              this.width = this.width * this.scaleX
-              this.height = this.height * this.scaleY
-              this.scaleX = 1
-              this.scaleY = 1
-              this.setCoords()
+              let width = this.width * this.scaleX;
+              let height = this.height * this.scaleY;
+              this.set('width', width);
+              this.set('height', height);
+              this.set('scaleX', 1);
+              this.set('scaleY', 1);
               const stickyBg = this.item(0);
-              stickyBg.width = this.width * this.scaleX
-              stickyBg.height = this.height * this.scaleY
-              stickyBg.scaleX = 1
-              stickyBg.scaleY = 1
-              stickyBg.setCoords()
-        console.log(this.width + ', ' + this.height);
+              stickyBg.set('width', width);
+              stickyBg.set('height', height);
+              const stickyCt = this.item(1);
+              stickyCt.set('width', width - 20); //20 as padding
+              stickyCt.set('height', height - 20);//20 as padding
     })
     numberOfStickies++;
 }
@@ -118,12 +118,14 @@ const getContentJson = function() {
         // content box position offset & size
         left: 0,
         top: 0, // position offset the center
+        height: 80,
+        width: 80,
         originX: 'center',
         originY: 'center',
-
+        absolutePositioned: true,
         // font styling
         fontFamily: 'Roboto',
-        fontSize: 20,
+        fontSize: 14,
         fontWeight: 'normal', // or 'bold'
         fontStyle: 'normal', // or 'italic'
         underline: false,
@@ -158,6 +160,9 @@ function getShape () {
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
     $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
+    const stickyCt = stickyObj.item(1);
+    stickyCt.set('width', stickyObj.width - 20); //20 as padding
+    stickyCt.set('height', stickyObj.height - 20);//20 as padding
     return stickyObj;
 }
 
