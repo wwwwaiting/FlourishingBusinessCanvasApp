@@ -33,13 +33,6 @@ const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(100,200,200,0.1)';
 const imageUrl = "https://i.imgur.com/TROjQTF.png";
 
-$(window).resize(function() {
-    $("canvas").width($(window).width())
-    $("canvas").height($(window).height())
-    $('canvas').attr('width', $(window).width());
-    $('canvas').attr('height', $(window).height());
-    canvas.renderAll()
-});
 
 // Initialize the canvas
 function initialize_canvas() {
@@ -80,10 +73,55 @@ function initialize_canvas() {
         // 'object:rotating': checkBoudningBox,
         // 'object:skewing': checkBoudningBox
     });
+    /// Pan and zoom
+    canvas.on('mouse:down', function (opt) {
+        const evt = opt.e;
+        if (evt.ctrlKey === true) {
+            this.isDragging = true;
+            this.selection = false;
+            this.lastPosX = evt.clientX;
+            this.lastPosY = evt.clientY;
+        }
+    });
+    canvas.on('mouse:move', function (opt) {
+        if (this.isDragging) {
+            const e = opt.e;
+            this.viewportTransform[4] += e.clientX - this.lastPosX;
+            this.viewportTransform[5] += e.clientY - this.lastPosY;
+            this.requestRenderAll();
+            this.lastPosX = e.clientX;
+            this.lastPosY = e.clientY;
+        }
+    });
+    canvas.on('mouse:up', function (opt) {
+        this.isDragging = false;
+        this.selection = true;
+        canvas.forEachObject(obj => {
+            obj.selectable = true;
+            obj.setCoords();
+        });
+    });
+    canvas.on('mouse:wheel', function (opt) {
+        const delta = opt.e.deltaY;
+        const pointer = canvas.getPointer(opt.e);
+        let zoom = canvas.getZoom();
+        zoom = zoom + delta / 600;
+        if (zoom > 8) zoom = 8;
+        if (zoom < 0.8) zoom = 0.8;
+        canvas.zoomToPoint({
+            x: opt.e.offsetX,
+            y: opt.e.offsetY
+        }, zoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+        canvas.renderAll()
+    });
 }
 
 // Used to set / reset background image of the canvas
 function setCanvasBgImg() {
+    canvas.backgroundColor = fallbackBackgroundColor;
+    canvas.renderTop();
     canvas.setBackgroundImage(imageUrl, canvas.renderAll.bind(canvas), {
         backgroundImageOpacity: 1,
         backgroundImageStretch: true,
@@ -403,11 +441,25 @@ function doubleClicked(obj, handler) {
     };
 };
 
+function handleWindowResize() {
+    $(".canvas-container").width($(window).width());
+    $(".canvas-container").height($(window).height());
+    $("canvas").width($(window).width());
+    $("canvas").height($(window).height());
+    $('canvas').attr('width', $(window).width());
+    $('canvas').attr('height', $(window).height());
+    canvas.set('width', $(window).width());
+    canvas.set('height', $(window).height());
+    canvas.renderAll();
+}
+
 
 // Used to call functions after page is fully loaded.
 function main() {
     initialize_canvas();
     canvas.selection = false; // disable group selection
+    handleWindowResize();
     canvas.renderAll();
 }
+$(window).resize(handleWindowResize);
 $(document).ready(main);
