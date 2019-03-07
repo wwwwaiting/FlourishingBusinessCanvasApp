@@ -18,7 +18,7 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    min-width: 300px; /*pls synchronize with textarea's min-size*/
+    min-width: 370px; /*pls synchronize with textarea's min-size*/
     min-height: 100px; /*pls synchronize with textarea's min-size*/
     margin-top: -100px;
     margin-left: -250px;
@@ -27,10 +27,24 @@ body {
     display: none;
 }
 
+.editFormBtns {
+    float: right;
+    width: 70px;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+#btnContainer {
+    float: right;
+    width: 70px;
+    text-align: center;
+}
+
 textarea {
     background-color: yellow;
     min-height: 100px;
-    min-width: 300px
+    width: 300px
 }
 
 /* #canvasHeader {

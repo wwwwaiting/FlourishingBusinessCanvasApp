@@ -54,13 +54,13 @@ function initialize_canvas() {
 
     // Event listeners down below
     /// updateInfoText for every changes
-    canvas.on({
-        'object:moving': updateInfoText,
-        'object:scaling': updateInfoText,
-        'object:resizing': updateInfoText,
-        'object:rotating': updateInfoText,
-        'object:skewing': updateInfoText
-    });
+    // canvas.on({
+    //     'object:moving': updateInfoText,
+    //     'object:scaling': updateInfoText,
+    //     'object:resizing': updateInfoText,
+    //     'object:rotating': updateInfoText,
+    //     'object:skewing': updateInfoText
+    // });
     /// Snap to grid
     canvas.on('object:moving', function (e) {
         // snapToGrid(e.target);
@@ -135,6 +135,7 @@ const Sticky = function () {
     // this.shape.hasControls = false;
     this.stickyId = numberOfStickies;
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
+        $('#editDiv').html('')
         displayEditForm(obj)
     }));
     this.shape.on('moving', function () {
@@ -244,13 +245,12 @@ function createSticky() {
     const newSticky = new Sticky();
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
-    createControl(newSticky);
+    // createControl(newSticky);
     canvas.renderAll();
 }
 
 function removeAll() {
     initialize_canvas();
-    $('#infoBarContainer').html("");
     currLeft = ogLeft;
     currTop = ogTop;
 }
@@ -261,44 +261,10 @@ function removeSticky() {
     const stickyToRemove = stickyList.find(s => s.stickyId == this.parentNode.id.split('y')[1]).shape;
     canvas.remove(stickyToRemove);
     canvas.discardActiveObject();
-    // remove stickyInfo
-    document.querySelector('#infoBarContainer').removeChild(this.parentNode);
+    // remove stickyInfo (commented for testing)
+    // document.querySelector('#infoBarContainer').removeChild(this.parentNode);
     // remove sticky in list
     stickyList.splice(indexToRemove, 1);
-}
-
-function createControl(sticky) {
-    const stickyInfo = document.createElement('div');
-    stickyInfo.className = 'stickyInfo';
-    stickyInfo.id = 'sticky' + sticky.stickyId;
-    const idText = document.createElement('span');
-    idText.id = 'idText';
-    idText.innerHTML = "ID: " + sticky.stickyId;
-
-    const changeColor = document.createElement('button');
-    changeColor.id = 'changeColor';
-    changeColor.innerText = 'Color';
-    changeColor.onclick = function () {
-        sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
-        canvas.renderAll();
-    }
-    const removeBtn = document.createElement('button');
-    removeBtn.id = 'removeBtn';
-    removeBtn.innerText = 'Remove';
-    removeBtn.onclick = removeSticky;
-
-    stickyInfo.appendChild(idText);
-    stickyInfo.appendChild(changeColor);
-    stickyInfo.appendChild(removeBtn);
-    document.querySelector('#infoBarContainer').appendChild(stickyInfo);
-}
-
-function updateInfoText(e) {
-    for (let i = 0; i < stickyList.length; i++) {
-        const shape = stickyList[i].shape;
-        const id = stickyList[i].stickyId;
-        const infoBarId = '#sticky' + id;
-    }
 }
 
 // Serialization of the canvas
@@ -395,36 +361,58 @@ function displayEditForm(obj) {
             stickyCt.setCoords()
             canvas.renderAll();
             const editDiv = document.querySelector('#editDiv')
-            editDiv.removeChild(editDiv.children[0]);
-            editDiv.removeChild(editDiv.children[0]);
+            editDiv.innerHTML = '';
             editDiv.style.display = 'none';
-
         }
     }
     const editRemoveBtn = document.createElement('button');
-    editRemoveBtn.id = 'editRemoveBtn';
+    // editRemoveBtn.id = 'editRemoveBtn';
     editRemoveBtn.innerText = 'Remove';
+    editRemoveBtn.className = 'editFormBtns';
     editRemoveBtn.onclick = function () {
         // remove sticky in canvas
         const indexToRemove = stickyList.findIndex(s => s.stickyId == stickyId);
         const stickyToRemove = stickyList.find(s => s.stickyId == stickyId).shape;
         canvas.remove(stickyToRemove);
         canvas.discardActiveObject();
-        // remove stickyInfo
-        document.querySelector('#infoBarContainer').removeChild(document.querySelector('#sticky' + stickyId));
         // remove sticky in list
         stickyList.splice(indexToRemove, 1);
 
         const editDiv = document.querySelector('#editDiv')
-        editDiv.removeChild(editDiv.children[0]);
-        editDiv.removeChild(editDiv.children[0]);
+        editDiv.innerHTML = ''
         editDiv.style.display = 'none';
     };
+
+    const editColorBtn = document.createElement('button')
+    // editColorBtn.id = 'editColorBtn';
+    editColorBtn.className = 'editFormBtns'
+    editColorBtn.innerText = 'Color';
+    editColorBtn.onclick = function () {
+        const targetSticky = stickyList.find(s => s.stickyId == stickyId)
+        targetSticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(targetSticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
+        canvas.renderAll()
+    }
+
+    const closeBtn = document.createElement('button')
+    closeBtn.innerText = 'Close'
+    closeBtn.className = 'editFormBtns'
+    closeBtn.onclick = function () {
+        const editDiv = $('#editDiv')
+        editDiv.html('')
+        editDiv[0].style.display = 'none';
+
+    }
+    const btnContainer = document.createElement('div')
+    btnContainer.id = 'btnContainer'
+    btnContainer.appendChild(editRemoveBtn)
+    btnContainer.appendChild(editColorBtn)
+    btnContainer.appendChild(closeBtn)
+
 
     const editDiv = document.querySelector('#editDiv')
     if (document.querySelector('#editRemoveBtn') == undefined) {
         editDiv.appendChild(textarea);
-        editDiv.appendChild(editRemoveBtn);
+        editDiv.appendChild(btnContainer);
     }
     editDiv.style.display = 'block';
 
@@ -464,3 +452,42 @@ function main() {
 }
 $(window).resize(handleWindowResize);
 $(document).ready(main);
+
+
+//###################################################3
+// functions that we deleted as we coded. 
+
+// function createControl(sticky) {
+//     const stickyInfo = document.createElement('div');
+//     stickyInfo.className = 'stickyInfo';
+//     stickyInfo.id = 'sticky' + sticky.stickyId;
+//     const idText = document.createElement('span');
+//     idText.id = 'idText';
+//     idText.innerHTML = "ID: " + sticky.stickyId;
+
+//     const changeColor = document.createElement('button');
+//     changeColor.id = 'changeColor';
+//     changeColor.innerText = 'Color';
+//     changeColor.onclick = function () {
+//         sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
+//         canvas.renderAll();
+//     }
+//     const removeBtn = document.createElement('button');
+//     removeBtn.id = 'removeBtn';
+//     removeBtn.innerText = 'Remove';
+//     removeBtn.onclick = removeSticky;
+
+//     stickyInfo.appendChild(idText);
+//     stickyInfo.appendChild(changeColor);
+//     stickyInfo.appendChild(removeBtn);
+//     document.querySelector('#infoBarContainer').appendChild(stickyInfo);
+// }
+
+
+// function updateInfoText(e) {
+//     for (let i = 0; i < stickyList.length; i++) {
+//         const shape = stickyList[i].shape;
+//         const id = stickyList[i].stickyId;
+//         const infoBarId = '#sticky' + id;
+//     }
+// }
