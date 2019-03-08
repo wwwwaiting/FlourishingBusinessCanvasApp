@@ -1,9 +1,9 @@
 var mongoose = require("mongoose");
 var options = {
-  useMongoClient: true,
   socketTimeoutMS: 0,
   keepAlive: true,
-  reconnectTries: 30
+  reconnectTries: 30,
+  useNewUrlParser: true
 };
 
 
