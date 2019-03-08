@@ -634,6 +634,49 @@ function handleWindowResize() {
     canvas.renderAll();
 }
 
+function searchInCanvas() {
+    document.getElementById("searchContent").addEventListener("input", function() {
+        // reset search result
+        $('#searchResult').html('');
+
+        const searchContent = $('#searchContent').val();
+
+        const dropDownMenu = document.querySelector('#searchResult')
+
+        for (let i = 0; i < stickyList.length; i++) {
+            const sticky = stickyList[i];
+
+            const content = sticky.content;
+
+            const words = content.split(" ")
+            for (let j = 0; j < words.length; j++) {
+                const word = words[j];
+
+                if (searchContent == word) {
+                    const listItem = document.createElement('a');
+                    listItem.setAttribute('class', "list-group-item list-group-item-action");
+                    listItem.appendChild(document.createTextNode(sticky.content));
+
+                    dropDownMenu.appendChild(listItem);
+                }
+            }
+        }
+
+        if (document.getElementById('searchResult').innerHTML === "" && searchContent != "") {
+            const noResult = document.createElement('a');
+            noResult.setAttribute('class', "list-group-item");
+            noResult.appendChild(document.createTextNode("No matching found"));
+
+            dropDownMenu.appendChild(noResult);
+        }
+    }, false);
+
+    // hide the search result if clicked outside
+    $('body').on('click', function(e) {
+        $('#searchResult').html('');
+        document.getElementById('searchContent').value = '';
+    });
+}
 
 // Used to call functions after page is fully loaded.
 function main() {
