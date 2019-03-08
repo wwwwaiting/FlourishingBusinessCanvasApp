@@ -3,7 +3,7 @@ var UserSchema = new mongoose.Schema({
   name: String,
   email: String,
   pwd: String,
-  role: String,
+  role: Number,
   canvas: [Number],
   occupation: String,
   status: Number

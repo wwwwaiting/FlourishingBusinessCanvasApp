@@ -2,7 +2,10 @@ var mongoose = require("mongoose");
 var CanvasSchema = new mongoose.Schema({
   id: Number,
   owner: String,
-  size: Number,
+  position: {
+    width: Number,
+    height: Number
+  },
   title: String,
   users: [String],
   stickies: [Number]
