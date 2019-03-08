@@ -163,9 +163,17 @@ function horizontal_restrict(sticky){
   return left
 }
 
-
-
-
+function convertDisplay(sticky){
+  const width = sticky.width * sticky.scaleX;
+  const height = sticky.height * sticky.scaleY;
+  const stickyCt = sticky.item(1);
+  let printText = stickyCt.text;
+  if (printText.length > (width - stickyPadding) * (height - stickyPadding) / 200){
+      printText = printText.slice(0, Math.round((width - stickyPadding) * (height - stickyPadding) / 200) - 3);
+      printText = printText + '...';
+  }
+  return printText;
+}
 
 const Sticky = function () {
     this.shape = getShape();
@@ -202,8 +210,9 @@ const Sticky = function () {
         stickyBg.set('width', width);
         stickyBg.set('height', height);
         const stickyCt = this.item(1);
-        stickyCt.set('width', width - stickyPadding); //20 as padding
-        stickyCt.set('height', height - stickyPadding); //20 as padding
+        stickyCt.set('width', width - stickyPadding);
+        stickyCt.set('height', height - stickyPadding);
+        console.log(convertDisplay(this));
     })
     numberOfStickies++;
 }
