@@ -8,12 +8,12 @@
         <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     </head>
     <body>
-        <div class="fixed-top bg-light p-2 m-0 ml-1 mr-1 rounded-bottom" id="headerContainer">
+        <div class="fixed-top bg-light p-2 m-0 ml-2 mr-2 rounded-bottom" id="headerContainer">
         <div class="d-flex" id="canvasHeader">
             <div class="mb-2" id="canvasTitle">
-                <input class="form-control form-control-lg bg-light" type="text" placeholder="Flourishing Business Canvas">
+                <input class="p-0 pl-1 form-control  bg-light" type="text" placeholder="Flourishing Business Canvas">
             </div>
-            <div class="ml-auto d-flex" id="canvasInfo">
+            <div class="ml-auto d-flex mt-0" id="canvasInfo">
                 <div class="designInfo ml-2">
                     <input class="form-control form-control" type="text" placeholder="Designed for:">
                 </div>
@@ -24,7 +24,7 @@
                     <input class="form-control form-control" type="text" placeholder="Date:">
                 </div>
             </div>
-            <div class="dropdown" id="exportBtn">
+            <div class="dropdown mt-0" id="exportBtn">
                 <button class="dropbtn">Export</button>
                 <div class="dropdown-content">
                     <a id="exportJson" onclick="exportJson()">Export as JSON</a>

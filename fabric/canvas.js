@@ -23,7 +23,7 @@ const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
 
 // Define colors
-const fallbackBackgroundColor = 'rgb(43,105,90)';
+const fallbackBackgroundColor = '#006858';
 // const fallbackBackgroundColor = 'rgb(236,232,238)';
 const stickyWhite = 'rgb(255,255,255)';
 const stickyPink = 'rgb(255,230,252)';
@@ -37,7 +37,7 @@ const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
-const imageUrl = "https://i.imgur.com/4scrQ34.png";
+const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
 // Initialize the canvas
 function initialize_canvas() {
@@ -87,7 +87,7 @@ function initialize_canvas() {
             this.selection = false;
             this.lastPosX = evt.clientX;
             this.lastPosY = evt.clientY;
-        } 
+        }
         $('#editDiv').html('')
     });
     canvas.on('mouse:move', function (opt) {
@@ -498,12 +498,12 @@ function displayEditForm(sticky) {
             <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer" class="input-group">
-                
+
                     <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >
                     <div class="input-group-append">
                         <button id="addComment" class="btn btn-primary" type="button">Add</button>
                     </div>
-                
+
             </div>
         </div>
     </div>`
@@ -518,12 +518,12 @@ function displayEditForm(sticky) {
         li.innerHTML = `<span class="commentWrap">${c}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
-        $('#commentContainer').append(li) 
+        $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function() {
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
-                sticky.comments.splice(index, 1)    
+                sticky.comments.splice(index, 1)
             }
             console.log(sticky.comments)
             $(this).parent().remove()
@@ -538,12 +538,12 @@ function displayEditForm(sticky) {
         li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
-        $('#commentContainer').append(li) 
+        $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function() {
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
-                sticky.comments.splice(index, 1)    
+                sticky.comments.splice(index, 1)
             }
             console.log(sticky.comments)
             $(this).parent().remove()
@@ -702,7 +702,7 @@ function handleWindowResize() {
     $('canvas').attr('height', $(window).height());
     canvas.set('width', $(window).width());
     canvas.set('height', $(window).height());
-    canvas.renderAll();
+    canvas.requestRenderAll();
 }
 
 function searchInCanvas() {
