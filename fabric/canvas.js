@@ -169,8 +169,8 @@ function horizontal_restrict(sticky){
 }
 
 function convertDisplay(sticky){
-  const width = sticky.width * sticky.scaleX;
-  const height = sticky.height * sticky.scaleY;
+  const width = sticky.shape.width * sticky.shape.scaleX;
+  const height = sticky.shape.height * sticky.shape.scaleY;
   let printText = sticky.content;
   console.log(printText);
   if (printText.length > (width - stickyPadding) * (height - stickyPadding) / 200){
@@ -179,6 +179,13 @@ function convertDisplay(sticky){
   }
   return printText;
 }
+
+
+function argHandler(obj, handler) {
+    return function () {
+        handler(obj);
+    };
+};
 
 const Sticky = function () {
     // Sticky id
@@ -221,28 +228,27 @@ const Sticky = function () {
         this.setCoords()
         console.log(this.left + ', ' + this.top);
     })
-    this.shape.on('scaling', function () {
-        let width = this.width * this.scaleX;
-        let height = this.height * this.scaleY;
+    this.shape.on('scaling', argHandler(this, function (sticky) {
+        let width = sticky.shape.width * sticky.shape.scaleX;
+        let height = sticky.shape.height * sticky.shape.scaleY;
         if (width > stickyMaxWidth) width = stickyMaxWidth;
         if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
-        this.set('width', width);
-        this.set('height', height);
-        this.set('scaleX', 1);
-        this.set('scaleY', 1);
-        const stickyBg = this.item(0);
+        sticky.shape.set('width', width);
+        sticky.shape.set('height', height);
+        sticky.shape.set('scaleX', 1);
+        sticky.shape.set('scaleY', 1);
+        const stickyBg = sticky.shape.item(0);
         stickyBg.set('width', width);
         stickyBg.set('height', height);
         stickyBg.setCoords();
-        const stickyCt = this.item(1);
+        const stickyCt = sticky.shape.item(1);
         stickyCt.set('width', width - stickyPadding); //20 as padding
         stickyCt.set('height', height - stickyPadding); //20 as padding
         stickyCt.setCoords();
-        this.setCoords();
-        // console.log(this.content);
-        // stickyCt.text = convertDisplay(this);
-        this.setCoords();
-    })
+        console.log(sticky.content);
+        stickyCt.text = convertDisplay(sticky);
+        sticky.shape.setCoords();
+    }))
     numberOfStickies++;
 }
 
