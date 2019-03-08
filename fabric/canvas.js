@@ -79,7 +79,7 @@ function initialize_canvas() {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
-        // if (evt.ctrlKey === true) {
+            // if (evt.ctrlKey === true) {
             this.isDragging = true;
             this.selection = false;
             this.lastPosX = evt.clientX;
@@ -133,37 +133,59 @@ function setCanvasBgImg() {
 }
 
 //the fuction restrict moving borders
-function vertical_restrict(sticky){
-  let top = sticky.top;
-  let left = sticky.left;
-  if (top < ogTop) top = ogTop;
-  if (top > 1133 - sticky.height * sticky.scaleY) top = 1133 - sticky.height * sticky.scaleY;
-  if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
-  if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
-  if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2){ //only for the middle part
-    if (top < 330) top = 330;
-  }
-  return top
+function vertical_restrict(sticky) {
+    let top = sticky.top;
+    let left = sticky.left;
+    if (top < ogTop) top = ogTop;
+    if (top > 1133 - sticky.height * sticky.scaleY) top = 1133 - sticky.height * sticky.scaleY;
+    if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
+    if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
+    if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2) { //only for the middle part
+        if (top < 330) top = 330;
+    }
+    return top
 }
 
-function horizontal_restrict(sticky){
-  let top = sticky.top;
-  let left = sticky.left;
-  if (left < ogLeft) left = ogLeft;
-  if (left > 1865 - sticky.width * sticky.scaleX) left = 1865 - sticky.width * sticky.scaleX;
+function horizontal_restrict(sticky) {
+    let top = sticky.top;
+    let left = sticky.left;
+    if (left < ogLeft) left = ogLeft;
+    if (left > 1865 - sticky.width * sticky.scaleX) left = 1865 - sticky.width * sticky.scaleX;
 
-  if (top < ((1942 - sticky.height * sticky.scaleY) / 2)){ // only for the upper part
-    if (left > 371 - sticky.width * sticky.scaleX && left < ((796 - sticky.width * sticky.scaleX) / 2)) left = 371 - sticky.width * sticky.scaleX;
-    if (left < 425 && left > ((796 - sticky.width * sticky.scaleX) / 2)) left = 425;
-    if (left > 838 - sticky.width * sticky.scaleX && left < ((1690 - sticky.width * sticky.scaleX) / 2)) left = 838 - sticky.width * sticky.scaleX;
-    if (left < 852 && left > ((1690 - sticky.width * sticky.scaleX) / 2)) left = 852;
-    if (left > 1190 - sticky.width * sticky.scaleX && left < ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1190 - sticky.width * sticky.scaleX;
-    if (left < 1202 && left > ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1202;
-    if (left > 1620 - sticky.width * sticky.scaleX && left < ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1620 - sticky.width * sticky.scaleX;
-    if (left < 1668 && left > ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1668;
-  }
+    if (top < ((1942 - sticky.height * sticky.scaleY) / 2)) { // only for the upper part
+        if (left > 371 - sticky.width * sticky.scaleX && left < ((796 - sticky.width * sticky.scaleX) / 2)) left = 371 - sticky.width * sticky.scaleX;
+        if (left < 425 && left > ((796 - sticky.width * sticky.scaleX) / 2)) left = 425;
+        if (left > 838 - sticky.width * sticky.scaleX && left < ((1690 - sticky.width * sticky.scaleX) / 2)) left = 838 - sticky.width * sticky.scaleX;
+        if (left < 852 && left > ((1690 - sticky.width * sticky.scaleX) / 2)) left = 852;
+        if (left > 1190 - sticky.width * sticky.scaleX && left < ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1190 - sticky.width * sticky.scaleX;
+        if (left < 1202 && left > ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1202;
+        if (left > 1620 - sticky.width * sticky.scaleX && left < ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1620 - sticky.width * sticky.scaleX;
+        if (left < 1668 && left > ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1668;
+    }
 
-  return left
+    return left
+}
+
+function smoothMoveH(stickyShape, leftDest) {
+    stickyShape.animate('left', leftDest, {
+        duration: 400,
+        onChange: canvas.renderAll.bind(canvas),
+        onComplete: function () {
+            // console.log('finish move h');
+        },
+        easing: fabric.util.ease['easeInOutQuart']
+    });
+}
+
+function smoothMoveV(stickyShape, topDest) {
+    stickyShape.animate('top', topDest, {
+        duration: 400,
+        onChange: canvas.renderAll.bind(canvas),
+        onComplete: function () {
+            // console.log('finish move v');
+        },
+        easing: fabric.util.ease['easeInOutQuart']
+    });
 }
 
 const Sticky = function () {
@@ -202,8 +224,11 @@ const Sticky = function () {
         let left = horizontal_restrict(this);
         // if (left < ogLeft) left = ogLeft;
         // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
-        this.left = left;
-        this.top = top;
+
+        // this.set('left', left);
+        // this.set('top', top);
+        smoothMoveH(this, left);
+        smoothMoveV(this, top);
         this.setCoords()
         console.log(this.left + ', ' + this.top);
     })
@@ -212,7 +237,7 @@ const Sticky = function () {
         let height = this.height * this.scaleY;
         if (width > stickyMinimumWidth && height > stickyMinimumWidth) {
             if (width > 185) width = 185;
-            if (height > 175) height = 175;// set scaling boundary so that not stikcy will have size larger than a block
+            if (height > 175) height = 175; // set scaling boundary so that not stikcy will have size larger than a block
             this.set('width', width);
             this.set('height', height);
             this.set('scaleX', 1);
