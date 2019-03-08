@@ -3,7 +3,8 @@ console.log("canvas.js");
 
 // Global vars
 let canvas;
-const snapGridSize = 30;
+const canvasMaxZoom = 8;
+const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
@@ -16,9 +17,11 @@ const stickyRadius = 5;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
+const stickyMinimumWidth = 80;
 
 // Define colors
-const fallbackBackgroundColor = 'rgb(236,232,238)';
+const fallbackBackgroundColor = 'rgb(43,105,90)';
+// const fallbackBackgroundColor = 'rgb(236,232,238)';
 const stickyWhite = 'rgb(255,255,255)';
 const stickyPink = 'rgb(255,230,252)';
 const stickyOrange = 'rgb(255,220,188)';
@@ -31,7 +34,7 @@ const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
-const imageUrl = "https://i.imgur.com/TROjQTF.png";
+const imageUrl = "https://i.imgur.com/4scrQ34.png";
 
 // Initialize the canvas
 function initialize_canvas() {
@@ -106,8 +109,8 @@ function initialize_canvas() {
         const pointer = canvas.getPointer(opt.e);
         let zoom = canvas.getZoom();
         zoom = zoom + delta / 400;
-        if (zoom > 8) zoom = 8;
-        if (zoom < 0.5) zoom = 0.5;
+        if (zoom > canvasMaxZoom) zoom = canvasMaxZoom;
+        if (zoom < canvasMinZoom) zoom = canvasMinZoom;
         canvas.zoomToPoint({
             x: opt.e.offsetX,
             y: opt.e.offsetY
@@ -176,10 +179,28 @@ function convertDisplay(sticky){
 }
 
 const Sticky = function () {
-    this.shape = getShape();
-    this.shape.set('lockRotation', true);
-    // this.shape.hasControls = false;
+    // Sticky id
     this.stickyId = numberOfStickies;
+
+    // Sticky content (text)
+    const textboxValue = $('#textInputBox').val();
+    $('#textInputBox').val("");
+    this.content = textboxValue;
+
+    // Sticky fabric object (named as shape)
+    this.shape = getShape(textboxValue);
+    this.shape.set('lockRotation', true);
+    this.shape.set('lockScalingFlip', true);
+    this.shape.set('transparentCorners', false);
+    this.shape.set('cornerStyle', 'circle');
+    this.shape.setControlVisible('tl', false);
+    this.shape.setControlVisible('ml', false);
+    this.shape.setControlVisible('bl', false);
+    this.shape.setControlVisible('br', false);
+    this.shape.setControlVisible('tr', false);
+    this.shape.setControlVisible('mt', false);
+    this.shape.setControlVisible('mtr', false);
+
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
         $('#editDiv').html('')
         displayEditForm(obj)
@@ -195,17 +216,32 @@ const Sticky = function () {
         // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
         this.left = left;
         this.top = top;
+        this.setCoords()
         console.log(this.left + ', ' + this.top);
     })
     this.shape.on('scaling', function () {
         let width = this.width * this.scaleX;
         let height = this.height * this.scaleY;
-        if (width > 185) width = 185;
-        if (height > 175) height = 175;// set scaling boundary so that not stikcy will have size larger than a block
-        this.set('width', width);
-        this.set('height', height);
+        if (width > stickyMinimumWidth && height > stickyMinimumWidth) {
+            if (width > 185) width = 185;
+            if (height > 175) height = 175;// set scaling boundary so that not stikcy will have size larger than a block
+            this.set('width', width);
+            this.set('height', height);
+            this.set('scaleX', 1);
+            this.set('scaleY', 1);
+            const stickyBg = this.item(0);
+            stickyBg.set('width', width);
+            stickyBg.set('height', height);
+            stickyBg.setCoords();
+            const stickyCt = this.item(1);
+            stickyCt.set('width', width - stickyPadding); //20 as padding
+            stickyCt.set('height', height - stickyPadding); //20 as padding
+            stickyCt.setCoords();
+            this.setCoords();
+        }
         this.set('scaleX', 1);
         this.set('scaleY', 1);
+<<<<<<< HEAD
         const stickyBg = this.item(0);
         stickyBg.set('width', width);
         stickyBg.set('height', height);
@@ -213,6 +249,9 @@ const Sticky = function () {
         stickyCt.set('width', width - stickyPadding);
         stickyCt.set('height', height - stickyPadding);
         console.log(convertDisplay(this));
+=======
+        this.setCoords();
+>>>>>>> 10797581677f593d7997ab006a0fff5c24471d68
     })
     numberOfStickies++;
 }
@@ -280,11 +319,9 @@ const getStickyObjJson = function () {
     return stickyObjJson;
 }
 
-function getShape() {
-    const textboxValue = $('#textInputBox').val();
+function getShape(textboxValue) {
     const stickyBackground = new fabric.Rect(new getBackgroundJson());
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-    $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
     const stickyCt = stickyObj.item(1);
     stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
