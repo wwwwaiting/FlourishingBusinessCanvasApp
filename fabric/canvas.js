@@ -668,31 +668,31 @@ function searchInCanvas() {
 
         if (searchContent != "") {
             const dropDownMenu = document.querySelector('#searchResult')
-    
+
             for (let i = 0; i < stickyList.length; i++) {
                 const sticky = stickyList[i];
-    
+
                 const content = sticky.content;
-    
+
                 const words = content.split(" ")
                 for (let j = 0; j < words.length; j++) {
                     const word = words[j];
-    
+
                     if (searchContent == word) {
                         const listItem = document.createElement('a');
                         listItem.setAttribute('class', "list-group-item list-group-item-action");
                         listItem.appendChild(document.createTextNode(sticky.content));
-    
+
                         dropDownMenu.appendChild(listItem);
                     }
                 }
             }
-    
+
             if (document.getElementById('searchResult').innerHTML === "") {
                 const noResult = document.createElement('a');
                 noResult.setAttribute('class', "list-group-item");
                 noResult.appendChild(document.createTextNode("No matching found"));
-    
+
                 dropDownMenu.appendChild(noResult);
             }
         }
@@ -703,10 +703,6 @@ function searchInCanvas() {
         $('#searchResult').html('');
         document.getElementById('searchContent').value = '';
     });
-}
-
-function inWhichBox() {
-    // alert(...)
 }
 
 // Used to call functions after page is fully loaded.
@@ -756,3 +752,32 @@ $(document).ready(main);
 //         const infoBarId = '#sticky' + id;
 //     }
 // }
+
+
+function inWhichBox(){
+  for (let i = 0; i < stickyList.length; i++){
+    console.log(stickyList[i].stickyId + ' in ' + returnClass(stickyList[i]));
+  }
+}
+
+function returnClass(sticky){
+  const top = sticky.shape.top;
+  const left = sticky.shape.left;
+  if (top >= 243 && top <= 613 && left >= 147 && left <= 372){return "BIOPHYSICAL STOCKS"}
+  if (top >= 613 && top <= 933 && left >= 147 && left <= 372){return "ECOSYSTEMSERVICES"}
+  if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866){return "ECOSYSTEM ACTORS"}
+  if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866){return "NEEDS"}
+  if (top >= 953 && top <= 1136 && left >= 147 && left <= 764){return "COSTS"}
+  if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278){return "GOALS"}
+  if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866){return "BENIFITS"}
+  if (top >= 334 && top <= 613 && left >= 423 && left <= 654){return "RESOURCES"}
+  if (top >= 613 && top <= 933 && left >= 423 && left <= 654){return "ACTIVITIES"}
+  if (top >= 334 && top <= 613 && left >= 654 && left <= 838){return "PARTNERSHIP"}
+  if (top >= 613 && top <= 933 && left >= 654 && left <= 838){return "GOVERNANCE"}
+  if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388){return "RELATIONSHIPS"}
+  if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388){return "CHANNELS"}
+  if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620){return "STAKEHOLDERS"}
+  if (top >= 334 && top <= 732 && left >= 850 && left <= 1192){return "VALUE CO-CREATIONS"}
+  if (top >= 732 && top <= 933 && left >= 850 && left <= 1192){return "VALUE CO-DESTRUCTIONS"}
+
+}
