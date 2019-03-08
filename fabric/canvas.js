@@ -210,11 +210,11 @@ const Sticky = function () {
     this.shape.setControlVisible('mt', false);
     this.shape.setControlVisible('mtr', false);
 
-    this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
-        const thisSticky = this;
+    this.shape.on('mousedown', doubleClicked(this, function (sticky) {
+        // const thisSticky = this;
         
         $('#editDiv').html('')
-        displayEditForm(obj, thisSticky)
+        displayEditForm(sticky)
     }));
     this.shape.on('mouseup', function () {
         // let left = this.left;
@@ -329,13 +329,6 @@ function getShape(textboxValue) {
 
 function createSticky() {
     const newSticky = new Sticky();
-    // console.log(newSticky.shape)
-    // newSticky.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
-    //     // const thisSticky = this;
-    //     console.log(newSticky)
-    //     $('#editDiv').html('')
-    //     displayEditForm(obj, thisSticky)
-    // }));
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     // createControl(newSticky);
@@ -450,7 +443,7 @@ function loadJsonToCanvas(jsonOutput) {
     canvas.loadFromJSON(jsonOutput);
 }
 
-function displayEditForm(obj, sticky) {
+function displayEditForm(sticky) {
     console.log(sticky)
     const html = `
     <div id="editForm" class="modal-content">
@@ -483,8 +476,8 @@ function displayEditForm(obj, sticky) {
     </div>`
     const editDiv = $('#editDiv')
     editDiv.html(html)
-    const shape = obj[0]
-    const stickyId = obj[1]
+    const shape = sticky.shape
+    const stickyId = sticky.stickyId
     console.log(stickyId)
     console.log(shape)
     const targetSticky = stickyList.find(s => s.stickyId == stickyId)
@@ -516,7 +509,8 @@ function displayEditForm(obj, sticky) {
             textarea.style.backgroundColor = 'rgb(236,232,238)';
             $("#textboxContainer").html(textarea)
         } else {
-            shape.item(1).text = $('.textbox').val()
+            sticky.content = $('.textbox').val()
+            shape.item(1).text = convertDisplay(sticky)
             const stickyCt = shape.item(1);
             stickyCt.set('width', shape.width - stickyPadding); //20 as padding
             stickyCt.set('height', shape.height - stickyPadding); //20 as padding
