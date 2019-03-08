@@ -125,6 +125,28 @@ $('.tab a').on('click', function (e) {
 
 });
 
+$('#register_submit').on('click', function(){
+   var name = document.getElementsByClassName('req-name')[0].value.trim();
+   var email = document.getElementsByClassName('req-email')[0].value.trim();
+   var pwd = document.getElementsByClassName('req-pwd')[0].value.trim();
+   var sent = {name, email, pwd};
+   $.ajax({
+     type: "POST",
+     url: "/register",
+     data: sent,
+     success: function(data){
+       if (data == 'false'){
+         $('#req-error').html('Oops, the specified email address has been registered in the system!');
+         //alert('Oops, the specified email address or username exist!');
+         $('#req-error').css('font-size', '35px');
+         document.getElementsByClassName('req-email')[0].value = '';
+         document.getElementsByClassName('req-name')[0].value = '';
+         document.getElementsByClassName('req-pwd')[0].value = '';
+       } else if (data == 'true'){
+         // not sure how we gonna use it
+       }
+     }});
+ });
  $('#login_submit').on('click', function(){
    var email = document.getElementsByClassName('log-email')[0].value.trim();
    var pwd = document.getElementsByClassName('log-pwd')[0].value.trim();
@@ -135,11 +157,15 @@ $('.tab a').on('click', function (e) {
       data: send,
       success: function(data){
         if (data == 'false'){
-          $('#log-error').html('Oops, invalid email or password!');
+          $('#log-error').html('Oops, invalid password!');
           $('.log-email').html('');
           $('.log-pwd').html('');
-        } else if (data == 'true'){
-          window.location.href = "/main2";
+        } else if (data == 'denied'){
+          $('#log-error').html('User does not exist or does not have the authorization to login!');
+          $('.log-email').html('');
+          $('.log-pwd').html('');
+        }else if (data == 'true'){
+          // need to wait for all the user liabary pages
         }
    }});
  });
