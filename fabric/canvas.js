@@ -490,25 +490,26 @@ function displayEditForm(sticky) {
             <div id="textboxContainer">
                 <p class="textbox"></p>
             </div>
-            <div id="btnContainer" class="class="input-group mb-3 mt-3 pr-3 pl-3">
+            <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
                 <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
                 <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
                 <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
             </div>
             <div><ul id="commentContainer"></ul>
             </div>
-            <div id="commentInputContainer">
-                <div class="input-group">
+            <div id="commentInputContainer" class="input-group">
+                
                     <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >
                     <div class="input-group-append">
                         <button id="addComment" class="btn btn-primary" type="button">Add</button>
                     </div>
-                </div>
+                
             </div>
         </div>
     </div>`
     const editDiv = $('#editDiv')
     editDiv.html(html)
+    // <div class="input-group">
 
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
@@ -546,7 +547,10 @@ function displayEditForm(sticky) {
             }
             console.log(sticky.comments)
             $(this).parent().remove()
-        }) 
+        })
+        $('#commentContent').remove()
+        $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
+
     })
 
     $('button.close').click(function () {
@@ -576,6 +580,7 @@ function displayEditForm(sticky) {
             textarea.rows = '4';
             textarea.cols = '40';
             textarea.className = 'textbox';
+            textarea.id = 'textarea;'
             textarea.style.backgroundColor = 'rgb(236,232,238)';
             $("#textboxContainer").html(textarea)
         } else {
