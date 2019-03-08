@@ -705,6 +705,10 @@ function searchInCanvas() {
     });
 }
 
+function inWhichBox() {
+    // alert(...)
+}
+
 // Used to call functions after page is fully loaded.
 function main() {
     initialize_canvas();
