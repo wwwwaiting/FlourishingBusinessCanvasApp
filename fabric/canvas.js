@@ -3,7 +3,8 @@ console.log("canvas.js");
 
 // Global vars
 let canvas;
-const snapGridSize = 30;
+const canvasMaxZoom = 8;
+const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
@@ -19,7 +20,8 @@ const stickyPadding = 20;
 const stickyMinimumWidth = 80;
 
 // Define colors
-const fallbackBackgroundColor = 'rgb(236,232,238)';
+const fallbackBackgroundColor = 'rgb(43,105,90)';
+// const fallbackBackgroundColor = 'rgb(236,232,238)';
 const stickyWhite = 'rgb(255,255,255)';
 const stickyPink = 'rgb(255,230,252)';
 const stickyOrange = 'rgb(255,220,188)';
@@ -107,8 +109,8 @@ function initialize_canvas() {
         const pointer = canvas.getPointer(opt.e);
         let zoom = canvas.getZoom();
         zoom = zoom + delta / 400;
-        if (zoom > 8) zoom = 8;
-        if (zoom < 0.5) zoom = 0.5;
+        if (zoom > canvasMaxZoom) zoom = canvasMaxZoom;
+        if (zoom < canvasMinZoom) zoom = canvasMinZoom;
         canvas.zoomToPoint({
             x: opt.e.offsetX,
             y: opt.e.offsetY
@@ -165,7 +167,16 @@ function horizontal_restrict(sticky){
 }
 
 const Sticky = function () {
-    this.shape = getShape();
+    // Sticky id
+    this.stickyId = numberOfStickies;
+
+    // Sticky content (text)
+    const textboxValue = $('#textInputBox').val();
+    $('#textInputBox').val("");
+    this.content = textboxValue;
+
+    // Sticky fabric object (named as shape)
+    this.shape = getShape(textboxValue);
     this.shape.set('lockRotation', true);
     this.shape.set('lockScalingFlip', true);
     this.shape.set('transparentCorners', false);
@@ -177,8 +188,7 @@ const Sticky = function () {
     this.shape.setControlVisible('tr', false);
     this.shape.setControlVisible('mt', false);
     this.shape.setControlVisible('mtr', false);
-    this.shape.set('minScaleLimit', 0.5);
-    this.stickyId = numberOfStickies;
+
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
         $('#editDiv').html('')
         displayEditForm(obj)
@@ -287,11 +297,9 @@ const getStickyObjJson = function () {
     return stickyObjJson;
 }
 
-function getShape() {
-    const textboxValue = $('#textInputBox').val();
+function getShape(textboxValue) {
     const stickyBackground = new fabric.Rect(new getBackgroundJson());
     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-    $('#textInputBox').val("");
     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
     const stickyCt = stickyObj.item(1);
     stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
