@@ -210,10 +210,11 @@ const Sticky = function () {
     this.shape.setControlVisible('tr', false);
     this.shape.setControlVisible('mt', false);
     this.shape.setControlVisible('mtr', false);
+    this.shape.item(1).text = convertDisplay(this);
 
     this.shape.on('mousedown', doubleClicked(this, function (sticky) {
         // const thisSticky = this;
-        
+
         $('#editDiv').html('')
         displayEditForm(sticky)
     }));
@@ -487,7 +488,7 @@ function displayEditForm(sticky) {
     $('button.close').click(function () {
         editDiv.html('')
     })
-    
+
     $('#colorBtn').click(function () {
         targetSticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(targetSticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
         canvas.renderAll()
@@ -526,7 +527,7 @@ function displayEditForm(sticky) {
             $('#textboxContainer').html(p)
         }
     })
-    
+
 
 }
 
