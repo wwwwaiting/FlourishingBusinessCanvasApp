@@ -211,8 +211,10 @@ const Sticky = function () {
     this.shape.setControlVisible('mtr', false);
 
     this.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
+        const thisSticky = this;
+        
         $('#editDiv').html('')
-        displayEditForm(obj)
+        displayEditForm(obj, thisSticky)
     }));
     this.shape.on('mouseup', function () {
         // let left = this.left;
@@ -327,6 +329,13 @@ function getShape(textboxValue) {
 
 function createSticky() {
     const newSticky = new Sticky();
+    // console.log(newSticky.shape)
+    // newSticky.shape.on('mousedown', doubleClicked([this.shape, this.stickyId], function (obj) {
+    //     // const thisSticky = this;
+    //     console.log(newSticky)
+    //     $('#editDiv').html('')
+    //     displayEditForm(obj, thisSticky)
+    // }));
     canvas.add(newSticky.shape);
     stickyList.push(newSticky);
     // createControl(newSticky);
@@ -441,7 +450,8 @@ function loadJsonToCanvas(jsonOutput) {
     canvas.loadFromJSON(jsonOutput);
 }
 
-function displayEditForm(obj) {
+function displayEditForm(obj, sticky) {
+    console.log(sticky)
     const html = `
     <div id="editForm" class="modal-content">
         <div class="modal-header">
