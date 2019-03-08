@@ -15,30 +15,35 @@
             </div>
             <div class="ml-auto d-flex" id="canvasInfo">
                 <div class="designInfo ml-2">
-                    <input class="form-control form-control-lg" type="text" placeholder="Designed for:">
+                    <input class="form-control form-control" type="text" placeholder="Designed for:">
                 </div>
                 <div class="designInfo ml-2">
-                    <input class="form-control form-control-lg" type="text" placeholder="Designed by:">
+                    <input class="form-control form-control" type="text" placeholder="Designed by:">
                 </div>
                 <div class="designInfo ml-2">
-                    <input class="form-control form-control-lg" type="text" placeholder="Date:">
+                    <input class="form-control form-control" type="text" placeholder="Date:">
                 </div>
             </div>
         </div>
 
-        <div>
-            <input id='textInputBox' type="text" placeholder="Type content">
-            <button id="createBtn" onclick="createSticky()">New Sticky</button>
-            <button id="removeAllBtn" onclick="removeAll()">Remove All</button>
-            <button id="importBtn" onclick="importJson()">Import JSON</button>
+        <div id="stickyInfo">
+            <div>
+                <input id='textInputBox' type="text" placeholder="Type content">
+                <button id="createBtn" onclick="createSticky()">New Sticky</button>
+                <button id="removeAllBtn" onclick="removeAll()">Remove All</button>
+                <button id="importBtn" onclick="importJson()">Import JSON</button>
+            </div>
+            <div>
+                <button id="exportJson" onclick="exportJson()">Export as JSON</button>
+                <button id="exportSvg" onclick="exportSvg()">Export as SVG</button>
+                <button id="exportPng" onclick="exportPng()">Export as PNG</button>
+                <button id="exportPdf" onclick="exportPdf()">Export as PDF</button>
+            </div>
+            <div id="infoBarContainer">
+            </div>
         </div>
-        <div>
-            <button id="exportJson" onclick="exportJson()">Export as JSON</button>
-            <button id="exportSvg" onclick="exportSvg()">Export as SVG</button>
-            <button id="exportPng" onclick="exportPng()">Export as PNG</button>
-            <button id="exportPdf" onclick="exportPdf()">Export as PDF</button>
-        </div>
-        <div id="infoBarContainer">
+        <div id="searchBar">
+            <input id="searchContent" onclick="searchInCanvas()" class="form-control form-control" type="text" placeholder="Search within the canvas">
         </div>
         </div>
 
