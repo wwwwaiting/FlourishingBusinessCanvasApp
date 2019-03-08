@@ -641,33 +641,35 @@ function searchInCanvas() {
 
         const searchContent = $('#searchContent').val();
 
-        const dropDownMenu = document.querySelector('#searchResult')
-
-        for (let i = 0; i < stickyList.length; i++) {
-            const sticky = stickyList[i];
-
-            const content = sticky.content;
-
-            const words = content.split(" ")
-            for (let j = 0; j < words.length; j++) {
-                const word = words[j];
-
-                if (searchContent == word) {
-                    const listItem = document.createElement('a');
-                    listItem.setAttribute('class', "list-group-item list-group-item-action");
-                    listItem.appendChild(document.createTextNode(sticky.content));
-
-                    dropDownMenu.appendChild(listItem);
+        if (searchContent != "") {
+            const dropDownMenu = document.querySelector('#searchResult')
+    
+            for (let i = 0; i < stickyList.length; i++) {
+                const sticky = stickyList[i];
+    
+                const content = sticky.content;
+    
+                const words = content.split(" ")
+                for (let j = 0; j < words.length; j++) {
+                    const word = words[j];
+    
+                    if (searchContent == word) {
+                        const listItem = document.createElement('a');
+                        listItem.setAttribute('class', "list-group-item list-group-item-action");
+                        listItem.appendChild(document.createTextNode(sticky.content));
+    
+                        dropDownMenu.appendChild(listItem);
+                    }
                 }
             }
-        }
-
-        if (document.getElementById('searchResult').innerHTML === "" && searchContent != "") {
-            const noResult = document.createElement('a');
-            noResult.setAttribute('class', "list-group-item");
-            noResult.appendChild(document.createTextNode("No matching found"));
-
-            dropDownMenu.appendChild(noResult);
+    
+            if (document.getElementById('searchResult').innerHTML === "") {
+                const noResult = document.createElement('a');
+                noResult.setAttribute('class', "list-group-item");
+                noResult.appendChild(document.createTextNode("No matching found"));
+    
+                dropDownMenu.appendChild(noResult);
+            }
         }
     }, false);
 
