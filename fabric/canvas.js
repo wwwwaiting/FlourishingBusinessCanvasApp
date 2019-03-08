@@ -18,6 +18,7 @@ const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
 const stickyMinimumWidth = 80;
+const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
 
@@ -173,8 +174,8 @@ function convertDisplay(sticky){
   const height = sticky.shape.height * sticky.shape.scaleY;
   let printText = sticky.content;
   console.log(printText);
-  if (printText.length > (width - stickyPadding) * (height - stickyPadding) / 200){
-      printText = printText.slice(0, Math.round((width - stickyPadding) * (height - stickyPadding) / 200) - 3);
+  if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15)){
+      printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15) - 3);
       printText = printText + '...';
   }
   return printText;
@@ -235,6 +236,8 @@ const Sticky = function () {
         let height = sticky.shape.height * sticky.shape.scaleY;
         if (width > stickyMaxWidth) width = stickyMaxWidth;
         if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
+        if (width < stickyMinimumWidth) width = stickyMinimumWidth;
+        if (height < stickyMinimumHeight) height = stickyMinimumHeight;
         sticky.shape.set('width', width);
         sticky.shape.set('height', height);
         sticky.shape.set('scaleX', 1);
