@@ -16,33 +16,51 @@ body {
 
 #editDiv {
     position: fixed;
-    top: 50%;
+    top: 30%;
     left: 50%;
     min-width: 370px; /*pls synchronize with textarea's min-size*/
     min-height: 100px; /*pls synchronize with textarea's min-size*/
     margin-top: -100px;
     margin-left: -250px;
-    text-align: center;
-    background-color: yellow;
-    display: none;
+    /* text-align: center; */
+    /* background-color: yellow; */
+    /* display: none; */
+}
+
+#editForm {
+    width: 400px
 }
 
 .editFormBtns {
-    float: right;
-    width: 70px;
-    display: block;
-    margin: 0;
+    /* float: right; */
+    width: 80px;
+    margin-left: 10px;
+    margin-right: 10px;
+    /* display: block; */
+    /* margin: 0; */
     padding: 0;
 }
 
+.textbox {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    min-height: 100px;
+    width: 100%;
+    border: 1px solid black;
+}
 #btnContainer {
-    float: right;
-    width: 70px;
+    /* float: right;
+    width: 70px; */
     text-align: center;
+    margin-bottom: 10px;
+}
+
+.modal-title {
+    margin: 0 auto;
 }
 
 textarea {
-    background-color: yellow;
+    /* background-color: yellow; */
     min-height: 100px;
     width: 300px
 }
