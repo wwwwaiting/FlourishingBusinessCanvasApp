@@ -18,6 +18,8 @@ const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
 const stickyMinimumWidth = 80;
+const stickyMaxWidth = 185;
+const stickyMaxHeight = 175;
 
 // Define colors
 const fallbackBackgroundColor = 'rgb(43,105,90)';
@@ -169,8 +171,8 @@ function horizontal_restrict(sticky){
 function convertDisplay(sticky){
   const width = sticky.width * sticky.scaleX;
   const height = sticky.height * sticky.scaleY;
-  const stickyCt = sticky.item(1);
-  let printText = stickyCt.text;
+  let printText = sticky.content;
+  console.log(printText);
   if (printText.length > (width - stickyPadding) * (height - stickyPadding) / 200){
       printText = printText.slice(0, Math.round((width - stickyPadding) * (height - stickyPadding) / 200) - 3);
       printText = printText + '...';
@@ -222,36 +224,24 @@ const Sticky = function () {
     this.shape.on('scaling', function () {
         let width = this.width * this.scaleX;
         let height = this.height * this.scaleY;
-        if (width > stickyMinimumWidth && height > stickyMinimumWidth) {
-            if (width > 185) width = 185;
-            if (height > 175) height = 175;// set scaling boundary so that not stikcy will have size larger than a block
-            this.set('width', width);
-            this.set('height', height);
-            this.set('scaleX', 1);
-            this.set('scaleY', 1);
-            const stickyBg = this.item(0);
-            stickyBg.set('width', width);
-            stickyBg.set('height', height);
-            stickyBg.setCoords();
-            const stickyCt = this.item(1);
-            stickyCt.set('width', width - stickyPadding); //20 as padding
-            stickyCt.set('height', height - stickyPadding); //20 as padding
-            stickyCt.setCoords();
-            this.setCoords();
-        }
+        if (width > stickyMaxWidth) width = stickyMaxWidth;
+        if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
+        this.set('width', width);
+        this.set('height', height);
         this.set('scaleX', 1);
         this.set('scaleY', 1);
-<<<<<<< HEAD
         const stickyBg = this.item(0);
         stickyBg.set('width', width);
         stickyBg.set('height', height);
+        stickyBg.setCoords();
         const stickyCt = this.item(1);
-        stickyCt.set('width', width - stickyPadding);
-        stickyCt.set('height', height - stickyPadding);
-        console.log(convertDisplay(this));
-=======
+        stickyCt.set('width', width - stickyPadding); //20 as padding
+        stickyCt.set('height', height - stickyPadding); //20 as padding
+        stickyCt.setCoords();
         this.setCoords();
->>>>>>> 10797581677f593d7997ab006a0fff5c24471d68
+        // console.log(this.content);
+        // stickyCt.text = convertDisplay(this);
+        this.setCoords();
     })
     numberOfStickies++;
 }
