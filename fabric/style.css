@@ -96,22 +96,22 @@ textarea {
     /* height: 70px; */
     border: none;
     color: black;
-    /* font-size: 40px; */
+    font-size: 25px;
 }
 
 #canvasTitle ::placeholder {
     color: black;
-    font-size: 40px;
+    font-size: 25px;
 }
 
-/* #canvasInfo {
-    display: block;
+ #canvasInfo {
+    /* display: block;
     float: right;
-    margin-right: 50px;
-    margin-top: 10px;
+    margin-right: 50px; */
+    margin-top: 15px;
 }
 
-.designInfo {
+/* .designInfo {
     float: left;
     width: 300px;
 } */
@@ -119,4 +119,14 @@ textarea {
 #headerContainer {
     opacity: 0.95;
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+#stickyInfo {
+    display: inline-block;
+}
+
+#searchBar {
+    display: block;
+    float: right;
+    width: 500px;
 }

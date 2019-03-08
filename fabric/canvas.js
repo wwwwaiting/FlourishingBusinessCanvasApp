@@ -82,7 +82,7 @@ function initialize_canvas() {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
-        // if (evt.ctrlKey === true) {
+            // if (evt.ctrlKey === true) {
             this.isDragging = true;
             this.selection = false;
             this.lastPosX = evt.clientX;
@@ -139,37 +139,59 @@ function setCanvasBgImg() {
 }
 
 //the fuction restrict moving borders
-function vertical_restrict(sticky){
-  let top = sticky.top;
-  let left = sticky.left;
-  if (top < ogTop) top = ogTop;
-  if (top > 1133 - sticky.height * sticky.scaleY) top = 1133 - sticky.height * sticky.scaleY;
-  if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
-  if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
-  if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2){ //only for the middle part
-    if (top < 330) top = 330;
-  }
-  return top
+function vertical_restrict(sticky) {
+    let top = sticky.top;
+    let left = sticky.left;
+    if (top < ogTop) top = ogTop;
+    if (top > 1133 - sticky.height * sticky.scaleY) top = 1133 - sticky.height * sticky.scaleY;
+    if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
+    if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
+    if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2) { //only for the middle part
+        if (top < 330) top = 330;
+    }
+    return top
 }
 
-function horizontal_restrict(sticky){
-  let top = sticky.top;
-  let left = sticky.left;
-  if (left < ogLeft) left = ogLeft;
-  if (left > 1865 - sticky.width * sticky.scaleX) left = 1865 - sticky.width * sticky.scaleX;
+function horizontal_restrict(sticky) {
+    let top = sticky.top;
+    let left = sticky.left;
+    if (left < ogLeft) left = ogLeft;
+    if (left > 1865 - sticky.width * sticky.scaleX) left = 1865 - sticky.width * sticky.scaleX;
 
-  if (top < ((1942 - sticky.height * sticky.scaleY) / 2)){ // only for the upper part
-    if (left > 371 - sticky.width * sticky.scaleX && left < ((796 - sticky.width * sticky.scaleX) / 2)) left = 371 - sticky.width * sticky.scaleX;
-    if (left < 425 && left > ((796 - sticky.width * sticky.scaleX) / 2)) left = 425;
-    if (left > 838 - sticky.width * sticky.scaleX && left < ((1690 - sticky.width * sticky.scaleX) / 2)) left = 838 - sticky.width * sticky.scaleX;
-    if (left < 852 && left > ((1690 - sticky.width * sticky.scaleX) / 2)) left = 852;
-    if (left > 1190 - sticky.width * sticky.scaleX && left < ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1190 - sticky.width * sticky.scaleX;
-    if (left < 1202 && left > ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1202;
-    if (left > 1620 - sticky.width * sticky.scaleX && left < ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1620 - sticky.width * sticky.scaleX;
-    if (left < 1668 && left > ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1668;
-  }
+    if (top < ((1942 - sticky.height * sticky.scaleY) / 2)) { // only for the upper part
+        if (left > 371 - sticky.width * sticky.scaleX && left < ((796 - sticky.width * sticky.scaleX) / 2)) left = 371 - sticky.width * sticky.scaleX;
+        if (left < 425 && left > ((796 - sticky.width * sticky.scaleX) / 2)) left = 425;
+        if (left > 838 - sticky.width * sticky.scaleX && left < ((1690 - sticky.width * sticky.scaleX) / 2)) left = 838 - sticky.width * sticky.scaleX;
+        if (left < 852 && left > ((1690 - sticky.width * sticky.scaleX) / 2)) left = 852;
+        if (left > 1190 - sticky.width * sticky.scaleX && left < ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1190 - sticky.width * sticky.scaleX;
+        if (left < 1202 && left > ((2392 - sticky.width * sticky.scaleX) / 2)) left = 1202;
+        if (left > 1620 - sticky.width * sticky.scaleX && left < ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1620 - sticky.width * sticky.scaleX;
+        if (left < 1668 && left > ((3288 - sticky.width * sticky.scaleX) / 2)) left = 1668;
+    }
 
-  return left
+    return left
+}
+
+function smoothMoveH(stickyShape, leftDest) {
+    stickyShape.animate('left', leftDest, {
+        duration: 400,
+        onChange: canvas.renderAll.bind(canvas),
+        onComplete: function () {
+            // console.log('finish move h');
+        },
+        easing: fabric.util.ease['easeInOutQuart']
+    });
+}
+
+function smoothMoveV(stickyShape, topDest) {
+    stickyShape.animate('top', topDest, {
+        duration: 400,
+        onChange: canvas.renderAll.bind(canvas),
+        onComplete: function () {
+            // console.log('finish move v');
+        },
+        easing: fabric.util.ease['easeInOutQuart']
+    });
 }
 
 function convertDisplay(sticky){
@@ -214,10 +236,11 @@ const Sticky = function () {
     this.shape.setControlVisible('tr', false);
     this.shape.setControlVisible('mt', false);
     this.shape.setControlVisible('mtr', false);
+    this.shape.item(1).text = convertDisplay(this);
 
     this.shape.on('mousedown', doubleClicked(this, function (sticky) {
         // const thisSticky = this;
-        
+
         $('#editDiv').html('')
         displayEditForm(sticky)
     }));
@@ -230,8 +253,11 @@ const Sticky = function () {
         let left = horizontal_restrict(this);
         // if (left < ogLeft) left = ogLeft;
         // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
-        this.left = left;
-        this.top = top;
+
+        // this.set('left', left);
+        // this.set('top', top);
+        smoothMoveH(this, left);
+        smoothMoveV(this, top);
         this.setCoords()
         console.log(this.left + ', ' + this.top);
     })
@@ -526,7 +552,7 @@ function displayEditForm(sticky) {
     $('button.close').click(function () {
         editDiv.html('')
     })
-    
+
     $('#colorBtn').click(function () {
         // console.log(targetSticky)
         sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
@@ -567,6 +593,7 @@ function displayEditForm(sticky) {
             $('#textboxContainer').html(p)
         }
     })
+
 }
 
 
@@ -673,6 +700,51 @@ function handleWindowResize() {
     canvas.renderAll();
 }
 
+function searchInCanvas() {
+    document.getElementById("searchContent").addEventListener("input", function() {
+        // reset search result
+        $('#searchResult').html('');
+
+        const searchContent = $('#searchContent').val();
+
+        if (searchContent != "") {
+            const dropDownMenu = document.querySelector('#searchResult')
+
+            for (let i = 0; i < stickyList.length; i++) {
+                const sticky = stickyList[i];
+
+                const content = sticky.content;
+
+                const words = content.split(" ")
+                for (let j = 0; j < words.length; j++) {
+                    const word = words[j];
+
+                    if (searchContent == word) {
+                        const listItem = document.createElement('a');
+                        listItem.setAttribute('class', "list-group-item list-group-item-action");
+                        listItem.appendChild(document.createTextNode(sticky.content));
+
+                        dropDownMenu.appendChild(listItem);
+                    }
+                }
+            }
+
+            if (document.getElementById('searchResult').innerHTML === "") {
+                const noResult = document.createElement('a');
+                noResult.setAttribute('class', "list-group-item");
+                noResult.appendChild(document.createTextNode("No matching found"));
+
+                dropDownMenu.appendChild(noResult);
+            }
+        }
+    }, false);
+
+    // hide the search result if clicked outside
+    $('body').on('click', function(e) {
+        $('#searchResult').html('');
+        document.getElementById('searchContent').value = '';
+    });
+}
 
 // Used to call functions after page is fully loaded.
 function main() {
@@ -721,3 +793,32 @@ $(document).ready(main);
 //         const infoBarId = '#sticky' + id;
 //     }
 // }
+
+
+function inWhichBox(){
+  for (let i = 0; i < stickyList.length; i++){
+    console.log(stickyList[i].stickyId + ' in ' + returnClass(stickyList[i]));
+  }
+}
+
+function returnClass(sticky){
+  const top = sticky.shape.top;
+  const left = sticky.shape.left;
+  if (top >= 243 && top <= 613 && left >= 147 && left <= 372){return "BIOPHYSICAL STOCKS"}
+  if (top >= 613 && top <= 933 && left >= 147 && left <= 372){return "ECOSYSTEMSERVICES"}
+  if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866){return "ECOSYSTEM ACTORS"}
+  if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866){return "NEEDS"}
+  if (top >= 953 && top <= 1136 && left >= 147 && left <= 764){return "COSTS"}
+  if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278){return "GOALS"}
+  if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866){return "BENIFITS"}
+  if (top >= 334 && top <= 613 && left >= 423 && left <= 654){return "RESOURCES"}
+  if (top >= 613 && top <= 933 && left >= 423 && left <= 654){return "ACTIVITIES"}
+  if (top >= 334 && top <= 613 && left >= 654 && left <= 838){return "PARTNERSHIP"}
+  if (top >= 613 && top <= 933 && left >= 654 && left <= 838){return "GOVERNANCE"}
+  if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388){return "RELATIONSHIPS"}
+  if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388){return "CHANNELS"}
+  if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620){return "STAKEHOLDERS"}
+  if (top >= 334 && top <= 732 && left >= 850 && left <= 1192){return "VALUE CO-CREATIONS"}
+  if (top >= 732 && top <= 933 && left >= 850 && left <= 1192){return "VALUE CO-DESTRUCTIONS"}
+
+}
