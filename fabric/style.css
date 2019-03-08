@@ -19,13 +19,33 @@ body {
     top: 30%;
     left: 50%;
 
-    /* text-align: center; */
-    /* background-color: yellow; */
-    /* display: none; */
 }
 
+#commentContainer {
+    list-style-type: none;
+    padding: 0;
+}
+
+#commentContainer li {
+    min-height: 28px;
+}
+.commentWrap {
+    word-wrap: break-word;
+}
 #editForm {
     width: 400px
+}
+
+.delComment {
+    height: 26px;
+    width: 26px;
+    float: right;
+    margin: 0px;
+    padding: 0px;
+}
+
+.checkbox {
+    margin-right: 5px;
 }
 
 .editFormBtns {

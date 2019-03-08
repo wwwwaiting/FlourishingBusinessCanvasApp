@@ -87,7 +87,8 @@ function initialize_canvas() {
             this.selection = false;
             this.lastPosX = evt.clientX;
             this.lastPosY = evt.clientY;
-        }
+        } 
+        $('#editDiv').html('')
     });
     canvas.on('mouse:move', function (opt) {
         if (this.isDragging) {
@@ -122,6 +123,8 @@ function initialize_canvas() {
         opt.e.stopPropagation();
         canvas.renderAll()
     });
+
+
 }
 
 // Used to set / reset background image of the canvas
@@ -196,6 +199,7 @@ const Sticky = function () {
     const textboxValue = $('#textInputBox').val();
     $('#textInputBox').val("");
     this.content = textboxValue;
+    this.comments = []
 
     // Sticky fabric object (named as shape)
     this.shape = getShape(textboxValue);
@@ -465,11 +469,11 @@ function displayEditForm(sticky) {
                 <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
                 <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
             </div>
-            <div id="commentContainer">
+            <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Add new comment" >
+                    <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >
                     <div class="input-group-append">
                         <button id="addComment" class="btn btn-primary" type="button">Add</button>
                     </div>
@@ -479,23 +483,60 @@ function displayEditForm(sticky) {
     </div>`
     const editDiv = $('#editDiv')
     editDiv.html(html)
-    const shape = sticky.shape
-    const stickyId = sticky.stickyId
-    console.log(stickyId)
-    console.log(shape)
-    const targetSticky = stickyList.find(s => s.stickyId == stickyId)
+
+    for (let i = 0; i < sticky.comments.length; i++) {
+        const c = sticky.comments[i]
+        const li = document.createElement('li')
+        const buttonId = `delComment${i}`
+        li.innerHTML = `<span class="commentWrap">${c}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>`
+        $('#commentContainer').append(li) 
+        $(`#${buttonId}`).click(function() {
+            const content = $(this).prev().text()
+            const index = sticky.comments.findIndex(c => c == content)
+            if (index >= 0) {
+                sticky.comments.splice(index, 1)    
+            }
+            console.log(sticky.comments)
+            $(this).parent().remove()
+        })
+    }
+
+    $('#addComment').click(function addComments() {
+        const content = $('#commentContent').val()
+        const buttonId = `delComment${sticky.comments.length}`
+        sticky.comments.push(content)
+        const li = document.createElement('li')
+        li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>`
+        $('#commentContainer').append(li) 
+        $(`#${buttonId}`).click(function() {
+            const content = $(this).prev().text()
+            const index = sticky.comments.findIndex(c => c == content)
+            if (index >= 0) {
+                sticky.comments.splice(index, 1)    
+            }
+            console.log(sticky.comments)
+            $(this).parent().remove()
+        }) 
+    })
+
     $('button.close').click(function () {
         editDiv.html('')
     })
     
     $('#colorBtn').click(function () {
-        targetSticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(targetSticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
+        // console.log(targetSticky)
+        sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
         canvas.renderAll()
     })
 
+
     $('#deleteBtn').click(function() {
-        const indexToRemove = stickyList.findIndex(s => s.stickyId == stickyId);
-        canvas.remove(targetSticky.shape);
+        const indexToRemove = stickyList.findIndex(s => s.stickyId == sticky.stickyId);
+        canvas.remove(sticky.shape);
         canvas.discardActiveObject();
         stickyList.splice(indexToRemove, 1);
         editDiv.html('')
@@ -513,10 +554,10 @@ function displayEditForm(sticky) {
             $("#textboxContainer").html(textarea)
         } else {
             sticky.content = $('.textbox').val()
-            shape.item(1).text = convertDisplay(sticky)
-            const stickyCt = shape.item(1);
-            stickyCt.set('width', shape.width - stickyPadding); //20 as padding
-            stickyCt.set('height', shape.height - stickyPadding); //20 as padding
+            sticky.shape.item(1).text = convertDisplay(sticky)
+            const stickyCt = sticky.shape.item(1);
+            stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
+            stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
             stickyCt.setCoords()
             canvas.renderAll();
             $(this)[0].id = 'editBtn'
@@ -526,9 +567,8 @@ function displayEditForm(sticky) {
             $('#textboxContainer').html(p)
         }
     })
-    
-
 }
+
 
 // <button class="btn btn-primary" type="button" id="clearUpload">Clear</button>
 // <button class="btn btn-primary" id="visibleUpload" type="button">Upload</button>
