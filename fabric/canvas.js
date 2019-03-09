@@ -23,7 +23,7 @@ const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
 
 // Define colors
-const fallbackBackgroundColor = '#006858';
+const fallbackBackgroundColor = 'rgb(0,104,88)';
 // const fallbackBackgroundColor = 'rgb(236,232,238)';
 const stickyWhite = 'rgb(255,255,255)';
 const stickyPink = 'rgb(255,230,252)';
@@ -49,35 +49,13 @@ function initialize_canvas() {
     canvas = new fabric.Canvas('mainCanvas', {
         hoverCursor: 'pointer'
     });
-
     // Reset global vars
-    numberOfStickies = 1;
+    numberOfStickies = 0;
     stickyList = [];
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
-
-    // Event listeners down below
-    /// updateInfoText for every changes
-    // canvas.on({
-    //     'object:moving': updateInfoText,
-    //     'object:scaling': updateInfoText,
-    //     'object:resizing': updateInfoText,
-    //     'object:rotating': updateInfoText,
-    //     'object:skewing': updateInfoText
-    // });
-    /// Snap to grid
-    canvas.on('object:moving', function (e) {
-        // snapToGrid(e.target);
-    });
-    /// Boundary Check
-    canvas.on({
-        // 'object:moving': checkBoudningBox,
-        // 'object:scaling': checkBoudningBox,
-        // 'object:resizing': checkBoudningBox,
-        // 'object:rotating': checkBoudningBox,
-        // 'object:skewing': checkBoudningBox
-    });
+    
     /// Pan and zoom
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
@@ -123,8 +101,6 @@ function initialize_canvas() {
         opt.e.stopPropagation();
         canvas.renderAll()
     });
-
-
 }
 
 // Used to set / reset background image of the canvas
@@ -225,17 +201,7 @@ const Sticky = function () {
 
     // Sticky fabric object (named as shape)
     this.shape = getShape(textboxValue);
-    this.shape.set('lockRotation', true);
-    this.shape.set('lockScalingFlip', true);
-    this.shape.set('transparentCorners', false);
-    this.shape.set('cornerStyle', 'circle');
-    this.shape.setControlVisible('tl', false);
-    this.shape.setControlVisible('ml', false);
-    this.shape.setControlVisible('bl', false);
-    this.shape.setControlVisible('br', false);
-    this.shape.setControlVisible('tr', false);
-    this.shape.setControlVisible('mt', false);
-    this.shape.setControlVisible('mtr', false);
+
     this.shape.item(1).text = convertDisplay(this);
 
     this.shape.on('mousedown', doubleClicked(this, function (sticky) {
@@ -245,17 +211,8 @@ const Sticky = function () {
         displayEditForm(sticky)
     }));
     this.shape.on('mouseup', function () {
-        // let left = this.left;
-        // let top = this.top;
-        // if (top < ogTop) top = ogTop;
-        // if (top > 1133 - this.height * this.scaleY) top = 1133 - this.height * this.scaleY;
         let top = vertical_restrict(this);
         let left = horizontal_restrict(this);
-        // if (left < ogLeft) left = ogLeft;
-        // if (left > 1865 - this.width * this.scaleX) left = 1865 - this.width * this.scaleX;
-
-        // this.set('left', left);
-        // this.set('top', top);
         smoothMoveH(this, left);
         smoothMoveV(this, top);
         this.setCoords()
@@ -340,10 +297,23 @@ const getStickyObjJson = function () {
         top: currTop,
         width: stickyOgWidth,
         height: stickyOgHeight,
-        // lockUniScaling: true,
-        // lockScalingX: true,
         originX: 'left',
-        originY: 'top'
+        originY: 'top',
+        lockRotation: true,
+        lockScalingFlip: true,
+        transparentCorners: false,
+        cornerStyle: 'circle',
+        _controlsVisibility: {
+            tl: false,
+            tr: false,
+            br: false,
+            bl: false,
+            ml: false,
+            mt: false,
+            mr: true,
+            mb: true,
+            mtr: false
+        }
     };
     currLeft += 10;
     currTop += 10;
@@ -398,35 +368,34 @@ function revertTransformation() {
 }
 
 // download popup helper function
-function downloadPopup(href, extension) {
-    const link = document.createElement('a');
-    link.href = href;
+function downloadPopup(href) {
     const canvasTitle = $('#canvasTitle').text().trim();
-    link.download = canvasTitle.length == 0 ? "untitled canvas" : canvasTitle + extension;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    $("body").prepend(`<a id="hiddenLink" download="${canvasTitle.length == 0 ? "untitled canvas" : canvasTitle}">`);
+    $("#hiddenLink").attr("href", href);
+    $("#hiddenLink")[0].click();
+    $("#hiddenLink").remove();
 }
 
 // toJSON
 function exportJson() {
     revertTransformation();
-    const href = 'data:text/plain;charset=utf-u,' + JSON.stringify(canvas);
-    downloadPopup(href, '.json');
+    const href = 'data:application/json,' + JSON.stringify(canvas.toJSON());
+    downloadPopup(href);
 }
 
 // toSVG
 function exportSvg() {
     revertTransformation();
     const href = 'data:image/svg+xml,' + canvas.toSVG();
-    downloadPopup(href, '.svg');
+    console.log(href)
+    downloadPopup(href);
 }
 
 // toPNG
 function exportPng() {
     revertTransformation();
     const href = canvas.toDataURL("image/png");
-    downloadPopup(href, '.png');
+    downloadPopup(href);
 }
 
 // toPDF
