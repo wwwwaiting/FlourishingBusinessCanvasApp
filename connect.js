@@ -7,5 +7,5 @@ var options = {
 };
 
 
-var url = "mongodb+srv://csc301:csc301partner@cluster0-3vsmn.mongodb.net/test?retryWrites=true";
+var url = "mongodb://csc301:csc301partner@ds247648.mlab.com:47648/csc301db";
 var db = mongoose.connect(url,options);
