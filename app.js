@@ -59,6 +59,7 @@ app.post('/login', function(req, res) {
         name = user.name;
         if (pwd === user.pwd) {
           res.cookie('name', name);
+          res.cookie('email', email);
           res.send(tru);
         } else {
           res.send(fal);
@@ -102,7 +103,8 @@ app.post('/register', function(req, res) {
                 if (err) {
                   console.log(err);
                 } else {
-                  res.cookie('name', name);
+                  res.cookie('name', name);    //cookie now store both name and email
+                  res.cookie('email', email);
                   res.send(tru);
                 }
               });
