@@ -149,20 +149,49 @@ Conflict Resolution
 
 #### Events
 
-Describe meetings (and other events) you are planning to have:
+<!-- Describe meetings (and other events) you are planning to have:
  * When and where? Recurring or ad hoc? In-person or online?
  * What's the purpose of each meeting?
- * Other events could be coding sessions, code reviews, quick weekly sync meeting online, etc.
+ * Other events could be coding sessions, code reviews, quick weekly sync meeting online, etc. -->
+
+We have three weekly meetings:
+
+Monday at tutorial room
+  * Check the progress of the weekly plan (how much of the weekly goal is completed, what needs to be improved, etc.)
+  * Set up plan/goal for the coming week
+
+Thursday 4-5 pm at the study room we booked. During that time, two meetings will be held:
+  * Partner meeting
+    - Report the progress and discuss continuously on the project requirements or modifications on specifications
+  * Internal group meeting (followed after the partner meeting)
+    - Understand and interpret needs of the partner
+    - Discuss any issues regarding the weekly plan for the group and derive solutions/modifications if needed
+    - Assign weekly goals for individual members
+
+In addition, we have two events:
+
+* Coding sessions
+  - Every weekend in-person at the study room we booked
+  - Attendance is not required, members can choose to come if they do not have other deadlines to work on.
+  - Ensure more smooth workflow between front-end and back-end development. Both teams can communicate and make agreement on what information needs to be sent and retrieved in order to minimize amount of data transfer.
+  - Since certain tasks are planned to be done in a small subgroup of two or three assigned members, working together provides them an opportunity to better divide tasks among themselves based on each one's own strength and weakness. 
+
+* Code reviews
+  - Ad hoc, online
+  - When a member finishes implementing a specific feature, that member will ask another member in the team to test the functionality of the feature, its consistency with the original requirement, and potential bugs that may occur.
+  - If any improvement needs to be addressed, the member will fix the problem based on the feedback from the other member. After fixing, they will go through another round of the review process until the feature is ready to be pushed to the master branch.
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to organize your team.       
+<!-- List/describe the artifacts you will produce in order to organize your team.       
 
 * Artifacts can be To-Do lists, Task boards, schedule(s), etc.
 * We want to understand:
   * How do you keep track of what needs to get done?
   * How do you prioritize tasks?
-  * How do tasks get assigned to team members?
+  * How do tasks get assigned to team members? -->
+
+We are using Trello for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
 
 #### Deployment and Github Workflow
 
