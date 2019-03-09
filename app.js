@@ -25,11 +25,7 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/assets'));
 app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
+app.use(bodyParser.urlencoded({extended: true,}));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
 app.use(express.static('public'));
@@ -41,8 +37,8 @@ const denied = 'denied';
 const tru = 'true';
 const registrationRquest = new Array();
 
-//login page
 
+//login page
 app.get('/login', function(req, res) {
   res.render('login');
 });
@@ -51,12 +47,7 @@ app.post('/login', function(req, res) {
   var email = req.body.email;
   var pwd = req.body.pwd;
   var name;
-  User.find(
-    {
-      email: email,
-      status: 2,
-    },
-    function(err, result) {
+  User.find({'email': email,'status': 2},function(err, result) {
       if (err) {
         console.log(err);
         res.send(fal);
@@ -77,31 +68,19 @@ app.post('/login', function(req, res) {
   );
 });
 
+
 // register for new user
 app.post('/register', function(req, res) {
   var name = req.body.name;
   var pwd = req.body.pwd;
   var email = req.body.email;
   var canvasList = new Array();
-  User.findOneAndUpdate(
-    {
-      email: email,
-      pwd: '',
-      status: 2,
-    },
-    {
-      pwd: pwd,
-    },
-    function(err, result) {
+  User.findOneAndUpdate({'email':email,'pwd':'','status':2},{pwd:pwd},function(err, result) {
       if (err) {
         console.log(err);
         res.send(fal);
       } else if (result === null) {
-        User.find(
-          {
-            email: email,
-          },
-          function(err, result) {
+        User.find({email: email},function(err, result) {
             if (err) {
               console.log(err);
               res.send(fal);
