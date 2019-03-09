@@ -46,6 +46,7 @@ function initialize_canvas() {
         canvas.dispose();
     }
     canvas = new fabric.Canvas('mainCanvas', {
+        canvasId: 0,
         hoverCursor: 'pointer'
     });
     // Reset global vars
@@ -79,6 +80,7 @@ function initialize_canvas() {
         }
     });
     canvas.on('mouse:up', function (opt) {
+        // TODO: when mouse:up, send data to backend
         this.isDragging = false;
         canvas.setCursor('default');
         this.selection = true;
@@ -415,7 +417,7 @@ function downloadPopup(href) {
 // toJSON
 function exportJson() {
     revertTransformation();
-    const href = 'data:application/json,' + JSON.stringify(canvas.toJSON());
+    const href = 'data:application/json,' + JSON.stringify(canvas.toJSON(['canvasId', 'hoverCursor']));
     downloadPopup(href);
 }
 
