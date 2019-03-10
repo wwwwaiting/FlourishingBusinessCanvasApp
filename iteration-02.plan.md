@@ -15,9 +15,11 @@ The following describes the different roles on the team and the responsibilities
 
 * Front-end team
   - Design the canvas model and stickies using Fabric, EJS, HTML, CSS, and JavaScript.
+  - Design the data structure (JSON object) cooperatively with back-end team
 
 * Back-end team
   - Implement server and database using Node.js, express, and MongoDB.
+  - Design the data structure (JSON object) cooperatively with front-end team
 
 * Product Manager
   - Organize and facilitate meetings between the team and the stakeholder, which requires understanding of the need of the stakeholder and the progress of the team.
@@ -129,20 +131,20 @@ Communications
     The progress of the project will be presented to the partner during the meeting in forms of screenshots and demonstration.
 
 Meetings
-  The scrum master is the moderator for internal meetings who will keep track of attendance of the team and discuss with absent members all details about the group activities.
+  The scrum master is the moderator for internal meetings who will keep track of attendance of the team and discuss with absent members all details about the group activities. 
 
 Conflict Resolution
   * Indecisions
     - Analyze the issue in advance as a group to make sure every member understands the underlying concept.
-    - Brainstorm all possible solutions.
+    - Brainstorm all possible solutions and analyze the pros and cons of each alternative.
     - A voting will be held and the option chosen by the majority will be our final decision.
   * Non-responsive team members
     - Send messages directly to them and contact the member who is closest to them.
     - Address conversations in a private manner to find out if the member has any personal issues, and offer help as a team if any support is needed.
   * Members keep missing deadline
     - Lower the workload assigned to the member.
-    - Depending on the evaluation of the difficulty of the task, give a reasonable extension on deadline.
-    - Redistribute the roles and responsibilities to other members who have capacity to support.
+    - Depending on the level of the difficulty of the task, give a reasonable extension on deadline.
+    - Redistribute the roles and responsibilities to other members who have capability to support.
   * Digressions and tangents
     - Product manager communicates with the partner to find out if there is room for flexibility.
     - Negotiate with the partner to adjust the direction of the project in case the objective is not aligned with the original goal.
@@ -153,6 +155,7 @@ Conflict Resolution
  * When and where? Recurring or ad hoc? In-person or online?
  * What's the purpose of each meeting?
  * Other events could be coding sessions, code reviews, quick weekly sync meeting online, etc. -->
+Weekly goal will be set during the meeting in tutorial time. Modification of the goal and measurement of actions will be continuously discussed and monitored through daily online discussion. The process of the project and accountability of each member for attending meeting is discussed in Communications and Conflict Resolution section.
 
 We have three weekly meetings:
 
@@ -168,7 +171,7 @@ Thursday 4-5 pm at the study room we booked. During that time, two meetings will
     - Discuss any issues regarding the weekly plan for the group and derive solutions/modifications if needed
     - Assign weekly goals for individual members
 
-In addition, we have two events:
+In addition, we have three events:
 
 * Coding sessions
   - Every weekend in-person at the study room we booked
@@ -181,6 +184,11 @@ In addition, we have two events:
   - When a member finishes implementing a specific feature, that member will ask another member in the team to test the functionality of the feature, its consistency with the original requirement, and potential bugs that may occur.
   - If any improvement needs to be addressed, the member will fix the problem based on the feedback from the other member. After fixing, they will go through another round of the review process until the feature is ready to be pushed to the master branch.
 
+* Ongoing adjustments
+  - Online group messenger (weChat)
+  - As group memebers work on to achieve weekly target, there might be potential issues that require immediate modification in implementation or weekly goal. These issues will be ongoingly monitored and discussed through online group messenger. 
+  - If immediate change in the direction of the project is needed, additional group meeting will be scheduled with priority. The decisions on minor issues will be made through the group chat.
+
 #### Artifacts
 
 <!-- List/describe the artifacts you will produce in order to organize your team.       
@@ -190,18 +198,24 @@ In addition, we have two events:
   * How do you keep track of what needs to get done?
   * How do you prioritize tasks?
   * How do tasks get assigned to team members? -->
+* To-do lists, Taskboards, Issue Tracker
+  - We are using Trello for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
 
-We are using Trello for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
+* Communication
+  - WeChat as the primary communication of team. This is where we discuss immediate issues that require prioritized decision making or anything that was not covered in the in-person meetings.
 
 #### Deployment and Github Workflow
 
 Describe your Git / GitHub workflow. Essentially, we want to understand how your team members shares a codebase, avoid conflicts and deploys the application.
-
+<!-- 
  * Be concise, yet precise. For example, "we use pull-requests" is not a precise statement since it leaves too many open questions - Pull-requests from where to where? Who reviews the pull-requests? Who is responsible for merging them? etc.
  * If applicable, specify any naming conventions or standards you decide to adopt.
  * Describe your overall deployment process from writing code to viewing a live applicatioon
  * What deployment tool(s) are you using and why
  * Don't forget to **explain why** you chose this workflow or particular aspects of it!
+ -->
+* Sub-branches for each funtionality (front-end, back-end)
+  - Front-end: 
 
 ## Product
 
