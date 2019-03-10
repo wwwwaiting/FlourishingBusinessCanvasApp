@@ -3,6 +3,7 @@ console.log("canvasControl.js");
 
 // Global vars
 let canvas;
+let backUpSticky;
 const canvasMaxZoom = 8;
 const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
@@ -21,6 +22,7 @@ const stickyMinimumWidth = 80;
 const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
+
 
 // Define colors
 const fallbackBackgroundColor = 'rgb(0,104,88)';
@@ -65,6 +67,14 @@ function initialize_canvas() {
             this.selection = false;
             this.lastPosX = evt.clientX;
             this.lastPosY = evt.clientY;
+        } else {
+            // let temp = canvas.getActiveObject()
+            // let temp0 = temp.item(0);
+            // let temp1 = temp.item(1);
+            // backUpSticky = [temp.height, temp.width, temp.left, temp.top,
+            //                 temp0.height, temp0.width, temp0.left, temp0.top,
+            //                 temp1.height, temp1.width, temp1.left, temp1.top];
+
         }
         $('#editDiv').html('')
     });
@@ -81,6 +91,26 @@ function initialize_canvas() {
     });
     canvas.on('mouse:up', function (opt) {
         // TODO: when mouse:up, send data to backend
+        if (canvas.getActiveObject()){
+            let sticky = canvas.getActiveObject();
+            console.log(backUpSticky);
+            console.log(sticky);
+            // sticky.height = backUpSticky[0];
+            // sticky.width = backUpSticky[1];
+            // sticky.left = backUpSticky[2];
+            // sticky.top = backUpSticky[3];
+            // sticky.item(0).height = backUpSticky[4];
+            // sticky.item(0).width = backUpSticky[5];
+            // sticky.item(0).left = backUpSticky[6];
+            // sticky.item(0).top = backUpSticky[7];
+            // sticky.item(1).height = backUpSticky[8];
+            // sticky.item(1).width = backUpSticky[9];
+            // sticky.item(1).left = backUpSticky[10];
+            // sticky.item(1).top = backUpSticky[11];
+            canvas.renderAll();
+            backUpSticky = "";
+        }
+
         this.isDragging = false;
         canvas.setCursor('default');
         this.selection = true;
@@ -173,16 +203,16 @@ function smoothMoveV(stickyShape, topDest) {
     });
 }
 
-function convertDisplay(sticky) {
-    const width = sticky.shape.width * sticky.shape.scaleX;
-    const height = sticky.shape.height * sticky.shape.scaleY;
-    let printText = sticky.content;
-    console.log(printText);
-    if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15)) {
-        printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15) - 3);
-        printText = printText + '...';
-    }
-    return printText;
+function convertDisplay(sticky){
+  const width = sticky.width * sticky.scaleX;
+  const height = sticky.height * sticky.scaleY;
+  let printText = sticky.content;
+  console.log(printText);
+  if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15)){
+      printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15) - 3);
+      printText = printText + '...';
+  }
+  return printText;
 }
 
 function argHandler(obj, handler) {
@@ -205,82 +235,131 @@ function setupStickyListeners(stickyShape) {
         console.log(this.left + ', ' + this.top);
     })
     stickyShape.on('scaling', argHandler(this, function (sticky) {
-        let width = sticky.shape.width * sticky.shape.scaleX;
-        let height = sticky.shape.height * sticky.shape.scaleY;
+        let width = sticky.width * sticky.scaleX;
+        let height = sticky.height * sticky.scaleY;
         if (width > stickyMaxWidth) width = stickyMaxWidth;
         if (height > stickyMaxHeight) height = stickyMaxHeight; // set scaling boundary so that not stikcy will have size larger than a block
         if (width < stickyMinimumWidth) width = stickyMinimumWidth;
         if (height < stickyMinimumHeight) height = stickyMinimumHeight;
-        sticky.shape.set('width', width);
-        sticky.shape.set('height', height);
-        sticky.shape.set('scaleX', 1);
-        sticky.shape.set('scaleY', 1);
-        const stickyBg = sticky.shape.item(0);
+        sticky.set('width', width);
+        sticky.set('height', height);
+        sticky.set('scaleX', 1);
+        sticky.set('scaleY', 1);
+        const stickyBg = sticky.item(0);
         stickyBg.set('width', width);
         stickyBg.set('height', height);
         stickyBg.setCoords();
-        const stickyCt = sticky.shape.item(1);
+        const stickyCt = sticky.item(1);
         stickyCt.set('width', width - stickyPadding); //20 as padding
         stickyCt.set('height', height - stickyPadding); //20 as padding
         stickyCt.setCoords();
         console.log(sticky.content);
         stickyCt.text = convertDisplay(sticky);
-        sticky.shape.setCoords();
+        sticky.setCoords();
     }))
 }
 
-const Sticky = function () {
-    // Sticky id
-    this.stickyId = numberOfStickies;
+const Sticky = fabric.util.createClass(fabric.Group, {
+  type: 'Sticky',
 
-    // Sticky content (text)
-    const textboxValue = $('#textInputBox').val();
-    $('#textInputBox').val("");
-    this.content = textboxValue;
-    this.comments = []
+  initialize: function(){
+      const options = {
+              left: currLeft,
+              top: currTop,
+              width: stickyOgWidth,
+              height: stickyOgHeight,
+              originX: 'left',
+              originY: 'top',};
+      const textboxValue = $('#textInputBox').val();
+      $('#textInputBox').val("");
+      const stickyBackground = new fabric.Rect(new getBackgroundJson());
+      const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
+      this.callSuper('initialize', [stickyBackground, stickyContent], options);
+      const stickyCt = this.item(1);
+      stickyCt.set('width', this.width - stickyPadding); //20 as padding
+      stickyCt.set('height', this.height - stickyPadding); //20 as padding
+      this.set('content', options.content || textboxValue);
+      this.set('stickyId', options.stickyId || numberOfStickies);
+      this.set('comments', options.comments || []);
+      this.set('lockRotation', options.lockRotation || true);
+      this.set('lockScalingFlip', options.lockScalingFlip || true);
+      this.set('transparentCorners', options.transparentCorners || false);
+      this.set('cornerStyle', options.cornerStyle || 'circle');
+      this.set('_controlsVisibility', options._controlsVisibility || {
+          tl: false,
+          tr: false,
+          br: false,
+          bl: false,
+          ml: false,
+          mt: false,
+          mr: true,
+          mb: true,
+          mtr: false
+      });
 
-    // Sticky fabric object (named as shape)
-    this.shape = getShape(textboxValue);
+      // // Sticky content (text)
+      // this.content = textboxValue;
+      // this.comments = []
 
-    this.shape.item(1).text = convertDisplay(this);
+      // Sticky fabric object (named as shape)
 
-    this.shape.on('mousedown', doubleClicked(this, function (sticky) {
-        $('#editDiv').html('')
-        displayEditForm(sticky)
-    }));
-    this.shape.on('mouseup', function () {
-        let top = vertical_restrict(this);
-        let left = horizontal_restrict(this);
-        smoothMoveH(this, left);
-        smoothMoveV(this, top);
-        this.setCoords()
-        console.log(this.left + ', ' + this.top);
-    })
-    this.shape.on('scaling', argHandler(this, function (sticky) {
-        let width = sticky.shape.width * sticky.shape.scaleX;
-        let height = sticky.shape.height * sticky.shape.scaleY;
-        if (width > stickyMaxWidth) width = stickyMaxWidth;
-        if (height > stickyMaxHeight) height = stickyMaxHeight; // set scaling boundary so that not stikcy will have size larger than a block
-        if (width < stickyMinimumWidth) width = stickyMinimumWidth;
-        if (height < stickyMinimumHeight) height = stickyMinimumHeight;
-        sticky.shape.set('width', width);
-        sticky.shape.set('height', height);
-        sticky.shape.set('scaleX', 1);
-        sticky.shape.set('scaleY', 1);
-        const stickyBg = sticky.shape.item(0);
-        stickyBg.set('width', width);
-        stickyBg.set('height', height);
-        stickyBg.setCoords();
-        const stickyCt = sticky.shape.item(1);
-        stickyCt.set('width', width - stickyPadding); //20 as padding
-        stickyCt.set('height', height - stickyPadding); //20 as padding
-        stickyCt.setCoords();
-        console.log(sticky.content);
-        stickyCt.text = convertDisplay(sticky);
-        sticky.shape.setCoords();
-    }))
-    numberOfStickies++;
-}
+      this.item(1).text = convertDisplay(this);
+
+      this.on('mousedown', doubleClicked(this, function (sticky) {
+          $('#editDiv').html('')
+          displayEditForm(sticky)
+      }));
+
+      this.on('mouseup', function () {
+          let top = vertical_restrict(this);
+          let left = horizontal_restrict(this);
+          smoothMoveH(this, left);
+          smoothMoveV(this, top);
+          this.setCoords()
+          console.log(this.left + ', ' + this.top);
+      })
+      this.on('scaling', argHandler(this, function (sticky) {
+          let width = sticky.width * sticky.scaleX;
+          let height = sticky.height * sticky.scaleY;
+          if (width > stickyMaxWidth) width = stickyMaxWidth;
+          if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
+          if (width < stickyMinimumWidth) width = stickyMinimumWidth;
+          if (height < stickyMinimumHeight) height = stickyMinimumHeight;
+          sticky.set('width', width);
+          sticky.set('height', height);
+          sticky.set('scaleX', 1);
+          sticky.set('scaleY', 1);
+          const stickyBg = sticky.item(0);
+          stickyBg.set('width', width);
+          stickyBg.set('height', height);
+          stickyBg.setCoords();
+          const stickyCt = sticky.item(1);
+          stickyCt.set('width', width - stickyPadding); //20 as padding
+          stickyCt.set('height', height - stickyPadding); //20 as padding
+          stickyCt.setCoords();
+          console.log(sticky.content);
+          stickyCt.text = convertDisplay(sticky);
+          sticky.setCoords();
+      }))
+      numberOfStickies++;
+      currLeft += 10;
+      currTop += 10;
+    },
+
+    toObject: function(){
+      return fabric.util.object.extend(this.callSuper('toObject'), {
+        lockRotation: this.get('lockRotation'),
+        lockScalingFlip: this.get('lockScalingFlip'),
+        transparentCorners: this.get('transparentCorners'),
+        cornerStyle: this.get('cornerStyle'),
+        _controlsVisibility: this.get('_controlsVisibility'),
+        content:this.get('content'),
+        stickyId: this.get('stickyId'),
+        comments:this.get('comments')
+      });
+    }
+
+});
 
 const getBackgroundJson = function () {
     const backgroundJson = {
@@ -329,48 +408,32 @@ const getContentJson = function () {
     return contentJson;
 }
 
-const getStickyObjJson = function () {
-    const stickyObjJson = {
-        left: currLeft,
-        top: currTop,
-        width: stickyOgWidth,
-        height: stickyOgHeight,
-        originX: 'left',
-        originY: 'top',
-        lockRotation: true,
-        lockScalingFlip: true,
-        transparentCorners: false,
-        cornerStyle: 'circle',
-        _controlsVisibility: {
-            tl: false,
-            tr: false,
-            br: false,
-            bl: false,
-            ml: false,
-            mt: false,
-            mr: true,
-            mb: true,
-            mtr: false
-        }
-    };
-    currLeft += 10;
-    currTop += 10;
-    return stickyObjJson;
-}
+// const getStickyObjJson = function () {
+//     const stickyObjJson = {
+//         left: currLeft,
+//         top: currTop,
+//         width: stickyOgWidth,
+//         height: stickyOgHeight,
+//         originX: 'left',
+//         originY: 'top',
+//     };
+//
+//     return stickyObjJson;
+// }
 
-function getShape(textboxValue) {
-    const stickyBackground = new fabric.Rect(new getBackgroundJson());
-    const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-    const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
-    const stickyCt = stickyObj.item(1);
-    stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
-    stickyCt.set('height', stickyObj.height - stickyPadding); //20 as padding
-    return stickyObj;
-}
+// function getShape(textboxValue) {
+//     const stickyBackground = new fabric.Rect(new getBackgroundJson());
+//     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
+//     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
+//     const stickyCt = stickyObj.item(1);
+//     stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
+//     stickyCt.set('height', stickyObj.height - stickyPadding); //20 as padding
+//     return stickyObj;
+// }
 
 function createSticky() {
     const newSticky = new Sticky();
-    canvas.add(newSticky.shape);
+    canvas.add(newSticky);
     stickyList.push(newSticky);
     // createControl(newSticky);
     canvas.renderAll();
@@ -483,6 +546,7 @@ function loadJsonToCanvas(jsonOutput) {
     canvas.loadFromJSON(jsonOutput);
 }
 
+// handling all the editing/deleting/comments of sticky
 function displayEditForm(sticky) {
     console.log(sticky)
     const html = `
@@ -495,7 +559,7 @@ function displayEditForm(sticky) {
         </div>
         <div class="modal-body">
             <div id="textboxContainer">
-                <p class="textbox"></p>
+                <p id="textboxP" class="textbox">${sticky.content}</p>
             </div>
             <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
                 <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
@@ -516,7 +580,6 @@ function displayEditForm(sticky) {
     </div>`
     const editDiv = $('#editDiv')
     editDiv.html(html)
-    // <div class="input-group">
 
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
@@ -540,6 +603,7 @@ function displayEditForm(sticky) {
     $('#addComment').click(function addComments() {
         const content = $('#commentContent').val()
         const buttonId = `delComment${sticky.comments.length}`
+        // send post request 
         sticky.comments.push(content)
         const li = document.createElement('li')
         li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
@@ -566,14 +630,15 @@ function displayEditForm(sticky) {
 
     $('#colorBtn').click(function () {
         // console.log(targetSticky)
-        sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
+        sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
         canvas.renderAll()
     })
 
 
-    $('#deleteBtn').click(function () {
+    $('#deleteBtn').click(function() {
+        // delete request to server
         const indexToRemove = stickyList.findIndex(s => s.stickyId == sticky.stickyId);
-        canvas.remove(sticky.shape);
+        canvas.remove(sticky);
         canvas.discardActiveObject();
         stickyList.splice(indexToRemove, 1);
         editDiv.html('')
@@ -589,103 +654,50 @@ function displayEditForm(sticky) {
             textarea.className = 'textbox';
             textarea.id = 'textarea;'
             textarea.style.backgroundColor = 'rgb(236,232,238)';
+            const prevText = $('#textboxP').text()
+            textarea.innerHTML = prevText;
             $("#textboxContainer").html(textarea)
+
+            textarea.onkeydown = function (e) {
+                let key = e.keyCode;
+                if (key == '13') {
+                    stickyContentEdit(sticky)
+                }
+            }
         } else {
-            sticky.content = $('.textbox').val()
-            sticky.shape.item(1).text = convertDisplay(sticky)
-            const stickyCt = sticky.shape.item(1);
-            stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
-            stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
-            stickyCt.setCoords()
-            canvas.renderAll();
-            $(this)[0].id = 'editBtn'
-            $(this).text('Edit');
-            const p = document.createElement('p');
-            p.className = 'textbox';
-            $('#textboxContainer').html(p)
+            stickyContentEdit(sticky)
+            // sticky.content = $('.textbox').val()
+            // sticky.shape.item(1).text = convertDisplay(sticky)
+            // const stickyCt = sticky.shape.item(1);
+            // stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
+            // stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
+            // stickyCt.setCoords()
+            // canvas.renderAll();
+            // // $(this)[0].id = 'editBtn'
+            // $('#editBtn').text('Edit');
+            // const p = document.createElement('p');
+            // p.className = 'textbox';
+            // $('#textboxContainer').html(p)
         }
     })
 
 }
 
-
-// <button class="btn btn-primary" type="button" id="clearUpload">Clear</button>
-// <button class="btn btn-primary" id="visibleUpload" type="button">Upload</button>
-// <textarea id='newText' rows='4' cols='40'></textarea>
-
-// function displayEditForm(obj) {
-//     const shape = obj[0]
-//     const stickyId = obj[1]
-
-// const textarea = document.createElement('textarea');
-// textarea.rows = '4';
-// textarea.cols = '40';
-// textarea.id = 'newText';
-// textarea.onkeydown = function (e) {
-//     let key = e.keyCode;
-//     if (key == '13') {
-//         shape.item(1).text = $('#newText').val()
-//         const stickyCt = shape.item(1);
-//         stickyCt.set('width', shape.width - stickyPadding); //20 as padding
-//         stickyCt.set('height', shape.height - stickyPadding); //20 as padding
-//         stickyCt.setCoords()
-//         canvas.renderAll();
-//         const editDiv = document.querySelector('#editDiv')
-//         editDiv.innerHTML = '';
-//         editDiv.style.display = 'none';
-//     }
-// }
-//     const editRemoveBtn = document.createElement('button');
-//     // editRemoveBtn.id = 'editRemoveBtn';
-//     editRemoveBtn.innerText = 'Remove';
-//     editRemoveBtn.className = 'editFormBtns';
-//     editRemoveBtn.onclick = function () {
-//         // remove sticky in canvas
-//         const indexToRemove = stickyList.findIndex(s => s.stickyId == stickyId);
-//         const stickyToRemove = stickyList.find(s => s.stickyId == stickyId).shape;
-//         canvas.remove(stickyToRemove);
-//         canvas.discardActiveObject();
-//         // remove sticky in list
-//         stickyList.splice(indexToRemove, 1);
-
-//         const editDiv = document.querySelector('#editDiv')
-//         editDiv.innerHTML = ''
-//         editDiv.style.display = 'none';
-//     };
-
-//     const editColorBtn = document.createElement('button')
-//     // editColorBtn.id = 'editColorBtn';
-//     editColorBtn.className = 'editFormBtns'
-//     editColorBtn.innerText = 'Color';
-//     editColorBtn.onclick = function () {
-//         const targetSticky = stickyList.find(s => s.stickyId == stickyId)
-//         targetSticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(targetSticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
-//         canvas.renderAll()
-//     }
-
-//     const closeBtn = document.createElement('button')
-//     closeBtn.innerText = 'Close'
-//     closeBtn.className = 'editFormBtns'
-//     closeBtn.onclick = function () {
-//         const editDiv = $('#editDiv')
-//         editDiv.html('')
-//         editDiv[0].style.display = 'none';
-
-//     }
-//     const btnContainer = document.createElement('div')
-//     btnContainer.id = 'btnContainer'
-//     btnContainer.appendChild(editRemoveBtn)
-//     btnContainer.appendChild(editColorBtn)
-//     btnContainer.appendChild(closeBtn)
-
-
-//     const editDiv = document.querySelector('#editDiv')
-//     if (document.querySelector('#editRemoveBtn') == undefined) {
-//         editDiv.appendChild(textarea);
-//         editDiv.appendChild(btnContainer);
-//     }
-//     editDiv.style.display = 'block';
-// }
+function stickyContentEdit(sticky) {
+    sticky.content = $('.textbox').val()
+    sticky.item(1).text = convertDisplay(sticky)
+    const stickyCt = sticky.item(1);
+    stickyCt.set('width', sticky.width - stickyPadding); //20 as padding
+    stickyCt.set('height', sticky.height - stickyPadding); //20 as padding
+    stickyCt.setCoords()
+    canvas.renderAll();
+    $('#editBtn').text('Edit');
+    const p = document.createElement('p');
+    p.className = 'textbox';
+    p.id = 'textboxP'
+    p.innerHTML = sticky.content;
+    $('#textboxContainer').html(p)
+}
 
 function doubleClicked(obj, handler) {
     return function () {
