@@ -242,7 +242,7 @@ function convertDisplay(sticky) {
     const width = sticky.width * sticky.scaleX;
     const height = sticky.height * sticky.scaleY;
     let printText = sticky.content;
-    console.log(printText);
+    // console.log(printText);
     if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15)) {
         printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15) - 3);
         printText = printText + '...';
@@ -331,6 +331,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const textboxValue = options.content;
         $('#textInputBox').val("");
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
+        stickyBackground.width = options.width;
+        stickyBackground.height = options.height;
         const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
         this.callSuper('initialize', [stickyBackground, stickyContent], options);
         const stickyCt = this.item(1);
@@ -356,7 +358,6 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         });
         this.set("isMoving", false);
         this.set("isResizing", false);
-
 
         // // Sticky content (text)
         // this.content = textboxValue;
@@ -1209,8 +1210,8 @@ function getCanvasInfo() {
         type: "GET",
         url: "/canvas/get",
         success: function (data) {
-            console.log(data)
-            initialize_canvas(data);          
+            initialize_canvas(data);
+            handleWindowResize();
         },
         error: function () {
             alert('error getting canvas info');
@@ -1219,11 +1220,5 @@ function getCanvasInfo() {
 }
 
 // Used to call functions after page is fully loaded.
-function main() {
-    getCanvasInfo();
-    canvas.selection = false; // disable group selection
-    handleWindowResize();
-    canvas.renderAll();
-}
 $(window).resize(handleWindowResize);
-$(document).ready(main);
+$(document).ready(getCanvasInfo);
