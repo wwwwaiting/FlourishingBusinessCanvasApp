@@ -228,12 +228,23 @@ function argHandler(obj, handler) {
 function showSidepanel (stickySelected) {
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
-    const testRect = returnTestRect(stickySelected);
+    // const testRect = returnTestRect(stickySelected);
+    const stickyClass = returnClass(stickySelected)
     $('#sidepanel-list').html('')
+    // canvas.getObjects().forEach(sticky => {
+    //     if (sticky.intersectsWithObject(testRect)) {
+    //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+    //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+    //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+    //             <p class="mb-1">${sticky.get('content')}</p>
+    //         </div></a>`);
+    //     }
+    // });
     canvas.getObjects().forEach(sticky => {
-        if (sticky.intersectsWithObject(testRect)) {
+        if (returnClass(sticky) == stickyClass) {
+          // console.log(sticky.item(0).get('fill'));
             $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
-            <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+            <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
             </div></a>`);
@@ -294,7 +305,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         // Sticky fabric object (named as shape)
 
         this.on('selected', ()=>{
-            if (!stickyIsMoving && !stickyIsResizing) showSidepanel(this);
+          showSidepanel(this)
+        //     if (!stickyIsMoving && !stickyIsResizing) showSidepanel(this);
         })
 
         this.item(1).text = convertDisplay(this);
@@ -361,6 +373,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         })
         this.on('moving', ()=>{
             stickyIsMoving = true;
+            showSidepanel(this);
         });
         this.on('scaling', argHandler(this, function (sticky) {
             let width = sticky.width * sticky.scaleX;
@@ -500,7 +513,7 @@ function createSticky() {
                 title: '',
                 comment: [],
                 optimalFields: {}
-            }   
+            }
         },
         success: function (resultData) {
             console.log(resultData)
@@ -651,7 +664,7 @@ function displayEditForm(sticky) {
         $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function () {
             // Comment delete and send to backend
-            // send post request 
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -687,8 +700,8 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function () {        
-            // send post request 
+        $(`#${buttonId}`).click(function () {
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -724,7 +737,7 @@ function displayEditForm(sticky) {
 
     $('#colorBtn').click(function () {
         sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
-        // send post request 
+        // send post request
         $.ajax({
             type: 'POST',
             url: "/canvas/edit",
@@ -742,12 +755,13 @@ function displayEditForm(sticky) {
             }
         });
         canvas.renderAll()
+        showSidepanel(sticky);
     })
 
 
     $('#deleteBtn').click(function () {
         // delete request to server
-        // send post request 
+        // send post request
         $.ajax({
             type: 'POST',
             url: "/canvas/delete",
@@ -785,7 +799,7 @@ function displayEditForm(sticky) {
                 let key = e.keyCode;
                 if (key == '13') {
                     stickyContentEdit(sticky)
-                    // send post request 
+                    // send post request
                     $.ajax({
                         type: 'POST',
                         url: "/canvas/edit",
@@ -802,11 +816,12 @@ function displayEditForm(sticky) {
                             alert("Something went wrong")
                         }
                     });
+                    showSidepanel(sticky);
                 }
             }
         } else {
             stickyContentEdit(sticky)
-            // send post request 
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -823,6 +838,7 @@ function displayEditForm(sticky) {
                     alert("Something went wrong")
                 }
             });
+            showSidepanel(sticky);
             // sticky.content = $('.textbox').val()
             // sticky.shape.item(1).text = convertDisplay(sticky)
             // const stickyCt = sticky.shape.item(1);
@@ -1023,58 +1039,58 @@ function returnClass(sticky) {
     }
 }
 
-function returnTestRect(sticky) {
-    const top = sticky.top;
-    const left = sticky.left;
-    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-        return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
-    }
-    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-        return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
-    }
-    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-        return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
-    }
-    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-        return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
-    }
-    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-        return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
-    }
-    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-        return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
-    }
-    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-        return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
-    }
-    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
-        return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
-    }
-    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-        return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
-    }
-    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
-        return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
-    }
-    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-        return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
-    }
-    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
-        return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
-    }
-    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-        return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
-    }
-    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
-        return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
-    }
-    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
-        return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
-    }
-    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-        return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
-    }
-}
+// function returnTestRect(sticky) {
+//     const top = sticky.top;
+//     const left = sticky.left;
+//     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+//         return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+//         return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+//     }
+//     if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+//         return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+//         return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+//         return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+//         return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+//         return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+//         return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+//         return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+//         return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+//         return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+//         return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+//         return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+//         return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+//     }
+//     if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+//         return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+//     }
+//     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+//         return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
+//     }
+// }
 
 function getCanvasInfo() {
     $.ajax({
