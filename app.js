@@ -498,7 +498,7 @@ app.post('/manager/user', function(req, res){
 
 // add canvas from manager page
 app.post('/manager/add', function(req, res){
-	var owner = req.body.owner;
+	var owner = req.cookies.name;
 	var title = req.body.title;
 	var empty = new Array();
 	var time = new Date();
@@ -515,7 +515,7 @@ app.post('/manager/add', function(req, res){
 	});
 	
 	// add canvas to database
-	Canvas.create(canvas, function(err, result){
+	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
 			console.log(err);
 			res.send(fal);		
