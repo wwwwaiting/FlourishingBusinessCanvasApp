@@ -4,7 +4,7 @@ var UserSchema = new mongoose.Schema({
   email: String,
   pwd: String,
   role: Number,
-  canvas: [Number],
+  canvas: [String],
   occupation: String,
   status: Number,
   phone: String,
