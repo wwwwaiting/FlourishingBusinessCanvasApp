@@ -86,6 +86,16 @@ function initialize_canvas() {
             this.lastPosX = e.clientX;
             this.lastPosY = e.clientY;
         }
+        // else {
+        //     const e = opt.e
+        //     const positionClass = returnMouseClass(e.clientY,e.clientX)
+        //     if (positionClass != undefined){
+        //         showMouseSidepanel(positionClass);
+        //     } else {
+        //         $('.collapse').collapse('hide');
+        //     }
+        //
+        // }
     });
     canvas.on('mouse:up', function (opt) {
         // TODO: when mouse:up, send data to backend
@@ -133,7 +143,7 @@ function initialize_canvas() {
         canvas.renderAll()
     });
     canvas.on('selection:cleared', ()=>{
-        console.log('cleared!')
+        // console.log('cleared!')
         $('.collapse').collapse('hide');
         // $('.collapse').collapse('dispose');
     })
@@ -230,6 +240,33 @@ function showSidepanel (stickySelected) {
     $('#sidepanel-title').text(stickyBoxName);
     // const testRect = returnTestRect(stickySelected);
     const stickyClass = returnClass(stickySelected)
+    $('#sidepanel-list').html('')
+    // canvas.getObjects().forEach(sticky => {
+    //     if (sticky.intersectsWithObject(testRect)) {
+    //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+    //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+    //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+    //             <p class="mb-1">${sticky.get('content')}</p>
+    //         </div></a>`);
+    //     }
+    // });
+    canvas.getObjects().forEach(sticky => {
+        if (returnClass(sticky) == stickyClass) {
+          // console.log(sticky.item(0).get('fill'));
+            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+            <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
+                <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+                <p class="mb-1">${sticky.get('content')}</p>
+            </div></a>`);
+        }
+    });
+    $('#collapseSidepanel').collapse('show');
+}
+
+function showMouseSidepanel (stickyBoxName) {
+    $('#sidepanel-title').text(stickyBoxName);
+    // const testRect = returnTestRect(stickySelected);
+    const stickyClass = stickyBoxName;
     $('#sidepanel-list').html('')
     // canvas.getObjects().forEach(sticky => {
     //     if (sticky.intersectsWithObject(testRect)) {
@@ -522,6 +559,7 @@ function createSticky() {
             alert("Something went wrong")
         }
     });
+    showSidepanel(newSticky);
 }
 
 function removeAll() {
@@ -989,6 +1027,57 @@ function inWhichBox() {
 function returnClass(sticky) {
     const top = sticky.top;
     const left = sticky.left;
+    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+        return "BIOPHYSICAL STOCKS"
+    }
+    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+        return "ECOSYSTEMSERVICES"
+    }
+    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+        return "ECOSYSTEM ACTORS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+        return "NEEDS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+        return "COSTS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+        return "GOALS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+        return "BENIFITS"
+    }
+    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+        return "RESOURCES"
+    }
+    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+        return "ACTIVITIES"
+    }
+    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+        return "PARTNERSHIP"
+    }
+    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+        return "GOVERNANCE"
+    }
+    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+        return "RELATIONSHIPS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+        return "CHANNELS"
+    }
+    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+        return "STAKEHOLDERS"
+    }
+    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+        return "VALUE CO-CREATIONS"
+    }
+    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+        return "VALUE CO-DESTRUCTIONS"
+    }
+}
+
+function returnMouseClass(top, left) {
     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
         return "BIOPHYSICAL STOCKS"
     }
