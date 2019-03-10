@@ -235,27 +235,27 @@ function setupStickyListeners(stickyShape) {
         console.log(this.left + ', ' + this.top);
     })
     stickyShape.on('scaling', argHandler(this, function (sticky) {
-        let width = sticky.shape.width * sticky.shape.scaleX;
-        let height = sticky.shape.height * sticky.shape.scaleY;
+        let width = sticky.width * sticky.scaleX;
+        let height = sticky.height * sticky.scaleY;
         if (width > stickyMaxWidth) width = stickyMaxWidth;
         if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
         if (width < stickyMinimumWidth) width = stickyMinimumWidth;
         if (height < stickyMinimumHeight) height = stickyMinimumHeight;
-        sticky.shape.set('width', width);
-        sticky.shape.set('height', height);
-        sticky.shape.set('scaleX', 1);
-        sticky.shape.set('scaleY', 1);
-        const stickyBg = sticky.shape.item(0);
+        sticky.set('width', width);
+        sticky.set('height', height);
+        sticky.set('scaleX', 1);
+        sticky.set('scaleY', 1);
+        const stickyBg = sticky.item(0);
         stickyBg.set('width', width);
         stickyBg.set('height', height);
         stickyBg.setCoords();
-        const stickyCt = sticky.shape.item(1);
+        const stickyCt = sticky.item(1);
         stickyCt.set('width', width - stickyPadding); //20 as padding
         stickyCt.set('height', height - stickyPadding); //20 as padding
         stickyCt.setCoords();
         console.log(sticky.content);
         stickyCt.text = convertDisplay(sticky);
-        sticky.shape.setCoords();
+        sticky.setCoords();
     }))
 }
 
@@ -630,7 +630,7 @@ function displayEditForm(sticky) {
 
     $('#colorBtn').click(function () {
         // console.log(targetSticky)
-        sticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(sticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
+        sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
         canvas.renderAll()
     })
 
@@ -638,7 +638,7 @@ function displayEditForm(sticky) {
     $('#deleteBtn').click(function() {
         // delete request to server
         const indexToRemove = stickyList.findIndex(s => s.stickyId == sticky.stickyId);
-        canvas.remove(sticky.shape);
+        canvas.remove(sticky);
         canvas.discardActiveObject();
         stickyList.splice(indexToRemove, 1);
         editDiv.html('')
@@ -685,10 +685,10 @@ function displayEditForm(sticky) {
 
 function stickyContentEdit(sticky) {
     sticky.content = $('.textbox').val()
-    sticky.shape.item(1).text = convertDisplay(sticky)
-    const stickyCt = sticky.shape.item(1);
-    stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
-    stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
+    sticky.item(1).text = convertDisplay(sticky)
+    const stickyCt = sticky.item(1);
+    stickyCt.set('width', sticky.width - stickyPadding); //20 as padding
+    stickyCt.set('height', sticky.height - stickyPadding); //20 as padding
     stickyCt.setCoords()
     canvas.renderAll();
     $('#editBtn').text('Edit');
@@ -827,8 +827,8 @@ function inWhichBox(){
 }
 
 function returnClass(sticky){
-  const top = sticky.shape.top;
-  const left = sticky.shape.left;
+  const top = sticky.top;
+  const left = sticky.left;
   if (top >= 243 && top <= 613 && left >= 147 && left <= 372){return "BIOPHYSICAL STOCKS"}
   if (top >= 613 && top <= 933 && left >= 147 && left <= 372){return "ECOSYSTEMSERVICES"}
   if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866){return "ECOSYSTEM ACTORS"}
