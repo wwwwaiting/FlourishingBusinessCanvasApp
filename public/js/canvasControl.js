@@ -275,7 +275,7 @@ function showSidepanel (stickySelected) {
     canvas.getObjects().forEach(sticky => {
         if (returnClass(sticky) == stickyClass) {
           // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-1 border-0">
+            $('#sidepanel-list').append(`<a class="list-group-item bg-light list-group-item-action p-1 border-0">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
@@ -302,7 +302,7 @@ function showMouseSidepanel (stickyBoxName) {
     canvas.getObjects().forEach(sticky => {
         if (returnClass(sticky) == stickyClass) {
           // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-light list-group-item-action p-2">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
