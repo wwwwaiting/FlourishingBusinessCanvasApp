@@ -11,7 +11,7 @@ app.use(express.static('public'))
 
 // index page 
 app.get('/', function(req, res) {
-    res.render('pages/index');
+    res.render('canvas');
 });
 
 app.get('/canvas/get', function(req, res) {
