@@ -62,32 +62,32 @@
         </div>
 
         <div class="changePassword">
-            <a href="pwd.ejs">Want to change password?</a>
+            <a href="/password"> Want to change password?</a>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+</body>
+</html>
+
     <script type="text/javascript">
         var oldCompany, oldOccupation, oldPhone;
 
         $('body').ready(function() {
             var email = Cookies.get('email');
             var emailTextBox = document.querySelector('#email')
-            emailTextBox.appendChild(document.createTextNode(email))
+            emailTextBox.setAttribute('value', email)
 
             var oldName = Cookies.get('name').split(" ");
 
             var oldFirstName = oldName[0];
             var firstNameTextBox = document.querySelector('#firstName')
-            firstNameTextBox.appendChild(document.createTextNode(oldFirstName))
+            firstNameTextBox.setAttribute('value', oldFirstName)
 
             var oldLastName = oldName[1];
             var lastNameTextBox = document.querySelector('#lastName')
-            lastNameTextBox.appendChild(document.createTextNode(oldLastName))
+            lastNameTextBox.setAttribute('value', oldLastName)
 
             $.ajax({
                 type: "GET",
@@ -95,29 +95,30 @@
                 success: function(data) {
                     oldCompany = data.company;
                     var companyTextBox = document.querySelector('#company')
-                    companyTextBox.appendChild(document.createTextNode(oldCompany))
+                    companyTextBox.setAttribute('value', oldCompany)
 
                     oldOccupation = data.occupation;
                     var occupationTextBox = document.querySelector('#occupation')
-                    occupationTextBox.appendChild(document.createTextNode(oldOccupation))
+                    occupationTextBox.setAttribute('value', oldOccupation)
 
                     oldPhone = data.phone;
                     var phoneTextBox = document.querySelector('#phone')
-                    phoneTextBox.appendChild(document.createTextNode(oldPhone))
+                    phoneTextBox.setAttribute('value', oldPhone)
                 }
             });
         })
 
         $('#save').on('click', function() {
-            const firstName = document.getElementById("#firstName").value;
-            const lastName = document.getElementById("#lastName").value;
-            const company = document.getElementById("#company").value;
-            const occupation = document.getElementById("#occupation").value;
-            const phone = document.getElementById("#phone").value;
+            const firstName = document.querySelector("#firstName").value;
+            const lastName = document.querySelector("#lastName").value;
+            const company = document.querySelector("#company").value;
+            const occupation = document.querySelector("#occupation").value;
+            const phone = document.querySelector("#phone").value;
 
             var name = firstName + " " + lastName;
             
             var send = {name, company, occupation, phone};
+            console.log(send)
 
             $.ajax({
                 type: "POST",
@@ -133,5 +134,3 @@
             });
         })
     </script>
-</body>
-</html>
