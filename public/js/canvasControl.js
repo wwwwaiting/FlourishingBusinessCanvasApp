@@ -9,7 +9,6 @@ const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
-let stickyList = [];
 const ogLeft = 173;
 let currLeft = ogLeft;
 const ogTop = 240;
@@ -53,7 +52,6 @@ function initialize_canvas() {
     });
     // Reset global vars
     numberOfStickies = 0;
-    stickyList = [];
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
@@ -91,10 +89,10 @@ function initialize_canvas() {
     });
     canvas.on('mouse:up', function (opt) {
         // TODO: when mouse:up, send data to backend
-        if (canvas.getActiveObject()){
+        if (canvas.getActiveObject()) {
             let sticky = canvas.getActiveObject();
-            console.log(backUpSticky);
-            console.log(sticky);
+            // console.log(backUpSticky);
+            // console.log(sticky);
             // sticky.height = backUpSticky[0];
             // sticky.width = backUpSticky[1];
             // sticky.left = backUpSticky[2];
@@ -203,16 +201,16 @@ function smoothMoveV(stickyShape, topDest) {
     });
 }
 
-function convertDisplay(sticky){
-  const width = sticky.width * sticky.scaleX;
-  const height = sticky.height * sticky.scaleY;
-  let printText = sticky.content;
-  console.log(printText);
-  if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15)){
-      printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding)/15) - 3);
-      printText = printText + '...';
-  }
-  return printText;
+function convertDisplay(sticky) {
+    const width = sticky.width * sticky.scaleX;
+    const height = sticky.height * sticky.scaleY;
+    let printText = sticky.content;
+    console.log(printText);
+    if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15)) {
+        printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15) - 3);
+        printText = printText + '...';
+    }
+    return printText;
 }
 
 function argHandler(obj, handler) {
@@ -221,142 +219,161 @@ function argHandler(obj, handler) {
     };
 };
 
-function setupStickyListeners(stickyShape) {
-    stickyShape.on('mousedown', doubleClicked(this, function (sticky) {
-        $('#editDiv').html('')
-        displayEditForm(sticky)
-    }));
-    stickyShape.on('mouseup', function () {
-        let top = vertical_restrict(this);
-        let left = horizontal_restrict(this);
-        smoothMoveH(this, left);
-        smoothMoveV(this, top);
-        this.setCoords()
-        console.log(this.left + ', ' + this.top);
-    })
-    stickyShape.on('scaling', argHandler(this, function (sticky) {
-        let width = sticky.width * sticky.scaleX;
-        let height = sticky.height * sticky.scaleY;
-        if (width > stickyMaxWidth) width = stickyMaxWidth;
-        if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
-        if (width < stickyMinimumWidth) width = stickyMinimumWidth;
-        if (height < stickyMinimumHeight) height = stickyMinimumHeight;
-        sticky.set('width', width);
-        sticky.set('height', height);
-        sticky.set('scaleX', 1);
-        sticky.set('scaleY', 1);
-        const stickyBg = sticky.item(0);
-        stickyBg.set('width', width);
-        stickyBg.set('height', height);
-        stickyBg.setCoords();
-        const stickyCt = sticky.item(1);
-        stickyCt.set('width', width - stickyPadding); //20 as padding
-        stickyCt.set('height', height - stickyPadding); //20 as padding
-        stickyCt.setCoords();
-        console.log(sticky.content);
-        stickyCt.text = convertDisplay(sticky);
-        sticky.setCoords();
-    }))
-}
+let stickyIsMoving = false;
+let stickyIsResizing = false;
 
 const Sticky = fabric.util.createClass(fabric.Group, {
-  type: 'Sticky',
+    type: 'Sticky',
 
-  initialize: function(){
-      const options = {
-              left: currLeft,
-              top: currTop,
-              width: stickyOgWidth,
-              height: stickyOgHeight,
-              originX: 'left',
-              originY: 'top',};
-      const textboxValue = $('#textInputBox').val();
-      $('#textInputBox').val("");
-      const stickyBackground = new fabric.Rect(new getBackgroundJson());
-      const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-      this.callSuper('initialize', [stickyBackground, stickyContent], options);
-      const stickyCt = this.item(1);
-      stickyCt.set('width', this.width - stickyPadding); //20 as padding
-      stickyCt.set('height', this.height - stickyPadding); //20 as padding
-      this.set('content', options.content || textboxValue);
-      this.set('stickyId', options.stickyId || numberOfStickies);
-      this.set('comments', options.comments || []);
-      this.set('lockRotation', options.lockRotation || true);
-      this.set('lockScalingFlip', options.lockScalingFlip || true);
-      this.set('transparentCorners', options.transparentCorners || false);
-      this.set('cornerStyle', options.cornerStyle || 'circle');
-      this.set('_controlsVisibility', options._controlsVisibility || {
-          tl: false,
-          tr: false,
-          br: false,
-          bl: false,
-          ml: false,
-          mt: false,
-          mr: true,
-          mb: true,
-          mtr: false
-      });
+    initialize: function () {
+        const options = {
+            left: currLeft,
+            top: currTop,
+            width: stickyOgWidth,
+            height: stickyOgHeight,
+            originX: 'left',
+            originY: 'top',
+        };
+        const textboxValue = $('#textInputBox').val();
+        $('#textInputBox').val("");
+        const stickyBackground = new fabric.Rect(new getBackgroundJson());
+        const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
+        this.callSuper('initialize', [stickyBackground, stickyContent], options);
+        const stickyCt = this.item(1);
+        stickyCt.set('width', this.width - stickyPadding); //20 as padding
+        stickyCt.set('height', this.height - stickyPadding); //20 as padding
+        this.set('content', options.content || textboxValue);
+        this.set('stickyId', options.stickyId || numberOfStickies);
+        this.set('comments', options.comments || []);
+        this.set('lockRotation', options.lockRotation || true);
+        this.set('lockScalingFlip', options.lockScalingFlip || true);
+        this.set('transparentCorners', options.transparentCorners || false);
+        this.set('cornerStyle', options.cornerStyle || 'circle');
+        this.set('_controlsVisibility', options._controlsVisibility || {
+            tl: false,
+            tr: false,
+            br: false,
+            bl: false,
+            ml: false,
+            mt: false,
+            mr: true,
+            mb: true,
+            mtr: false
+        });
+        this.set("isMoving", false);
+        this.set("isResizing", false);
 
-      // // Sticky content (text)
-      // this.content = textboxValue;
-      // this.comments = []
 
-      // Sticky fabric object (named as shape)
+        // // Sticky content (text)
+        // this.content = textboxValue;
+        // this.comments = []
 
-      this.item(1).text = convertDisplay(this);
+        // Sticky fabric object (named as shape)
 
-      this.on('mousedown', doubleClicked(this, function (sticky) {
-          $('#editDiv').html('')
-          displayEditForm(sticky)
-      }));
+        this.item(1).text = convertDisplay(this);
 
-      this.on('mouseup', function () {
-          let top = vertical_restrict(this);
-          let left = horizontal_restrict(this);
-          smoothMoveH(this, left);
-          smoothMoveV(this, top);
-          this.setCoords()
-          console.log(this.left + ', ' + this.top);
-      })
-      this.on('scaling', argHandler(this, function (sticky) {
-          let width = sticky.width * sticky.scaleX;
-          let height = sticky.height * sticky.scaleY;
-          if (width > stickyMaxWidth) width = stickyMaxWidth;
-          if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
-          if (width < stickyMinimumWidth) width = stickyMinimumWidth;
-          if (height < stickyMinimumHeight) height = stickyMinimumHeight;
-          sticky.set('width', width);
-          sticky.set('height', height);
-          sticky.set('scaleX', 1);
-          sticky.set('scaleY', 1);
-          const stickyBg = sticky.item(0);
-          stickyBg.set('width', width);
-          stickyBg.set('height', height);
-          stickyBg.setCoords();
-          const stickyCt = sticky.item(1);
-          stickyCt.set('width', width - stickyPadding); //20 as padding
-          stickyCt.set('height', height - stickyPadding); //20 as padding
-          stickyCt.setCoords();
-          console.log(sticky.content);
-          stickyCt.text = convertDisplay(sticky);
-          sticky.setCoords();
-      }))
-      numberOfStickies++;
-      currLeft += 10;
-      currTop += 10;
+        this.on('mousedown', doubleClicked(this, function (sticky) {
+            $('#editDiv').html('')
+            displayEditForm(sticky)
+        }));
+
+        this.on('mouseup', function () {
+            let top = vertical_restrict(this);
+            let left = horizontal_restrict(this);
+            smoothMoveH(this, left);
+            smoothMoveV(this, top);
+            this.setCoords()
+            console.log(this.left + ', ' + this.top);
+            if (stickyIsResizing) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/canvas/edit",
+                    data: {
+                        type: "size",
+                        change: {
+                            height: this.height,
+                            width: this.width
+                        },
+                        canvasId: canvas.canvasId,
+                        stickyId: this.stickyId
+                    },
+                    success: function (resultData) {
+                        console.log(resultData)
+                    },
+                    error: function () {
+                        alert("Something went wrong")
+                    }
+                });
+                stickyIsResizing = false;
+            } else if (stickyIsMoving) {
+                console.log('entering isMoving')
+                $.ajax({
+                    type: 'POST',
+                    url: "/canvas/edit",
+                    data: {
+                        type: "position",
+                        change: {
+                            top: this.top,
+                            left: this.left
+                        },
+                        canvasId: canvas.canvasId,
+                        stickyId: this.stickyId
+                    },
+                    success: function (resultData) {
+                        console.log(resultData)
+                    },
+                    error: function () {
+                        alert("Something went wrong")
+                    }
+                });
+                stickyIsMoving = false;
+            } else {
+                alert('Neither isMoving, nor isResizing')
+            }
+        })
+        this.on('moving', ()=>{
+            stickyIsMoving = true;
+        });
+        this.on('scaling', argHandler(this, function (sticky) {
+            let width = sticky.width * sticky.scaleX;
+            let height = sticky.height * sticky.scaleY;
+            if (width > stickyMaxWidth) width = stickyMaxWidth;
+            if (height > stickyMaxHeight) height = stickyMaxHeight; // set scaling boundary so that not stikcy will have size larger than a block
+            if (width < stickyMinimumWidth) width = stickyMinimumWidth;
+            if (height < stickyMinimumHeight) height = stickyMinimumHeight;
+            sticky.set('width', width);
+            sticky.set('height', height);
+            sticky.set('scaleX', 1);
+            sticky.set('scaleY', 1);
+            const stickyBg = sticky.item(0);
+            stickyBg.set('width', width);
+            stickyBg.set('height', height);
+            stickyBg.setCoords();
+            const stickyCt = sticky.item(1);
+            stickyCt.set('width', width - stickyPadding); //20 as padding
+            stickyCt.set('height', height - stickyPadding); //20 as padding
+            stickyCt.setCoords();
+            // console.log(sticky.content);
+            stickyCt.text = convertDisplay(sticky);
+            sticky.setCoords();
+            stickyIsResizing = true;
+        }))
+        numberOfStickies++;
+        currLeft += 10;
+        currTop += 10;
     },
 
-    toObject: function(){
-      return fabric.util.object.extend(this.callSuper('toObject'), {
-        lockRotation: this.get('lockRotation'),
-        lockScalingFlip: this.get('lockScalingFlip'),
-        transparentCorners: this.get('transparentCorners'),
-        cornerStyle: this.get('cornerStyle'),
-        _controlsVisibility: this.get('_controlsVisibility'),
-        content:this.get('content'),
-        stickyId: this.get('stickyId'),
-        comments:this.get('comments')
-      });
+    toObject: function () {
+        return fabric.util.object.extend(this.callSuper('toObject'), {
+            lockRotation: this.get('lockRotation'),
+            lockScalingFlip: this.get('lockScalingFlip'),
+            transparentCorners: this.get('transparentCorners'),
+            cornerStyle: this.get('cornerStyle'),
+            _controlsVisibility: this.get('_controlsVisibility'),
+            content: this.get('content'),
+            stickyId: this.get('stickyId'),
+            comments: this.get('comments')
+        });
     }
 
 });
@@ -434,27 +451,40 @@ const getContentJson = function () {
 function createSticky() {
     const newSticky = new Sticky();
     canvas.add(newSticky);
-    stickyList.push(newSticky);
-    // createControl(newSticky);
     canvas.renderAll();
+    // Send to backend
+    $.ajax({
+        type: 'POST',
+        url: "/canvas/add",
+        data: {
+            canvasId: canvas.canvasId,
+            content: newSticky.get('content'),
+            position: {
+                left: newSticky.get('left'),
+                top: newSticky.get('top')
+            },
+            size: {
+                width: newSticky.get('width'),
+                height: newSticky.get('height')
+            },
+            color: newSticky.item(0).get('fill'),
+            title: '',
+            comment: [],
+            optimalFields: {}
+        },
+        success: function (resultData) {
+            console.log(resultData)
+        },
+        error: function () {
+            alert("Something went wrong")
+        }
+    });
 }
 
 function removeAll() {
     initialize_canvas();
     currLeft = ogLeft;
     currTop = ogTop;
-}
-
-function removeSticky() {
-    // remove sticky in canvas
-    const indexToRemove = stickyList.findIndex(s => s.stickyId == this.parentNode.id.split('y')[1]);
-    const stickyToRemove = stickyList.find(s => s.stickyId == this.parentNode.id.split('y')[1]).shape;
-    canvas.remove(stickyToRemove);
-    canvas.discardActiveObject();
-    // remove stickyInfo (commented for testing)
-    // document.querySelector('#infoBarContainer').removeChild(this.parentNode);
-    // remove sticky in list
-    stickyList.splice(indexToRemove, 1);
 }
 
 // Serialization of the canvas
@@ -589,7 +619,25 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function() {
+        $(`#${buttonId}`).click(function () {
+            // Comment delete and send to backend
+            // send post request 
+            $.ajax({
+                type: 'POST',
+                url: "/canvas/edit",
+                data: {
+                    type: "comment",
+                    change: sticky.comments,
+                    canvasId: canvas.canvasId,
+                    stickyId: sticky.stickyId
+                },
+                success: function (resultData) {
+                    console.log(resultData)
+                },
+                error: function () {
+                    alert("Something went wrong")
+                }
+            });
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
@@ -601,16 +649,32 @@ function displayEditForm(sticky) {
     }
 
     $('#addComment').click(function addComments() {
-        const content = $('#commentContent').val()
-        const buttonId = `delComment${sticky.comments.length}`
-        // send post request 
+        const content = $('#commentContent').val();
+        const buttonId = `delComment${sticky.comments.length}`;
         sticky.comments.push(content)
         const li = document.createElement('li')
         li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function() {
+        $(`#${buttonId}`).click(function () {        
+            // send post request 
+            $.ajax({
+                type: 'POST',
+                url: "/canvas/edit",
+                data: {
+                    type: "comment",
+                    change: sticky.comments,
+                    canvasId: canvas.canvasId,
+                    stickyId: sticky.stickyId
+                },
+                success: function (resultData) {
+                    console.log(resultData)
+                },
+                error: function () {
+                    alert("Something went wrong")
+                }
+            });
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
@@ -629,22 +693,53 @@ function displayEditForm(sticky) {
     })
 
     $('#colorBtn').click(function () {
-        // console.log(targetSticky)
         sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
+        // send post request 
+        $.ajax({
+            type: 'POST',
+            url: "/canvas/edit",
+            data: {
+                type: "color",
+                change: sticky.sticky.item(0).get('fill'),
+                canvasId: canvas.canvasId,
+                stickyId: sticky.stickyId
+            },
+            success: function (resultData) {
+                console.log(resultData)
+            },
+            error: function () {
+                alert("Something went wrong")
+            }
+        });
         canvas.renderAll()
     })
 
 
-    $('#deleteBtn').click(function() {
+    $('#deleteBtn').click(function () {
         // delete request to server
-        const indexToRemove = stickyList.findIndex(s => s.stickyId == sticky.stickyId);
+        // send post request 
+        $.ajax({
+            type: 'POST',
+            url: "/canvas/edit",
+            data: {
+                // type: "color",
+                // change: sticky.sticky.item(0).get('fill'),
+                // canvasId: canvas.canvasId,
+                // stickyId: sticky.stickyId
+            },
+            success: function (resultData) {
+                console.log(resultData)
+            },
+            error: function () {
+                alert("Something went wrong")
+            }
+        });
         canvas.remove(sticky);
         canvas.discardActiveObject();
-        stickyList.splice(indexToRemove, 1);
         editDiv.html('')
     })
 
-    $('#editBtn').click(function() {
+    $('#editBtn').click(function () {
         if ($(this).text() == 'Edit') {
             console.log($(this).text())
             $(this).text('Done')
@@ -662,10 +757,44 @@ function displayEditForm(sticky) {
                 let key = e.keyCode;
                 if (key == '13') {
                     stickyContentEdit(sticky)
+                    // send post request 
+                    $.ajax({
+                        type: 'POST',
+                        url: "/canvas/edit",
+                        data: {
+                            type: "content",
+                            change: sticky.content,
+                            canvasId: canvas.canvasId,
+                            stickyId: sticky.stickyId
+                        },
+                        success: function (resultData) {
+                            console.log(resultData)
+                        },
+                        error: function () {
+                            alert("Something went wrong")
+                        }
+                    });
                 }
             }
         } else {
             stickyContentEdit(sticky)
+            // send post request 
+            $.ajax({
+                type: 'POST',
+                url: "/canvas/edit",
+                data: {
+                    type: "content",
+                    change: sticky.content,
+                    canvasId: canvas.canvasId,
+                    stickyId: sticky.stickyId
+                },
+                success: function (resultData) {
+                    console.log(resultData)
+                },
+                error: function () {
+                    alert("Something went wrong")
+                }
+            });
             // sticky.content = $('.textbox').val()
             // sticky.shape.item(1).text = convertDisplay(sticky)
             // const stickyCt = sticky.shape.item(1);
@@ -699,8 +828,6 @@ function stickyContentEdit(sticky) {
     $('#textboxContainer').html(p)
 }
 
-
-
 function doubleClicked(obj, handler) {
     return function () {
         if (obj.clicked) handler(obj);
@@ -726,7 +853,7 @@ function handleWindowResize() {
 }
 
 function searchInCanvas() {
-    document.getElementById("searchContent").addEventListener("input", function() {
+    document.getElementById("searchContent").addEventListener("input", function () {
         // reset search result
         $('#searchResult').html('');
 
@@ -735,11 +862,10 @@ function searchInCanvas() {
         if (searchContent != "") {
             const dropDownMenu = document.querySelector('#searchResult')
 
-            for (let i = 0; i < stickyList.length; i++) {
-                const sticky = stickyList[i];
-
+            // for (let i = 0; i < stickyList.length; i++) {
+            // const sticky = stickyList[i];
+            canvas.getObjects().forEach(sticky => {
                 const content = sticky.content;
-
                 const words = content.split(" ")
                 for (let j = 0; j < words.length; j++) {
                     const word = words[j];
@@ -752,7 +878,7 @@ function searchInCanvas() {
                         dropDownMenu.appendChild(listItem);
                     }
                 }
-            }
+            })
 
             if (document.getElementById('searchResult').innerHTML === "") {
                 const noResult = document.createElement('a');
@@ -765,21 +891,11 @@ function searchInCanvas() {
     }, false);
 
     // hide the search result if clicked outside
-    $('body').on('click', function(e) {
+    $('body').on('click', function (e) {
         $('#searchResult').html('');
         document.getElementById('searchContent').value = '';
     });
 }
-
-// Used to call functions after page is fully loaded.
-function main() {
-    initialize_canvas();
-    canvas.selection = false; // disable group selection
-    handleWindowResize();
-    canvas.renderAll();
-}
-$(window).resize(handleWindowResize);
-$(document).ready(main);
 
 //###################################################3
 // functions that we deleted as we coded.
@@ -820,29 +936,87 @@ $(document).ready(main);
 // }
 
 
-function inWhichBox(){
-  for (let i = 0; i < stickyList.length; i++){
-    console.log(stickyList[i].stickyId + ' in ' + returnClass(stickyList[i]));
-  }
+function inWhichBox() {
+    canvas.getObjects().forEach(sticky => {
+        console.log(sticky.stickyId + ' in ' + returnClass(sticky));
+    })
 }
 
-function returnClass(sticky){
-  const top = sticky.top;
-  const left = sticky.left;
-  if (top >= 243 && top <= 613 && left >= 147 && left <= 372){return "BIOPHYSICAL STOCKS"}
-  if (top >= 613 && top <= 933 && left >= 147 && left <= 372){return "ECOSYSTEMSERVICES"}
-  if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866){return "ECOSYSTEM ACTORS"}
-  if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866){return "NEEDS"}
-  if (top >= 953 && top <= 1136 && left >= 147 && left <= 764){return "COSTS"}
-  if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278){return "GOALS"}
-  if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866){return "BENIFITS"}
-  if (top >= 334 && top <= 613 && left >= 423 && left <= 654){return "RESOURCES"}
-  if (top >= 613 && top <= 933 && left >= 423 && left <= 654){return "ACTIVITIES"}
-  if (top >= 334 && top <= 613 && left >= 654 && left <= 838){return "PARTNERSHIP"}
-  if (top >= 613 && top <= 933 && left >= 654 && left <= 838){return "GOVERNANCE"}
-  if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388){return "RELATIONSHIPS"}
-  if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388){return "CHANNELS"}
-  if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620){return "STAKEHOLDERS"}
-  if (top >= 334 && top <= 732 && left >= 850 && left <= 1192){return "VALUE CO-CREATIONS"}
-  if (top >= 732 && top <= 933 && left >= 850 && left <= 1192){return "VALUE CO-DESTRUCTIONS"}
+function returnClass(sticky) {
+    const top = sticky.top;
+    const left = sticky.left;
+    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+        return "BIOPHYSICAL STOCKS"
+    }
+    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+        return "ECOSYSTEMSERVICES"
+    }
+    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+        return "ECOSYSTEM ACTORS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+        return "NEEDS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+        return "COSTS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+        return "GOALS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+        return "BENIFITS"
+    }
+    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+        return "RESOURCES"
+    }
+    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+        return "ACTIVITIES"
+    }
+    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+        return "PARTNERSHIP"
+    }
+    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+        return "GOVERNANCE"
+    }
+    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+        return "RELATIONSHIPS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+        return "CHANNELS"
+    }
+    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+        return "STAKEHOLDERS"
+    }
+    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+        return "VALUE CO-CREATIONS"
+    }
+    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+        return "VALUE CO-DESTRUCTIONS"
+    }
 }
+
+function getCanvasInfo() {
+    $.ajax({
+        type: "GET",
+        url: "/canvas/get",
+        success: function (data) {
+            console.log(data)
+            if (data == 'false') {
+                alert("Cannot get the canvas.")
+            } else if (data == 'true') {
+                console.log('got the canvas.')
+            }
+        }
+    });
+}
+
+// Used to call functions after page is fully loaded.
+function main() {
+    getCanvasInfo();
+    initialize_canvas();
+    canvas.selection = false; // disable group selection
+    handleWindowResize();
+    canvas.renderAll();
+}
+$(window).resize(handleWindowResize);
+$(document).ready(main);
