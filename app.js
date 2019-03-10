@@ -78,7 +78,7 @@ app.post('/login', function(req, res) {
   User.find({'email': email,'status': 2},function(err, result) {
       if (err) {
         console.log(err);
-        res.send(fal);
+        res.send(0);
       } else if (result.length === 0) {
         console.log('user does not exist or does not have the authorization to login!');
         res.send(denied);
@@ -104,16 +104,16 @@ app.post('/register', function(req, res) {
   var pwd = req.body.pwd;
   var email = req.body.email;
   var canvasList = new Array();
-  User.findOneAndUpdate({'email':email,'pwd':'','status':2},{pwd:pwd},function(err, result) {
+  User.findOneAndUpdate({'email':email,'pwd':'','status':2},{name:name, pwd:pwd},function(err, result) {
       if (err) {
         console.log(err);
-        res.send(fal);
+        res.send(0);
       } else if (result === null) {
-        User.find({email: email},function(err, result) {
+        User.find({email: email},function(err, registered) {
             if (err) {
               console.log(err);
-              res.send(fal);
-            } else if (result.length !== 0) {
+              res.send(0);
+            } else if (registered.length !== 0) {
               console.log('The email has been registered in the system!');
               res.send(fal);
             } else {
@@ -126,6 +126,8 @@ app.post('/register', function(req, res) {
                 canvas: canvasList,
                 occupation: '',
                 status: 1,
+                phone: '',
+                company: ''
               });
               User.create(user, function(err, newlyCreated) {
                 if (err) {
