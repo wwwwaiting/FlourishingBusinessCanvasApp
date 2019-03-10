@@ -8,15 +8,11 @@ var http = require('http');
 
 require('./connect.js');
 require('./models/canvas.js');
-require('./models/comment.js');
-require('./models/history.js');
 require('./models/sticky.js');
 require('./models/user.js');
 
 //model name
-const Comment = mongoose.model('Comment');
 const User = mongoose.model('User');
-const History = mongoose.model('History');
 const Sticky = mongoose.model('Sticky');
 const Canvas = mongoose.model('Canvas');
 mongoose.Promise = global.Promise;
@@ -334,7 +330,6 @@ app.post('/canvas/edit', function(req, res){
           });
         };
       });
-      commentCount ++;
     }
     else{
       // update sticky information only
@@ -444,7 +439,6 @@ app.post('/manager/user', function(req, res){
                 			} else {
                   			res.send(tru);  // send true when finish create user in db.
                 			}
-
               			});		
 						} else {
 							//user in db

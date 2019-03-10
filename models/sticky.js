@@ -1,13 +1,13 @@
 var mongoose = require("mongoose");
+
 var CommentSchema = new mongoose.Schema({
-  id: Number,
   user: String,
   content: String,
   modifiedTime: Date
 });
+
 var StickySchema = new mongoose.Schema({
-  id: Number,
-  canvasId: Number,
+  canvasId: String,
   content: String,  // hashtag in content
   position: {
     left: Number,
