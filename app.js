@@ -44,7 +44,6 @@ const registrationRquest = new Array();
 const stickyCount = 0;
 const commentCount = 0;
 const historyCount = 0;
-const canvasCount = 0;
 const changeType = ['content', 'position', 'size', 'color', 'comment'];
 
 // render login page
@@ -158,6 +157,7 @@ app.post('/register', function(req, res) {
                 } else if (newlyCreated == null){
                   res.send(err);
                 } else {
+                	//console.log(newlyCreated.id);
                   res.send(newReg.toString());
                 }
               });
@@ -400,6 +400,7 @@ app.get('/library/get', function(req, res){
 			console.log(err);		
 		} else {
 			var user = result[0];
+			console.log(user.id);
 			var c_list = user.canvas;
 			
 			// loop through all canvas list
@@ -407,12 +408,18 @@ app.get('/library/get', function(req, res){
 			var canvasId = new Array();
 			var users = new Array();
 			for (var i = 0; i < c_list.length; i++){
-				var t = c_list[i].title;
-				var id = c_list[i].id;
-				var user = c_list.users;
-				title.push(t);
-				canvasId.push(id);
-				users.push(user);				
+				Canvas.find({id:c_list[i]}, function(err, result){
+					if (err) {
+						console.log(err);				
+					} else {
+						var c = result[0];
+						var t = c.title;
+						var user = c.users;
+						canvasId.push(c_list[i]);
+						title.push(t);
+						users.push(user);						
+					}				
+				});			
 			}
 			
 			// send back to front end
@@ -505,7 +512,6 @@ app.post('/manager/add', function(req, res){
 	
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
-		id: canvasCount,
 		owner: owner,
 		title: title,
 		users: empty,
@@ -517,11 +523,9 @@ app.post('/manager/add', function(req, res){
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
-			console.log(err);
-			res.send(fal);		
+			console.log(err);		
 		} else {
-			canvasCount += 1;  // update global count number.
-			res.send(tru);
+			res.send({id:result.id});
 		}
 	});
 });
