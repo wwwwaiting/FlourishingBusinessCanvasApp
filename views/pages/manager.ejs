@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Manager page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="css/user.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" id="mainNav">
+        <div class="container"><h1>Canvas</h1>
+            <ul class="nav navbar-nav ml-auto text-uppercase">
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="manageUsers()">Manage users</button>
+                </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="manageCanvas()">Manage canvas</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="text-center mb-4 " id="post-TwoRow"><div class="row fadeIn post-row">
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 1</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 2</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 3</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 4</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="row fadeIn post-row"><!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 5</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 6</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+        <!--one post-->
+        <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+            <div class="card shadow postCard">
+                <!--Card image-->
+                <div class="image-constrain">
+                    <img src="img/fbc.png" class="card-img-top post-img p-3">
+                </div>
+                <!--Card content-->
+                <div class="card-body text-center">
+                    <!--Title & role-->
+                    <h6 class="post-title font-weight-bold font-italic text-truncate">FBC 7</h6>
+                    <a href="img/fbc.png" class="btn btn-light">Detail</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <script src="js/popup.js"></script>
+</body>
+</html>

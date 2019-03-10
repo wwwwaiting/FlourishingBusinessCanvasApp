@@ -1,0 +1,187 @@
+@font-face {
+    font-family: Roboto;
+    src: url(https://fonts.googleapis.com/css?family=Roboto);
+}
+
+body {
+    font-family: Roboto, sans-serif;
+    /* margin: 0;
+    padding: 0;
+    border: 0; */
+    overflow: hidden;
+}
+
+/* #mainCanvas {
+    border: 1px solid black;
+} */
+
+#infoBarContainer span, #infoBarContainer button {
+    margin-right: 10px;
+}
+
+#editDiv {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+
+}
+
+#commentContainer {
+    list-style-type: none;
+    padding: 0;
+}
+
+#commentContainer li {
+    min-height: 28px;
+}
+.commentWrap {
+    word-wrap: break-word;
+}
+#editForm {
+    width: 400px
+}
+
+.delComment {
+    height: 26px;
+    width: 26px;
+    float: right;
+    margin: 0px;
+    padding: 0px;
+}
+
+.checkbox {
+    margin-right: 5px;
+}
+
+.editFormBtns {
+    /* float: right; */
+    width: 80px;
+    margin-left: 10px;
+    margin-right: 10px;
+    /* display: block; */
+    /* margin: 0; */
+    padding: 0;
+}
+
+.textbox {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    min-height: 100px;
+    width: 100%;
+    border: 1px solid black;
+}
+#btnContainer {
+    /* float: right;
+    width: 70px; */
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.modal-title {
+    margin: 0 auto;
+}
+
+textarea {
+    /* background-color: yellow; */
+    min-height: 100px;
+    width: 300px
+}
+
+/* #canvasHeader {
+    margin-top: 30px;
+} */
+
+/* #canvasTitle {
+    display: inline-block;
+    margin-left: 20px;
+} */
+
+#canvasTitle input {
+    width: 550px;
+    /* height: 70px; */
+    border: none;
+    color: black;
+    font-size: 25px;
+}
+
+#canvasTitle ::placeholder {
+    color: black;
+    font-size: 25px;
+}
+
+ #canvasInfo {
+    /* display: block;
+    float: right;
+    margin-right: 50px; */
+    margin-top: 13px;
+}
+
+/* .designInfo {
+    float: left;
+    width: 300px;
+} */
+
+#headerContainer {
+    /* opacity: 0.95; */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+#stickyInfo {
+    display: inline-block;
+}
+
+#searchBar {
+    display: block;
+    float: right;
+    width: 500px;
+}
+
+#exportBtn {
+    margin-left: 8px;
+    margin-top: 13px;
+}
+
+/* The container <div> - needed to position the dropdown content */
+#dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: grey;
+    color: white;
+    padding: 8px;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    right: 0;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {display: block;}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {background-color: grey;}

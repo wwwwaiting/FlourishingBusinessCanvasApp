@@ -1,0 +1,21 @@
+.postCard {
+    max-height: 500px;
+}
+
+.image-constrain{
+    width: 100%;
+}
+
+.image-constrain img {
+    /*width: 100%;*/
+    /*height: auto;*/
+    /*max-width: 310px;*/
+    height: 200px;
+    object-fit: contain;
+}
+
+.row{
+    padding-top: 100px;
+    padding-right: 40px;
+    padding-left: 40px;
+}
