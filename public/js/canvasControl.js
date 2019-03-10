@@ -3,6 +3,7 @@ console.log("canvasControl.js");
 
 // Global vars
 let canvas;
+let backUpSticky;
 const canvasMaxZoom = 8;
 const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
@@ -55,7 +56,7 @@ function initialize_canvas() {
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
-    
+
     /// Pan and zoom
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
@@ -65,6 +66,14 @@ function initialize_canvas() {
             this.selection = false;
             this.lastPosX = evt.clientX;
             this.lastPosY = evt.clientY;
+        } else {
+            // let temp = canvas.getActiveObject()
+            // let temp0 = temp.item(0);
+            // let temp1 = temp.item(1);
+            // backUpSticky = [temp.height, temp.width, temp.left, temp.top,
+            //                 temp0.height, temp0.width, temp0.left, temp0.top,
+            //                 temp1.height, temp1.width, temp1.left, temp1.top];
+
         }
         $('#editDiv').html('')
     });
@@ -81,6 +90,26 @@ function initialize_canvas() {
     });
     canvas.on('mouse:up', function (opt) {
         // TODO: when mouse:up, send data to backend
+        if (canvas.getActiveObject()){
+            let sticky = canvas.getActiveObject();
+            console.log(backUpSticky);
+            console.log(sticky);
+            // sticky.height = backUpSticky[0];
+            // sticky.width = backUpSticky[1];
+            // sticky.left = backUpSticky[2];
+            // sticky.top = backUpSticky[3];
+            // sticky.item(0).height = backUpSticky[4];
+            // sticky.item(0).width = backUpSticky[5];
+            // sticky.item(0).left = backUpSticky[6];
+            // sticky.item(0).top = backUpSticky[7];
+            // sticky.item(1).height = backUpSticky[8];
+            // sticky.item(1).width = backUpSticky[9];
+            // sticky.item(1).left = backUpSticky[10];
+            // sticky.item(1).top = backUpSticky[11];
+            canvas.renderAll();
+            backUpSticky = "";
+        }
+
         this.isDragging = false;
         canvas.setCursor('default');
         this.selection = true;
