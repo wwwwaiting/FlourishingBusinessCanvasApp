@@ -122,7 +122,7 @@ Junkai Li
 
 #### Team Rules
 
-The key to our team’s working culture would be transparency. The atmosphere where each member can express his/her thoughts and communicate open-mindedly is ensured. Scrum master makes sure that members are informed of important issues and changes in timely manner.
+The key to our team's working culture would be transparency. The atmosphere where each member can express his/her thoughts and communicate open-mindedly is ensured. Scrum master makes sure that members are informed of important issues and changes in timely manner.
 
 Communications
   * Daily online discussion if any team member encounters technical issues (Messenger)
@@ -151,11 +151,7 @@ Conflict Resolution
 
 #### Events
 
-<!-- Describe meetings (and other events) you are planning to have:
- * When and where? Recurring or ad hoc? In-person or online?
- * What's the purpose of each meeting?
- * Other events could be coding sessions, code reviews, quick weekly sync meeting online, etc. -->
-Weekly goal will be set during the meeting in tutorial time. Modification of the goal and measurement of actions will be continuously discussed and monitored through daily online discussion. The process of the project and accountability of each member for attending meeting is discussed in Communications and Conflict Resolution section.
+Weekly goal will be set during the meeting in tutorial time. Modification of the goal and measurement of actions will be continuously discussed and monitored through daily online discussion. The process of the project and accountability of each member for attending meeting is discussed in Communications and Conflict Resolution sections.
 
 We have three weekly meetings:
 
@@ -185,70 +181,59 @@ In addition, we have three events:
   - If any improvement needs to be addressed, the member will fix the problem based on the feedback from the other member. After fixing, they will go through another round of the review process until the feature is ready to be pushed to the master branch.
 
 * Ongoing adjustments
-  - Online group messenger (weChat)
+  - Online group messenger (WeChat)
   - As group memebers work on to achieve weekly target, there might be potential issues that require immediate modification in implementation or weekly goal. These issues will be ongoingly monitored and discussed through online group messenger. 
   - If immediate change in the direction of the project is needed, additional group meeting will be scheduled with priority. The decisions on minor issues will be made through the group chat.
 
 #### Artifacts
 
-<!-- List/describe the artifacts you will produce in order to organize your team.       
-
-* Artifacts can be To-Do lists, Task boards, schedule(s), etc.
-* We want to understand:
-  * How do you keep track of what needs to get done?
-  * How do you prioritize tasks?
-  * How do tasks get assigned to team members? -->
 * To-do lists, Taskboards, Issue Tracker
   - We are using Trello for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
 
 * Communication
-  - WeChat as the primary communication of team. This is where we discuss immediate issues that require prioritized decision making or anything that was not covered in the in-person meetings.
+  - WeChat as the primary communication of team. This is where we discuss immediate issues that require prioritized decision-making or anything that was not covered in the in-person meetings.
 
 #### Deployment and Github Workflow
 
-Describe your Git / GitHub workflow. Essentially, we want to understand how your team members shares a codebase, avoid conflicts and deploys the application.
-<!-- 
- * Be concise, yet precise. For example, "we use pull-requests" is not a precise statement since it leaves too many open questions - Pull-requests from where to where? Who reviews the pull-requests? Who is responsible for merging them? etc.
- * If applicable, specify any naming conventions or standards you decide to adopt.
- * Describe your overall deployment process from writing code to viewing a live applicatioon
- * What deployment tool(s) are you using and why
- * Don't forget to **explain why** you chose this workflow or particular aspects of it!
- -->
-
-Before we started writing everything, we had a group meeting first to split our team into subgroups working for individual categories. Specifically, to keep everyone on track, we have at least two persons working on the same category. We also had the persons working on the same part of our project sitting besides each other for communication once we started coding.
+Before we started the actual coding, we had a group meeting to split our team into subgroups, each working on one major part of the project (the breakdown is detailed below). To ensure the completeness of each part within the desired time, we have at least two people working on the same category so that they can reach out and offer help to one another.
 
 We split our project into three parts:
-1) Front-end(Fabric) Members: Junkai, Jae and Zhifan
-Junkai, Jae and Frank worked on building our FBC application page, which users put stickies on the fabric for their canvas.
-2) Front-end(Log in and Library) Members: Xuhui and Xinyi
-Xuhui and Xinyi worked on building registration, log in and profile page, as well as the library page for users/managers to move/manage to other canvas projects that they are participating in, if applicable.
+1) Front-end(Fabric) Members: Junkai, Jay, and Frank
+Junkai, Jae, and Frank worked on building the FBC application page, where users put stickies onto the virtual canvas.
+2) Front-end(User pages) Members: Xuhui and Xinyi
+Xuhui and Xinyi worked on building registration, log in, user profile, as well as the library page for users/managers to keep track of and access all canvas projects that they have participated in, if applicable.
 3) Back-end Members: Fanxuan and Luya
-Fanxuan and Luya worked on back-end programming such as storing user and canvas information, munipulating and sending information when our website need it.
+Fanxuan and Luya worked on back-end development to receive data sent from the front-end, interpret the meaning of the data, manipulate the data to get relevant information that needs to be updated on the database, and send data back to the front-end for displaying purposes.
+Our database is designed to store user information, canvas information, and the relationship between users and canvases.
 
-We split our work this way so that not too many members are working on the same parts of our project which helped us avoid having conflicts on our code. We also create sub-branches for our functionality which would be explained below.
+We split our work this way so that not too many members are working on the same part of our project which helps us avoid conflicts on our code as well as maximize efficiency.
 
-* Sub-branches for each funtionality (front-end, back-end)
-  - Front-end: profile, canvas+fabric, fabric_experiment, canvas-apapt-ejs
-  profile: 
-  sign up, log in page, as well as editing user's information.
-  canvas+fabric:
-  the fbc application page(main), and also the library page.
-  fabric_experiement:
-  the branch where we were testing how fabric.js worked and showed our partner our progress on the project.
-  canvas-adapt-ejs:
-  the branch where we adapt our canvas page to ejs for the back end.
-  back-end:
-  the branch where all back end codes are done.
+We create sub-branches on Git based on the functionality for tracking purpose which is explained below.
 
-We started our project by having profile, canvas+fabric and back-end, three branches, excluding the master.
-Then, for testing purpose, we create the sub-branch of canvas+fabric, the fabric_experiment. After we merged canvas+fabric and fabric_experiment together, we started a new branch called canvas-adpat-ejs for adapting ejs for the connections of our front end and back end.
-We then merged canvas-adapt-ejs back to canvas+fabric, and merged profile and master together. Later, we merged canvas+fabric to our master branch and finally we added backend to master as well to finish our deliverable.
+* Front-end
+  - ProfilePageDev
+	sign up page, log in page, and user profile page including ejs and css for each
+  - canvas+fabric
+	user library page including ejs and css, and FBC canvas page
+  - fabric_experiment
+	for testing how fabric.js works and showing our partner the intermediate progress on the project
+  - canvas-adapt-ejs
+	for adapting the FBC canvas page to ejs version
+  
+* Back-end
+  - backend
+	back-end files, database, and other merged front-end pages in ejs version for testing the correctness of whether front-end and back-end are linked properly
 
-We chose this workflow because we effictively avoided conflits by the fact that it was easy for any team members to know what other team members are writing since only one or two memembers are on the same team.
+We started our project by having ProfilePageDev, canvas+fabric, and backend, three branches, excluding the master.
+
+Then, for testing purpose, we created a sub-branch of canvas+fabric, the fabric_experiment. After we merged canvas+fabric and fabric_experiment together, we started a new sub-branch called canvas-adapt-ejs for converting from original vanilla js to ejs version in order to make connections between front-end and back-end.
+We then merged canvas-adapt-ejs back to canvas+fabric.
+
+After that, we merged ProfilePageDev and master together as it was completed first. Later, we merged canvas+fabric to our master branch. And finally we added backend to master and it indicated the finish of our deliverable 2.
 
 For deployment tools, we have node.js for local and heroku for online. 
-We used node.js becasuse our project does not have intensive operations but only connections between server and clients. node.js as a platform that is capable of handling a huge number of simultaneous connections suited for our need.
-We used heroku not only because it is widely poupular but also the fact that it is easy to set up, we only had to push and commit our codes to our heroku git repository. 
+We use node.js because our project does not have intensive operations but only connections between server and clients. Node.js as a platform that is capable of handling a huge number of simultaneous connections best suits for our need.
+We use heroku not only because it is widely popular but also the fact that it is easy to set up by simply pushing our codes to the heroku git repository. 
 
 
 ## Product
