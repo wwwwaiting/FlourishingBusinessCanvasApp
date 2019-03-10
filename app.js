@@ -18,7 +18,7 @@ const Comment = mongoose.model('Comment');
 const User = mongoose.model('User');
 const History = mongoose.model('History');
 const Sticky = mongoose.model('Sticky');
-const canvas = mongoose.model('Canvas');
+const Canvas = mongoose.model('Canvas');
 mongoose.Promise = global.Promise;
 const PORT = process.env.PORT || 3000;
 
@@ -40,6 +40,7 @@ const regUser = 2;
 const manager = 3;
 const admin = 4;
 const registrationRquest = new Array();
+const canvasCount = 0;
 
 
 // render login page
@@ -92,7 +93,8 @@ app.post('/login', function(req, res) {
         if (pwd === user.pwd) {
           res.cookie('name', name);
           res.cookie('email', email);
-          res.send(tru);
+          console.log("login finish");
+          res.send(2);
         } else {
           res.send(fal);
         }
@@ -158,6 +160,246 @@ app.get('/canvas/get', function(req, res){
 	
 });
 
+
+// get canvas from library page
+app.get('/library/get', function(req, res){
+	var email = req.cookies.name;
+	User.find({'email':email}, function(err, result){
+		if (err) {
+			console.log(err);		
+		} else {
+			var user = result[0];
+			var c_list = user.canvas;
+			
+			// loop through all canvas list
+			var title = new Array();
+			var canvasId = new Array();
+			var users = new Array();
+			for (var i = 0; i < c_list.length; i++){
+				var t = c_list[i].title;
+				var id = c_list[i].id;
+				var user = c_list.users;
+				title.push(t);
+				canvasId.push(id);
+				users.push(user);				
+			}
+			
+			// send back to front end
+			res.send({title:title, canvas:canvasId, users:users});
+		}
+	});
+});
+
+
+// edit user in manage page
+app.post('/manager/user', function(req, res){
+	 var type = req.body.type;
+	 var id = req.body.canvasId;
+	 var email = req.cookies.email;
+	 Canvas.find({'id':id}, function(err, result){
+	 	if (err) {
+			console.log(err);	 	
+	 	} else {
+			if (type == "add"){
+				//check if user is in the db
+				User.find({'email':email}, function(err, result){
+					if (err){
+						console.log(err);					
+					} else if (result.length == 0){
+						//user not in the db	
+						var canvasList = new Array();
+						var user = new User({
+                		name: '',
+                		email: email,
+                		pwd: '',
+                		role: regReg,
+                		canvas: canvasList,
+                		occupation: '',
+                		status: 2,
+                		phone: '',
+                		company: ''
+              		});	
+              		User.create(user, function(err, result) {
+               		if (err) {
+                  		console.log(err);
+                  		res.send(fal);
+                		} else {
+                  		res.send(tru);  // send true when finish create user in db.
+                		}
+              		});		
+					} else {
+						//user in db
+						Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
+							if (err) {
+								console.log(err);	
+								res.send(fal);						
+							} else {
+								res.send(tru);	 // send true when add user into canvas's user list.						
+							}					
+						});
+					}
+				});
+			} else if (type == "remove"){
+				// assume user is already in the db
+				Canvas.findOneAndUpdate({id:id}, {$pull: {users:email}}, function(err, result){
+					if (err) {
+						console.log(err);	
+						res.send(fal);						
+					} else {
+						res.send(tru);	 // send true when remove user from canvas's user list.						
+					}					
+				});
+			}	 	
+	 	}
+	 });
+});
+
+
+// add canvas from manager page
+app.post('/manager/add', function(req, res){
+	var owner = req.body.owner;
+	var title = req.body.title;
+	var empty = new Array();
+	var time = new Date();
+	
+	// create a new canvas with given owner and title.
+	var canvas = new Canvas({
+		id: canvasCount,
+		owner: owner,
+		title: title,
+		users: empty,
+		stickies: empty,
+		createDate: time,
+		editHistory: empty
+	});
+	
+	// add canvas to database
+	Canvas.create(canvas, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);		
+		} else {
+			canvasCount += 1;  // update global count number.
+			res.send(tru);
+		}
+	});
+});
+
+
+// delete canvas from manager page
+app.delete('/manager/del', function(req, res){
+	var id = req.body.canvasId;
+	Canvas.findOneAndDelete({id:id}, function(err, result){
+		if (err) {
+			console.log(err);	
+			res.send(fal);	
+		} else {
+			var u = result.users;
+			var s = result.stickies;
+			var e = result.editHistory;
+			
+			// loop through to delete canvasId from users
+			u.forEach(function(email){
+				User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
+					if (err) {
+						console.log(err);
+						res.send(fal);					
+					} 
+				});
+			});
+			
+			// loop through to delete stickies
+			s.foreach(function(sid){
+				Sticky.findOneAndDelete({id:sid}, function(err, result){
+					if (err) {
+						console.log(err);	
+						res.send(fal);				
+					}
+				});
+			});
+			
+			// loop through to delete editHistory
+			e.foreach(function(eid){
+				History.findOneAndDelete({id:eid}, function(err, result){
+					if (err) {
+						console.log(err);
+						res.send(fal);					
+					}
+				});
+			});
+			
+			// delete everything
+			res.send(tru);		
+		}		
+	});
+});
+
+
+// get user information for profile page
+app.get('/profile/get', function(req, res){
+	var email = req.cookies.email;
+	User.find({email:email}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);		
+		} else {
+			var user = result[0];
+			res.send({phone:user.phone, company:user.company, occupation:user.occupation});		
+		}
+	});
+});
+
+
+// edit user information for profile page
+app.post('/profile/edit', function(req, res){
+	var n = req.body.name;
+	var p = req.body.phone;
+	var c = req.body.company;
+	var o = req.body.occupation;
+	var e = req.cookies.email;
+	
+	User.findOndAndUpdate({email:e}, {$push: {name:n, phone:p, company:c, occupation:o}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);		
+		} else {
+			res.send(tru);		
+		}
+	});
+});
+
+
+// get password for password page
+app.get('/pwd/get', function(req, res){
+	var email = req.cookies.email;
+	User.find({email:email}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);		
+		} else {
+			var user = result[0];
+			res.send({pwd:user.pwd});
+		}
+	});
+});
+
+
+// change password for password page
+app.post('/pwd/edit', function(req, res){
+	var pwd = req.body.pwd;
+	var email = req.cookies.email;
+	User.findOneAndUpdate({email:email}, {$push:{pwd:pwd}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);		
+		} else {
+			res.send(tru);		
+		}
+	});
+});
+
+
+// get user information from 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
