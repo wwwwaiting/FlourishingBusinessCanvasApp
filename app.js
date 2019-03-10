@@ -508,7 +508,6 @@ app.delete('/manager/del', function(req, res){
 			} else {
 				var u = result.users;
 				var s = result.stickies;
-				var e = result.editHistory;
 			
 				// loop through to delete canvasId from users
 				u.forEach(function(email){
@@ -526,16 +525,6 @@ app.delete('/manager/del', function(req, res){
 						if (err) {
 							console.log(err);	
 							res.send(fal);				
-						}
-					});
-				});
-			
-				// loop through to delete editHistory
-				e.foreach(function(eid){
-					History.findOneAndDelete({id:eid}, function(err, result){
-						if (err) {
-							console.log(err);
-							res.send(fal);					
 						}
 					});
 				});

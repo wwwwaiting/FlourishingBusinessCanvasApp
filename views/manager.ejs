@@ -67,15 +67,6 @@
     let canvasIds = []
     let canvasTitles = []
 
-    for (let i = 1; i <= 7; i++) {
-        const users = []
-        for (let e = 1; e <= i; e++) {
-            users.push(e)
-        }
-        canvasUsers.push(users)
-        canvasIds.push(i)
-        canvasTitles.push(`fbc${i}`)
-    }
     console.log(canvasUsers)
     console.log(canvasIds)
     console.log(canvasTitles)
@@ -90,15 +81,15 @@
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
-        // $.ajax({
-        //     type: "GET",
-        //     url: "/library/get",
-        //     success: function (data) {
-        //         canvasTitles = data.title
-        //         canvasIds = data.canvas
-        //         canvasUsers = data.users
-        //     }
-        // })
+         $.ajax({
+             type: "GET",
+             url: "/library/get",
+             success: function (data) {
+                 canvasTitles = data.title
+                 canvasIds = data.canvas
+                 canvasUsers = data.users
+             }
+         })
         renderFbc()
     }
 
