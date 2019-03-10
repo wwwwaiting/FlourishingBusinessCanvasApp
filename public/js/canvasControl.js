@@ -703,7 +703,7 @@ function displayEditForm(sticky) {
             url: "/canvas/edit",
             data: {
                 type: "color",
-                change: sticky.sticky.item(0).get('fill'),
+                change: sticky.item(0).get('fill'),
                 canvasId: canvas.canvasId,
                 stickyId: sticky.stickyId
             },
