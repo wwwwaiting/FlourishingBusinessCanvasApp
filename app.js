@@ -54,7 +54,7 @@ app.get('/login', function(req, res) {
 
 // render canvas page
 app.get('/canvas', function(req, res){
-	res.render('canvas', {name:req.cookies.name, email:req.cookies.email});
+	res.render('canvas', {name:req.cookies.name, email:req.cookies.email, id:req.cookies.id});
 });
 
 // render manager page
@@ -393,6 +393,7 @@ app.post('/canvas/edit', function(req, res){
 
 // get canvas from library page
 app.get('/library/get', function(req, res){
+	res.clearCookie('id');
 	var email = req.cookies.name;
 	User.find({'email':email}, function(err, result){
 		if (err) {
@@ -421,11 +422,19 @@ app.get('/library/get', function(req, res){
 });
 
 
+// store the canvas id into cookie
+app.get('/library/id', function(req, res){
+	var cavasId = req.body.cavasId;
+	res.cookie('id', canvasId);
+	res.send(tru);
+});
+
+
 // edit user in manage page
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-	 var emails = req.cookies.email;   // now is a list of email
+	 var emails = req.body.email;   // now is a list of email
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);	 	
@@ -460,7 +469,7 @@ app.post('/manager/user', function(req, res){
               			});		
 						} else {
 							//user in db
-							Canvas.findOneAndUpdate({id:id}, {users:email}, function(err, result){
+							Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
 								if (err) {
 									console.log(err);	
 									res.send(fal);						
@@ -470,7 +479,7 @@ app.post('/manager/user', function(req, res){
 							});
 						}
 					});
-				}
+				});
 			} else if (type == "remove"){
 				// assume user is already in the db
 				Canvas.findOneAndUpdate({id:id}, {$pull: {users:email}}, function(err, result){
