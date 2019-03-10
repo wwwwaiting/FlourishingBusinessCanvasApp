@@ -723,12 +723,10 @@ function displayEditForm(sticky) {
         // send post request 
         $.ajax({
             type: 'POST',
-            url: "/canvas/edit",
+            url: "/canvas/delete",
             data: {
-                // type: "color",
-                // change: sticky.sticky.item(0).get('fill'),
-                // canvasId: canvas.canvasId,
-                // stickyId: sticky.stickyId
+                canvasId: canvas.canvasId,
+                stickyId: sticky.stickyId
             },
             success: function (resultData) {
                 console.log(resultData)
