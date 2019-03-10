@@ -458,19 +458,21 @@ function createSticky() {
         url: "/canvas/add",
         data: {
             canvasId: canvas.canvasId,
-            content: newSticky.get('content'),
-            position: {
-                left: newSticky.get('left'),
-                top: newSticky.get('top')
-            },
-            size: {
-                width: newSticky.get('width'),
-                height: newSticky.get('height')
-            },
-            color: newSticky.item(0).get('fill'),
-            title: '',
-            comment: [],
-            optimalFields: {}
+            sticky: {
+                content: newSticky.get('content'),
+                position: {
+                    left: newSticky.get('left'),
+                    top: newSticky.get('top')
+                },
+                size: {
+                    width: newSticky.get('width'),
+                    height: newSticky.get('height')
+                },
+                color: newSticky.item(0).get('fill'),
+                title: '',
+                comment: [],
+                optimalFields: {}
+            }   
         },
         success: function (resultData) {
             console.log(resultData)
