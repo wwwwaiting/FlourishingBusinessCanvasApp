@@ -24,6 +24,15 @@ $(document).ready(main);
 // Used to call functions after page is fully loaded.
 function main() {
     // send get request and set global arrays
+    $.ajax({
+        type: "GET",
+        url: "/library/get",
+        success: function (data) {
+            canvasTitles = data.title
+            canvasIds = data.canvas
+            canvasUsers = data.users
+        }
+    })
     renderFbc()
 }
 
