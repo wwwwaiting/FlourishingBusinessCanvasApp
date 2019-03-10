@@ -199,7 +199,7 @@ Before we started the actual coding, we had a group meeting to split our team in
 
 We split our project into three parts:
 1) Front-end(Fabric) Members: Junkai, Jay, and Frank
-Junkai, Jae, and Frank worked on building the FBC application page, where users put stickies onto the virtual canvas.
+Junkai, Jay, and Frank worked on building the FBC application page, where users put stickies onto the virtual canvas.
 2) Front-end(User pages) Members: Xuhui and Xinyi
 Xuhui and Xinyi worked on building registration, log in, user profile, as well as the library page for users/managers to keep track of and access all canvas projects that they have participated in, if applicable.
 3) Back-end Members: Fanxuan and Luya
@@ -240,56 +240,39 @@ We use heroku not only because it is widely popular but also the fact that it is
 
 #### Goals and tasks
 
- * Describe your goals for this iteration and the tasks that you will have to complete in order to achieve these goals.
- * Order the items from most to least important.
- * Feel free (but not obligated) to specify some/all tasks as user stories.
-
 Goal:
-Ouf main goal is to build a website where users can access and work on their FBCs online.
+For Deliverable 2, our main goal is to build a website where a single user can access and work on multiple FBCs online.
 
-Tasks(Ranking from the most important to the least):
+Tasks (Ranking from the most important to the least):
 1) Building the FBC application page
-To allow users to access virtual FBC, the most important task is to build the FBC application page which allows user to perform all options such as, adding, removing stickies to the canvas
+To allow users to access virtual FBC canvas and perform options such as adding stickies, removing stickies, moving around stickies, changing sticky information, and viewing edit history, etc.
 
 2) Building the library page
-To let users who are participating in multiple FBCs be able to edit all of their work.
+To provide users who are involved in multiple FBCs a way to keep track of all their work and access each individual canvas. It is the page that serves as a connection between user and FBC canvas.
 
 3) Connections between server and clients
-To be able to manage our website, allow users to work on the FBC at the same time, and modify their password etc.
+To be able to manage our website and persist changes made on data.
 
-4) User profile page
-To change basic information of users' profile.
-
-
+4) User pages
+To change basic information of user's profile and reset password.
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
-
- * Artifacts can be text, code, images, videos, interactive mock-ups and/or any other useful artifact you can think of.
- * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
- * Be concise, yet precise.         
-   For example: "Build the website" is not precise at all, but "Build a static home page and upload it somewhere, so that it is publicly accessible" is much clearer.
-
-
 Sticky auto positioning:
-Once users create a new sticky, it can be dragged under any categories of the canvas. Futhermore, we had created an auto positioning function which automatically fixes a sticky's position to be within one of its closest category if it was put in the middle of two categories, to avoid confusion and save time for users to organize the canvas.
+Once users create a new sticky, it can be dragged anywhere of the canvas. Thus we implemented an auto positioning function which automatically fixes a sticky's position to be within its closest box if it was put in the middle of two, to avoid confusion and most importantly, to identify the category it belongs to.
 
-Search function(Sticky hashtag):
-We created a search function on our main application page for the ease of finding a specific sticky that a user wants. In addition, we propose user to add hashtags once they finish writing a sticky so that they can search for stickies with the exact hashtags which helps them find the content that they need even easier.
-
-Library:
-We created a library page for users to easily access multiple FBCs at the same time. Compared to real life FBCs, having a library page on our webisite is much more efficient.
+Search function:
+We added a search bar on our canvas page for the ease of finding a specific sticky a user wants within the current canvas. The search function identifies between plain English words and hashtags.
+We encourage users to add hashtags once they finish writing sticky content because it is a good way to summarize the main topic of the sticky which later helps them narrow down the search and find the desired sticky more precisely.
 
 Comment:
-We implemented comment system under each stikies so that valuable disscussions can be stored in the stikies if needed. This is hard to accomplish in real life FBCs thus it presents our project idea. 
+We implemented a comment system under each sticky so that valuable disscussions can be stored. This is hard to accomplish in real-life physical FBCs, thus it makes the purpose of our project more standing-out. 
 
 Export Import:
-We implemented export and import function which allow users to continue their previous unfinished FBCs or save their current FBC offline. 
+We implemented export and import functions which allow users to reload their previously unfinished FBCs or save their FBCs offline. 
 
 Zooming:
-We allow users to zoom in or out their FBCs which will allow them to focus on individual categories or have a look at the full view.
+Users are able to zoom in or out their FBCs which provides them opportunities to focus on details or take a look at the full view.
 
 Text auto fitting:
-We allow users to enlarge or reduce the size of stikies, when doing so, the text inside the stikies will automatically change its size accordingly.
-
+Users are able to enlarge or reduce the size of a sticky, and by doing so the sticky text font size adjusts accordingly.
