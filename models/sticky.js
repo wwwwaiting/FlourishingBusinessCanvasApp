@@ -1,4 +1,10 @@
 var mongoose = require("mongoose");
+var CommentSchema = new mongoose.Schema({
+  id: Number,
+  user: String,
+  content: String,
+  modifiedTime: Date
+});
 var StickySchema = new mongoose.Schema({
   id: Number,
   canvasId: Number,
@@ -14,7 +20,7 @@ var StickySchema = new mongoose.Schema({
   color: String,
   modifiedTime: Date,
   title: String, 
-  comment: [Number],
+  comment: [CommentSchema],
   optionalFields: Object
 });
 

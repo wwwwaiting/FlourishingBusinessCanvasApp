@@ -41,10 +41,6 @@ const manager = 3;
 const admin = 4;
 
 const registrationRquest = new Array();
-const stickyCount = 0;
-const commentCount = 0;
-const historyCount = 0;
-const canvasCount = 0;
 const changeType = ['content', 'position', 'size', 'color', 'comment'];
 
 // render login page
@@ -175,48 +171,49 @@ app.post('/register', function(req, res) {
 });
 
 
+
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
-  var canvasId = req.body.canvasId;
-  Canvas.find({'id': canvasId},function(err, result) {
+  var canvasId = req.cookies.id;
+  var stickyList = [];
+  Canvas.find({id: 1},function(err, result) {
     if (err) {
       console.log(err);
       res.send(err);
-    } else if (result.length === 0) {
-      console.log('The requested canvas does not exist!');
-      res.send(fal);
-    } else {
+    } else if (result.length !== 0) {
       var canvas = result[0];
       var result = {
+        'canvasId': canvasId,
         'owner':canvas.owner,
         'title':canvas.title,
         'createDate': canvas.createDate
       };
       // constract the sticky list that the result need
       var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
-      var stickyList = stickies.map(function(id) {
-        Sticky.find({'id': id},function(err, sti) {
+      let count = 1;
+      for (i = 0; i < stickies.length; i++){
+        let ID = stickies[i];
+        Sticky.find({id: ID},function(err, sti) {
           if (err) {
             console.log(err);
             res.send(err);
-          } else if (sti.length === 0) {
-            console.log('The requested sticky does not exist!');
-            res.render(fal);
-          } else {
-            
+          } else if (sti.length !== 0) {
             var sticky = sti[0];
-            return sticky;
+            stickyList.push(sticky);
+            if (count === stickies.length){
+              result.stickies = stickyList;  
+              res.send(result.json);
+            }
+            count ++;
           }
         });
-      });
-      result.stickies = stickyList;    
-      res.send(result);
+      }
     }
   });
 });
 
-app.put('/canvas/add', function(req, res){
-  var canvas = req.body.canvasId;
+app.post('/canvas/add', function(req, res){
+  var canvas =  parseInt(req.body.canvasId);
   var sticky = req.body.sticky;
   Canvas.find({'id':canvas}, function(err, result){
     if(err){
@@ -226,7 +223,7 @@ app.put('/canvas/add', function(req, res){
       res.send(fal);
     } else {
       // create new sticky
-      sticky.id = stickyCount;
+      sticky.canvasId = canvas;
       sticky.modifiedTime = new Date();
       var newStic = new Sticky(sticky)
       Sticky.create(newStic, function(err, newlyCreated) {
@@ -238,28 +235,24 @@ app.put('/canvas/add', function(req, res){
         } 
         else {
           // add sticky index to the canava
-          Canvas.findOneAndUpdate({id:canvas}, { $push: { stickies : stickyCount } });
-          stickyCount ++; // increase the stickycount since it's an global index for sticky id
-          var newHis = new History({
-            id: historyCount,
+          var newHistory = {
             stickyID: newlyCreated.id,
             user: req.cookies.email,
             content: 'Add new sticky',
             modifiedTime: new Date()
+          };
+          Canvas.findOneAndUpdate( {id:canvas}, 
+            { $push: { stickies : sticky.id, editHistory : newHistory } }, 
+            function(err, updated){
+              if (err) {
+                console.log(err);
+                res.send(fal);
+              } else if (updated == null){
+                res.send(fal);
+              } else{
+                res.send(tru);
+              };
           });
-      
-          History.create(newHis,function(err, Created){
-            if (err) {
-              console.log(err);
-              res.send(fal);
-            } else if (Created == null){
-              res.send(fal);
-            } else{
-              Canvas.findOneAndUpdate({id:canvas}, { $push: { editHistory : historyCount } });
-              historyCount ++;
-            };
-          });
-          res.send(tru);
         }
       });
     }
@@ -269,127 +262,104 @@ app.put('/canvas/add', function(req, res){
 app.delete('/canvas/delete', function(req, res){
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
-  Canvas.findOneAndUpdate({
-    id : canvas
-  }, {$pull: {
-        stickies: sticky // delete sticky id from the sticky list in canvas
-    }
-  }, function(err, result) {
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (result == null){
-      res.send(fal);
-    }
-  });
-  // delete the requested id
-  Sticky.findOneAndDelete({id:sticky}, function(err, result){
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (result == null){
-      res.send(fal);
-    } else{ 
-      var comment = result.comment; // the list of comment id in the Sticky
-      comment.forEach(function(commentId) { // delete all the comments related to this sticky
-        Comment.findOneAndDelete({id:commentId}, function(err, deleted){
+  var newHistory = {
+    stickyID: sticky,
+    user: req.cookies.email,
+    content: 'Delete sticky',
+    modifiedTime: new Date()
+  };
+  Canvas.findOneAndUpdate({id: canvas}, {
+      $pull: { stickies: sticky }, // delete sticky id from the sticky list in canvas
+      $push: { editHistory: newHistory } // add new history to the canvas
+    }, function (err, result) {
+      if (err) {
+        console.log(err);
+        res.send(fal);
+      } else if (result == null) {
+        res.send(fal);
+      } else {
+        // delete the canvas by the requested id
+        Sticky.findOneAndDelete({id:sticky}, function(err, deleted){
           if (err) {
             console.log(err);
             res.send(fal);
-          } else if (deleted === null) {
-            console.log('The requested comment does not exist!');
+          } else if (deleted == null){
             res.send(fal);
+          } else{ 
+            res.send(tru);
           }; 
         });
-      });
-      // add new history to the database
-      var newHis = new History({
-        id: historyCount,
-        stickyID: sticky,
-        user: req.cookies.email,
-        content: 'Delete sticky',
-        modifiedTime: new Date()
-      });
-  
-      History.create(newHis,function(err, newlyCreated){
-        if (err) {
-          console.log(err);
-          res.send(fal);
-        } else if (newlyCreated == null){
-          res.send(fal);
-        } else{
-          // update the list of edithistory in the corresponding canvas
-          Canvas.findOneAndUpdate({id:result.canvasId}, { $push: { editHistory : historyCount } });
-          historyCount ++;
-        };
-      });
-      res.send(tru);
-    }
-  });
-})
+      };
+    });
+});
 
 app.post('/canvas/edit', function(req, res){
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
   var type = req.body.type;
   var change = req.body.change;
+  var newHis = {
+    stickyID: sticky,
+    user: req.cookies.email,
+    content: 'Modified' + type,
+    modifiedTime: new Date()
+  };
   if (changeType.indexOf(type) !== -1){ 
     if (type === 'comment'){ 
       // create new comment
-      var newCom = new Comment({
-        id:commentCount,
+      var newCom = {
         stickyID: sticky,
         user: req.cookies.email,
         content: change,
         modifiedTime: new Date()
-      });
-      Comment.create(newCom, function(err, newlyCreated) {
-        if (err) {
-          console.log(err);
-          res.send(fal);
-        } else if (newlyCreated == null){
-          res.send(fal);
-        }
-        else { // link new comment to the corresponding sticky
-          Sticky.findOneAndUpdate({id:sticky}, { $push: { comment : commentCount } });
-          commentCount ++;
-        }
-      });
-    }
-    else{
-      // update sticky information only
-      Sticky.findOneAndUpdate({id:sticky}, {type:change, modifiedTime:new Data()},function(err, result){
+      };
+      // add new comment to the corresponding sticky
+      Sticky.findOneAndUpdate({id:sticky}, { $push: { comment : newCom } }, function(err, result){
         if (err) {
           console.log(err);
           res.send(fal);
         } else if (result == null){
           res.send(fal);
+        }else{
+          Canvas.findOneAndUpdate({id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
+            if (err) {
+              console.log(err);
+              res.send(fal);
+            } else if (result == null){
+              res.send(fal);
+            } else{
+              res.send(tru);
+            }
+          });
         };
       });
+      commentCount ++;
     }
-    // create new history 
-    var newHis = new History({
-      id: historyCount,
-      stickyID: sticky,
-      user: req.cookies.email,
-      content: 'Modified' + type,
-      modifiedTime: new Date()
-    });
+    else{
+      // update sticky information only
+      Sticky.findOneAndUpdate({id:sticky}, {type:change, modifiedTime:new Date()},function(err, result){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else if (result == null){
+          res.send(fal);
+        }else{
+          Canvas.findOneAndUpdate({id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
+            if (err) {
+              console.log(err);
+              res.send(fal);
+            } else if (result == null){
+              res.send(fal);
+            } else{
+              res.send(tru);
+            }
+          });
 
-    History.create(newHis,function(err, newlyCreated){
-      if (err) {
-        console.log(err);
-        res.send(fal);
-      } else if (newlyCreated == null){
-        res.send(fal);
-      } else{
-        Canvas.findOneAndUpdate({'id':canvas}, { $push: { editHistory : historyCount } }); // link history to the canvas
-        historyCount ++;
-      };
-    });
+        }
+      });
+    }
   }
 });
-
 
 // get canvas from library page
 app.get('/library/get', function(req, res){
