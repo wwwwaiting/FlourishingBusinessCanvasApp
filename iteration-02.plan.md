@@ -259,6 +259,24 @@ We used heroku not only because it is widely poupular but also the fact that it 
  * Order the items from most to least important.
  * Feel free (but not obligated) to specify some/all tasks as user stories.
 
+Goal:
+Ouf main goal is to build a website where users can access and work on their FBCs online.
+
+Tasks(Ranking from the most important to the least):
+1) Building the FBC application page
+To allow users to access virtual FBC, the most important task is to build the FBC application page which allows user to perform all options such as, adding, removing stickies to the canvas
+
+2) Building the library page
+To let users who are participating in multiple FBCs be able to edit all of their work.
+
+3) Connections between server and clients
+To be able to manage our website, allow users to work on the FBC at the same time, and modify their password etc.
+
+4) User profile page
+To change basic information of users' profile.
+
+
+
 #### Artifacts
 
 List/describe the artifacts you will produce in order to present your project idea.
@@ -267,3 +285,26 @@ List/describe the artifacts you will produce in order to present your project id
  * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
  * Be concise, yet precise.         
    For example: "Build the website" is not precise at all, but "Build a static home page and upload it somewhere, so that it is publicly accessible" is much clearer.
+
+
+Sticky auto positioning:
+Once users create a new sticky, it can be dragged under any categories of the canvas. Futhermore, we had created an auto positioning function which automatically fixes a sticky's position to be within one of its closest category if it was put in the middle of two categories, to avoid confusion and save time for users to organize the canvas.
+
+Search function(Sticky hashtag):
+We created a search function on our main application page for the ease of finding a specific sticky that a user wants. In addition, we propose user to add hashtags once they finish writing a sticky so that they can search for stickies with the exact hashtags which helps them find the content that they need even easier.
+
+Library:
+We created a library page for users to easily access multiple FBCs at the same time. Compared to real life FBCs, having a library page on our webisite is much more efficient.
+
+Comment:
+We implemented comment system under each stikies so that valuable disscussions can be stored in the stikies if needed. This is hard to accomplish in real life FBCs thus it presents our project idea. 
+
+Export Import:
+We implemented export and import function which allow users to continue their previous unfinished FBCs or save their current FBC offline. 
+
+Zooming:
+We allow users to zoom in or out their FBCs which will allow them to focus on individual categories or have a look at the full view.
+
+Text auto fitting:
+We allow users to enlarge or reduce the size of stikies, when doing so, the text inside the stikies will automatically change its size accordingly.
+
