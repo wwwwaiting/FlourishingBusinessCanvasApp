@@ -6,7 +6,9 @@ var UserSchema = new mongoose.Schema({
   role: Number,
   canvas: [Number],
   occupation: String,
-  status: Number
+  status: Number,
+  phone: String,
+  company: String
 });
 
 module.exports = mongoose.model("User", UserSchema);

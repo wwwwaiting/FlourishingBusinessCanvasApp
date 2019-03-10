@@ -2,20 +2,19 @@ var mongoose = require("mongoose");
 var StickySchema = new mongoose.Schema({
   id: Number,
   canvasId: Number,
-  content: String,
+  content: String,  // hashtag in content
   position: {
     left: Number,
-    top: Number,
-    width: Number,
-    height: Number,
-    textBoxWidth: Number,
-    textBoxHeight: Number
+    top: Number
+  },
+  size :{
+  	 width: Number,
+    height: Number
   },
   color: String,
   modifiedTime: Date,
-  hashtag: String,
+  title: String, 
   comment: [Number],
-  editHistory: [Number],
   optionalFields: Object
 });
 
