@@ -214,8 +214,42 @@ Describe your Git / GitHub workflow. Essentially, we want to understand how your
  * What deployment tool(s) are you using and why
  * Don't forget to **explain why** you chose this workflow or particular aspects of it!
  -->
+
+Before we started writing everything, we had a group meeting first to split our team into subgroups working for individual categories. Specifically, to keep everyone on track, we have at least two persons working on the same category. We also had the persons working on the same part of our project sitting besides each other for communication once we started coding.
+
+We split our project into three parts:
+1) Front-end(Fabric) Members: Junkai, Jae and Zhifan
+Junkai, Jae and Frank worked on building our FBC application page, which users put stickies on the fabric for their canvas.
+2) Front-end(Log in and Library) Members: Xuhui and Xinyi
+Xuhui and Xinyi worked on building registration, log in and profile page, as well as the library page for users/managers to move/manage to other canvas projects that they are participating in, if applicable.
+3) Back-end Members: Fanxuan and Luya
+Fanxuan and Luya worked on back-end programming such as storing user and canvas information, munipulating and sending information when our website need it.
+
+We split our work this way so that not too many members are working on the same parts of our project which helped us avoid having conflicts on our code. We also create sub-branches for our functionality which would be explained below.
+
 * Sub-branches for each funtionality (front-end, back-end)
-  - Front-end: 
+  - Front-end: profile, canvas+fabric, fabric_experiment, canvas-apapt-ejs
+  profile: 
+  sign up, log in page, as well as editing user's information.
+  canvas+fabric:
+  the fbc application page(main), and also the library page.
+  fabric_experiement:
+  the branch where we were testing how fabric.js worked and showed our partner our progress on the project.
+  canvas-adapt-ejs:
+  the branch where we adapt our canvas page to ejs for the back end.
+  back-end:
+  the branch where all back end codes are done.
+
+We started our project by having profile, canvas+fabric and back-end, three branches, excluding the master.
+Then, for testing purpose, we create the sub-branch of canvas+fabric, the fabric_experiment. After we merged canvas+fabric and fabric_experiment together, we started a new branch called canvas-adpat-ejs for adapting ejs for the connections of our front end and back end.
+We then merged canvas-adapt-ejs back to canvas+fabric, and merged profile and master together. Later, we merged canvas+fabric to our master branch and finally we added backend to master as well to finish our deliverable.
+
+We chose this workflow because we effictively avoided conflits by the fact that it was easy for any team members to know what other team members are writing since only one or two memembers are on the same team.
+
+For deployment tools, we have node.js for local and heroku for online. 
+We used node.js becasuse our project does not have intensive operations but only connections between server and clients. node.js as a platform that is capable of handling a huge number of simultaneous connections suited for our need.
+We used heroku not only because it is widely poupular but also the fact that it is easy to set up, we only had to push and commit our codes to our heroku git repository. 
+
 
 ## Product
 
