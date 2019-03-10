@@ -54,7 +54,7 @@ app.get('/login', function(req, res) {
 
 // render canvas page
 app.get('/canvas', function(req, res){
-	res.render('canvas', {name:req.cookies.name, email:req.cookies.email});
+	res.render('canvas', {name:req.cookies.name, email:req.cookies.email, id:req.cookies.id});
 });
 
 // render manager page
@@ -393,6 +393,7 @@ app.post('/canvas/edit', function(req, res){
 
 // get canvas from library page
 app.get('/library/get', function(req, res){
+	res.clearCookie('id');
 	var email = req.cookies.name;
 	User.find({'email':email}, function(err, result){
 		if (err) {
@@ -421,11 +422,19 @@ app.get('/library/get', function(req, res){
 });
 
 
+// store the canvas id into cookie
+app.get('/library/id', function(req, res){
+	var cavasId = req.body.cavasId;
+	res.cookie('id', canvasId);
+	res.send(tru);
+});
+
+
 // edit user in manage page
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-	 var emails = req.cookies.email;   // now is a list of email
+	 var emails = req.body.email;   // now is a list of email
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);	 	
@@ -457,10 +466,11 @@ app.post('/manager/user', function(req, res){
                 			} else {
                   			res.send(tru);  // send true when finish create user in db.
                 			}
+
               			});		
 						} else {
 							//user in db
-							Canvas.findOneAndUpdate({id:id}, {users:email}, function(err, result){
+							Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
 								if (err) {
 									console.log(err);	
 									res.send(fal);						
@@ -489,7 +499,7 @@ app.post('/manager/user', function(req, res){
 
 // add canvas from manager page
 app.post('/manager/add', function(req, res){
-	var owner = req.body.owner;
+	var owner = req.cookies.name;
 	var title = req.body.title;
 	var empty = new Array();
 	var time = new Date();
@@ -506,7 +516,7 @@ app.post('/manager/add', function(req, res){
 	});
 	
 	// add canvas to database
-	Canvas.create(canvas, function(err, result){
+	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
 			console.log(err);
 			res.send(fal);		
@@ -520,49 +530,51 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var id = req.body.canvasId;
-	Canvas.findOneAndDelete({id:id}, function(err, result){
-		if (err) {
-			console.log(err);	
-			res.send(fal);	
-		} else {
-			var u = result.users;
-			var s = result.stickies;
-			var e = result.editHistory;
+	var ids = req.body.canvasId;  //now is a list of canvasId
+	ids.foreach(function(id){
+		Canvas.findOneAndDelete({id:id}, function(err, result){
+			if (err) {
+				console.log(err);	
+				res.send(fal);	
+			} else {
+				var u = result.users;
+				var s = result.stickies;
+				var e = result.editHistory;
 			
-			// loop through to delete canvasId from users
-			u.forEach(function(email){
-				User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					} 
+				// loop through to delete canvasId from users
+				u.forEach(function(email){
+					User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
+						if (err) {
+							console.log(err);
+							res.send(fal);					
+						} 
+					});
 				});
-			});
 			
-			// loop through to delete stickies
-			s.foreach(function(sid){
-				Sticky.findOneAndDelete({id:sid}, function(err, result){
-					if (err) {
-						console.log(err);	
-						res.send(fal);				
-					}
+				// loop through to delete stickies
+				s.foreach(function(sid){
+					Sticky.findOneAndDelete({id:sid}, function(err, result){
+						if (err) {
+							console.log(err);	
+							res.send(fal);				
+						}
+					});
 				});
-			});
 			
-			// loop through to delete editHistory
-			e.foreach(function(eid){
-				History.findOneAndDelete({id:eid}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					}
+				// loop through to delete editHistory
+				e.foreach(function(eid){
+					History.findOneAndDelete({id:eid}, function(err, result){
+						if (err) {
+							console.log(err);
+							res.send(fal);					
+						}
+					});
 				});
-			});
 			
-			// delete everything
-			res.send(tru);		
-		}		
+				// delete everything
+				res.send(tru);		
+			}		
+		});
 	});
 });
 
