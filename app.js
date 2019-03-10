@@ -425,50 +425,52 @@ app.get('/library/get', function(req, res){
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-	 var email = req.cookies.email;
+	 var emails = req.cookies.email;   // now is a list of email
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);	 	
 	 	} else {
 			if (type == "add"){
-				//check if user is in the db
-				User.find({'email':email}, function(err, result){
-					if (err){
-						console.log(err);					
-					} else if (result.length == 0){
-						//user not in the db	
-						var canvasList = new Array();
-						var user = new User({
-                		name: '',
-                		email: email,
-                		pwd: '',
-                		role: regReg,
-                		canvas: canvasList,
-                		occupation: '',
-                		status: 2,
-                		phone: '',
-                		company: ''
-              		});	
-              		User.create(user, function(err, result) {
-               		if (err) {
-                  		console.log(err);
-                  		res.send(fal);
-                		} else {
-                  		res.send(tru);  // send true when finish create user in db.
-                		}
-              		});		
-					} else {
-						//user in db
-						Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
-							if (err) {
-								console.log(err);	
-								res.send(fal);						
-							} else {
-								res.send(tru);	 // send true when add user into canvas's user list.						
-							}					
-						});
-					}
-				});
+				emails.forEach(function(email){
+					//check if user is in the db
+					User.find({'email':email}, function(err, result){
+						if (err){
+							console.log(err);					
+						} else if (result.length == 0){
+							//user not in the db	
+							var canvasList = new Array();
+							var user = new User({
+                			name: '',
+                			email: email,
+                			pwd: '',
+                			role: regReg,
+                			canvas: canvasList,
+                			occupation: '',
+                			status: 2,
+                			phone: '',
+                			company: ''
+              			});	
+              			User.create(user, function(err, result) {
+               			if (err) {
+                  			console.log(err);
+                  			res.send(fal);
+                			} else {
+                  			res.send(tru);  // send true when finish create user in db.
+                			}
+              			});		
+						} else {
+							//user in db
+							Canvas.findOneAndUpdate({id:id}, {users:email}, function(err, result){
+								if (err) {
+									console.log(err);	
+									res.send(fal);						
+								} else {
+									res.send(tru);	 // send true when add user into canvas's user list.						
+								}					
+							});
+						}
+					});
+				}
 			} else if (type == "remove"){
 				// assume user is already in the db
 				Canvas.findOneAndUpdate({id:id}, {$pull: {users:email}}, function(err, result){
