@@ -8,7 +8,7 @@ var StickySchema = new mongoose.Schema({
     top: Number
   },
   size :{
-  	 width: Number,
+  	width: Number,
     height: Number
   },
   color: String,

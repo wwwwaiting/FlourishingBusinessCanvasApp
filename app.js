@@ -35,6 +35,10 @@ app.use('/static', express.static('public'));
 const fal = 'false';
 const denied = 'denied';
 const tru = 'true';
+const newReg = 1;
+const regUser = 2;
+const manager = 3;
+const admin = 4;
 const registrationRquest = new Array();
 
 
@@ -122,7 +126,7 @@ app.post('/register', function(req, res) {
                 name: name,
                 email: email,
                 pwd: pwd,
-                role: 1,
+                role: newReg,
                 canvas: canvasList,
                 occupation: '',
                 status: 1,
@@ -142,7 +146,7 @@ app.post('/register', function(req, res) {
           }
         );
       } else {
-        res.send(tru);
+        res.send(result.role);
       }
     }
   );
