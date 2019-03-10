@@ -14,5 +14,9 @@ app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
+app.post('/canvas/edit', function(req, res) {
+    res.send(true)
+})
+
 app.listen(8080);
 console.log('8080 is the magic port');
