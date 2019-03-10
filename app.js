@@ -470,7 +470,7 @@ app.post('/manager/user', function(req, res){
 							});
 						}
 					});
-				}
+				});
 			} else if (type == "remove"){
 				// assume user is already in the db
 				Canvas.findOneAndUpdate({id:id}, {$pull: {users:email}}, function(err, result){
