@@ -45,27 +45,27 @@ app.get('/login', function(req, res) {
 
 // render canvas page
 app.get('/canvas', function(req, res){
-	res.render('canvas');
+	res.render('canvas', {name:req.cookies.name, email:req.cookies.email});
 });
 
 // render manager page
 app.get('/manager', function(req, res){
-	res.render('manager');
+	res.render('manager', {name:req.cookies.name, email:req.cookies.email});
 });
 
 // render user page
 app.get('/user', function(req, res){
-	res.render('user');
+	res.render('user', {name:req.cookies.name, email:req.cookies.email});
 });
 
 // render profile page
 app.get('/profile', function(req, res){
-	res.render('profile');
+	res.render('profile', {name:req.cookies.name, email:req.cookies.email});
 });
 
 // render password page
 app.get('/password', function(req, res){
-	res.render('password');
+	res.render('password', {name:req.cookies.name, email:req.cookies.email});
 });
 
 
