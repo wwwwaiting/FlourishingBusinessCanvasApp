@@ -198,7 +198,7 @@ $('#register_submit').on('click', function () {
           modal.style.display = "block";
           ent.getElementsByClassName('req-email')[0].value = '';
         } else if (data == 2) {
-          window.location.href = "/user";
+          window.location.href = "/profile";
         } else if (data == 3) {
           window.location.href = "/manager";
         } else if (data == 4) {
@@ -255,8 +255,8 @@ $('#login_submit').on('click', function () {
         } else if (data == 'denied') {
           modalContent.innerHTML = "User does not exist or does not have the authorization to login!";
           modal.style.display = "block";
-        } else if (data == 2) {
-          window.location.href = "/user";
+        } else if (data == "2") {
+          window.location.href = "/profile";
         } else if (data == 3) {
           window.location.href = "/manager";
         } else if (data == 4) {

@@ -91,10 +91,12 @@ app.post('/login', function(req, res) {
         var user = result[0];
         name = user.name;
         if (pwd === user.pwd) {
+        	console.log(name);
+        	console.log(email);
           res.cookie('name', name);
           res.cookie('email', email);
           console.log("login finish");
-          res.send(2);
+          res.send("2");
         } else {
           res.send(fal);
         }
@@ -358,7 +360,7 @@ app.post('/profile/edit', function(req, res){
 	var o = req.body.occupation;
 	var e = req.cookies.email;
 	
-	User.findOndAndUpdate({email:e}, {$push: {name:n, phone:p, company:c, occupation:o}}, function(err, result){
+	User.findOneAndUpdate({email:e}, {$set: {name:n, phone:p, company:c, occupation:o}}, function(err, result){
 		if (err) {
 			console.log(err);
 			res.send(fal);		
@@ -388,7 +390,7 @@ app.get('/pwd/get', function(req, res){
 app.post('/pwd/edit', function(req, res){
 	var pwd = req.body.pwd;
 	var email = req.cookies.email;
-	User.findOneAndUpdate({email:email}, {$push:{pwd:pwd}}, function(err, result){
+	User.findOneAndUpdate({email:email}, {pwd:pwd}, function(err, result){
 		if (err) {
 			console.log(err);
 			res.send(fal);		
