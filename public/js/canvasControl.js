@@ -569,6 +569,7 @@ function displayEditForm(sticky) {
     $('#addComment').click(function addComments() {
         const content = $('#commentContent').val()
         const buttonId = `delComment${sticky.comments.length}`
+        // send post request 
         sticky.comments.push(content)
         const li = document.createElement('li')
         li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
@@ -601,6 +602,7 @@ function displayEditForm(sticky) {
 
 
     $('#deleteBtn').click(function() {
+        // delete request to server
         const indexToRemove = stickyList.findIndex(s => s.stickyId == sticky.stickyId);
         canvas.remove(sticky.shape);
         canvas.discardActiveObject();
