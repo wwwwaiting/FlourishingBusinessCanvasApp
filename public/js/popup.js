@@ -1,24 +1,21 @@
 "use strict"
 console.log("popup.js")
-let canvasUsers = null
-let canvasIds = null
-let canvasTitles = null
-class Fbc{
-    constructor(users, name, id){
-        this.users = users;
-        this.name = name;
-        this.id = id;
-    }
-}
-const fbcs = []
+let canvasUsers = []
+let canvasIds = []
+let canvasTitles = []
+
 for (let i = 1; i <= 7; i++) {
     const users = []
     for (let e = 1; e <= i; e++) {
         users.push(e)
     }
-    fbcs.push(new Fbc(users, `fbc${i}`, i))
+    canvasUsers.push(users)
+    canvasIds.push(i)
+    canvasTitles.push(`fbc${i}`)
 }
-console.log(fbcs)
+console.log(canvasUsers)
+console.log(canvasIds)
+console.log(canvasTitles)
 
 
 $(document).ready(main);
@@ -26,18 +23,16 @@ $(document).ready(main);
 
 // Used to call functions after page is fully loaded.
 function main() {
-    //get request
-    const url = '/library/get'
-
+    // send get request and set global arrays
     renderFbc()
 }
 
 function renderFbc() {
     const imgUrl = '/images/fbc.png'
-    for (let i = 0; i < fbcs.length; i++) {
+    for (let i = 0; i < canvasIds.length; i++) {
         const html = `
         <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-            <a href="" id="${fbcs[i].id}">
+            <a href="" id="${canvasIds[i]}">
                 <div class="card shadow postCard">
                     <div class="image-constrain">
                         <img src="${imgUrl}" class="card-img-top post-img p-3">
@@ -56,69 +51,74 @@ function renderFbc() {
     }
 }
 
+function renderManageUsers() {
 
-
-let manageUsersContent = ''
-manageUsersContent += '<div class="modal-body">\n'
-manageUsersContent += '<form>\n'
-for(let i = 0; i < fbcs.length; i++){
-    manageUsersContent += '<h5>'
-    manageUsersContent += fbcs[i].name
-    manageUsersContent += '</h5>'
-    for (let j = 0; j < fbcs[i].users.length; j++){
-        manageUsersContent += `<div class="form-check">
-    <input class="form-check-input" type="checkbox" onclick="storeRemovingUsers(${fbcs[i].users[j].username})">
-    <label class="form-check-label" for="defaultCheck1">
-        ${fbcs[i].users[j].username}
-    </label>
-</div>`
+    let manageUsersContent = '<div class="modal-body"><form>'
+    for(let i = 0; i < canvasTitles.length; i++){
+        manageUsersContent += `<div><h5>${canvasTitles[i]}</h5>`
+        for (let j = 0; j < canvasUsers[i].length; j++){
+            manageUsersContent += `<div class="form-check">
+        <input class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
+        }
+        manageUsersContent += `<button type="button" class="btn btn-light">Add</button>
+            <button type="button" class="btn btn-light" onclick="removeUsers()">Remove</button></div>`
     }
-    manageUsersContent += `<button type="button" class="btn btn-light">Add</button>
-        <button type="button" class="btn btn-light">Remove</button>`
-}
-manageUsersContent += '</form>\n'
-manageUsersContent += '</div>'
-
-let manageCanvasContent = ''
-manageCanvasContent += '<div class="modal-body">\n'
-manageCanvasContent += '<form>\n'
-for(let i = 0; i < fbcs.length; i++){
-    manageCanvasContent += `<div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-    <label class="form-check-label" for="defaultCheck1">
-        ${fbcs[i].name}
-    </label>
-</div>`
-}
-manageCanvasContent += '</form>\n'
-manageCanvasContent += '</div>'
-
-
-
-
-function manageUsers(){
+    manageUsersContent += '</form></div>'
     $(".modal-title").html("Manage users")
     $(".modal-body").html(manageUsersContent)
-    $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
 }
 
-function manageCanvas(){
+
+function removeUsers() {
+    const selected = $('.form-check-input:checked')
+    const usersToRemove = []
+    for (let e of selected) {
+        usersToRemove.push(e.nextElementSibling.innerHTML)
+    }
+    const canvasTitle = selected[0].parentElement.parentElement.children[0].innerHTML
+    const index = canvasTitles.findIndex(t => t == canvasTitle)
+    canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
+    console.log(canvasUsers)
+    renderManageUsers()
+    //send update request
+}
+
+
+function renderManageCanvas(){
+    let manageCanvasContent = '<div class="modal-body"><form>'
+    for (let i = 0; i < canvasTitles.length; i++){
+        manageCanvasContent += `<div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+        <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]}</label>
+    </div>`
+    }
+    manageCanvasContent += '</form></div>'
+
     $(".modal-title").html("Manage Canvas")
     $(".modal-body").html(manageCanvasContent)
     $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Add</button>
-                    <button type="button" class="btn btn-primary">Remove</button>`)
+                    <button type="button" class="btn btn-primary" onclick="addCanvas()">Add</button>
+                    <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
 }
 
-let removingUsers = []
-
-function storeRemovingUsers(index, username){
-    removingUsers.push((index, username))
+function removeCanvas() {
+    const selected = $('.form-check-input:checked')
+    for (let e of selected) {
+        const indexToRemove = canvasTitles.findIndex(t => t == e.nextElementSibling.innerHTML)
+        canvasTitles.splice(indexToRemove, 1)
+        canvasIds.splice(indexToRemove, 1)
+        canvasUsers.splice(indexToRemove, 1)
+    }
+    console.log(canvasTitles)
+    console.log(canvasIds)
+    console.log(canvasUsers)
+    renderManageCanvas()
+    removeSection()
+    renderFbc()
 }
-//
-// function removeUsers(i){
-//     for (let j = 0; j < removingUsers.length; j++){
-//         let index = fbcs[i].indexOf(removingUsers[j])
-//         fbcs[i].splice(index, 1)
-//     }
-// }
+
+function removeSection() {
+    $('section').html('')
+}
+

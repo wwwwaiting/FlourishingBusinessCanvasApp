@@ -23,6 +23,7 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -32,10 +33,10 @@
         <div class="container"><h1>Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="manageUsers()">Manage users</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Manage users</button>
                 </li>
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="manageCanvas()">Manage canvas</button>
+                    <button id="manageCanvasBtn" type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
                 </li>
             </ul>
         </div>
