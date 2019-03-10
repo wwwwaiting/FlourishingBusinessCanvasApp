@@ -47,7 +47,7 @@ function initialize_canvas() {
         canvas.dispose();
     }
     canvas = new fabric.Canvas('mainCanvas', {
-        canvasId: 0,
+        canvasId: 1,
         hoverCursor: 'pointer'
     });
     // Reset global vars
