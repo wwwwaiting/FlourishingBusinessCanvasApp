@@ -473,6 +473,7 @@ app.post('/manager/user', function(req, res){
                 			} else {
                   			res.send(tru);  // send true when finish create user in db.
                 			}
+
               			});		
 						} else {
 							//user in db
