@@ -327,9 +327,10 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     }
                 });
                 stickyIsMoving = false;
-            } else {
-                alert('Neither isMoving, nor isResizing')
             }
+            // } else {
+            //     // alert('Neither isMoving, nor isResizing')
+            // }
         })
         this.on('moving', ()=>{
             stickyIsMoving = true;
