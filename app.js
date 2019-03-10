@@ -38,10 +38,38 @@ const tru = 'true';
 const registrationRquest = new Array();
 
 
-//login page
+// render login page
 app.get('/login', function(req, res) {
   res.render('login');
 });
+
+// render canvas page
+app.get('/canvas', function(req, res){
+	res.render('canvas');
+});
+
+// render manager page
+app.get('/manager', function(req, res){
+	res.render('manager');
+});
+
+// render user page
+app.get('/user', function(req, res){
+	res.render('user');
+});
+
+// render profile page
+app.get('/profile', function(req, res){
+	res.render('profile');
+});
+
+// render password page
+app.get('/password', function(req, res){
+	res.render('password');
+});
+
+
+
 
 app.post('/login', function(req, res) {
   var email = req.body.email;
@@ -116,6 +144,12 @@ app.post('/register', function(req, res) {
       }
     }
   );
+});
+
+
+// get canvas at the beginning
+app.get('/canvas/get', function(req, res){
+	
 });
 
 app.listen(PORT, () => {
