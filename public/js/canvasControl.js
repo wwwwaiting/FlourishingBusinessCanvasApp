@@ -8,7 +8,7 @@ const canvasMaxZoom = 8;
 const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
-let numberOfStickies = 0;
+// let numberOfStickies = 0;
 const ogLeft = 182;
 let currLeft = ogLeft;
 const ogTop = 292;
@@ -40,18 +40,41 @@ const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
 // Initialize the canvas
-function initialize_canvas() {
+function initialize_canvas(data) {
     // Check if there's an existing canvas
     if (canvas) {
         canvas.clear();
         canvas.dispose();
     }
     canvas = new fabric.Canvas('mainCanvas', {
-        canvasId: 1,
+        canvasId: data.canvasId,
         hoverCursor: 'pointer'
     });
+
+    $('#designedFor').attr('value', data.title);
+    $('#designedBy').attr('value', data.owner);
+    $('#designedDate').attr('value', data.createDate);
+
+    data.stickies.forEach(sticky => {
+        const options = {
+            stickyId: sticky.id,
+            left: sticky.position.left,
+            top: sticky.position.top,
+            width: sticky.size.width,
+            height: sticky.size.height,
+            originX: 'left',
+            originY: 'top',
+            content: sticky.content,
+            comment: sticky.comment
+        }
+        const newSticky = new Sticky(options);
+        newSticky.item(0).set('fill', sticky.color);
+        canvas.add(newSticky);
+    })
+    canvas.renderAll();
+
     // Reset global vars
-    numberOfStickies = 0;
+    // numberOfStickies = 0;
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
@@ -60,7 +83,6 @@ function initialize_canvas() {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
-            // if (evt.ctrlKey === true) {
             this.isDragging = true;
             this.selection = false;
             this.lastPosX = evt.clientX;
@@ -86,6 +108,16 @@ function initialize_canvas() {
             this.lastPosX = e.clientX;
             this.lastPosY = e.clientY;
         }
+        // else {
+        //     const e = opt.e
+        //     const positionClass = returnMouseClass(e.clientY,e.clientX)
+        //     if (positionClass != undefined){
+        //         showMouseSidepanel(positionClass);
+        //     } else {
+        //         $('.collapse').collapse('hide');
+        //     }
+        //
+        // }
     });
     canvas.on('mouse:up', function (opt) {
         // TODO: when mouse:up, send data to backend
@@ -133,7 +165,7 @@ function initialize_canvas() {
         canvas.renderAll()
     });
     canvas.on('selection:cleared', ()=>{
-        console.log('cleared!')
+        // console.log('cleared!')
         $('.collapse').collapse('hide');
         // $('.collapse').collapse('dispose');
     })
@@ -228,12 +260,50 @@ function argHandler(obj, handler) {
 function showSidepanel (stickySelected) {
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
-    const testRect = returnTestRect(stickySelected);
+    // const testRect = returnTestRect(stickySelected);
+    const stickyClass = returnClass(stickySelected)
     $('#sidepanel-list').html('')
+    // canvas.getObjects().forEach(sticky => {
+    //     if (sticky.intersectsWithObject(testRect)) {
+    //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+    //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+    //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+    //             <p class="mb-1">${sticky.get('content')}</p>
+    //         </div></a>`);
+    //     }
+    // });
     canvas.getObjects().forEach(sticky => {
-        if (sticky.intersectsWithObject(testRect)) {
+        if (returnClass(sticky) == stickyClass) {
+          // console.log(sticky.item(0).get('fill'));
+            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-1 border-0">
+            <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
+                <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+                <p class="mb-1">${sticky.get('content')}</p>
+            </div></a>`);
+        }
+    });
+    $('#collapseSidepanel').collapse('show');
+}
+
+function showMouseSidepanel (stickyBoxName) {
+    $('#sidepanel-title').text(stickyBoxName);
+    // const testRect = returnTestRect(stickySelected);
+    const stickyClass = stickyBoxName;
+    $('#sidepanel-list').html('')
+    // canvas.getObjects().forEach(sticky => {
+    //     if (sticky.intersectsWithObject(testRect)) {
+    //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+    //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+    //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+    //             <p class="mb-1">${sticky.get('content')}</p>
+    //         </div></a>`);
+    //     }
+    // });
+    canvas.getObjects().forEach(sticky => {
+        if (returnClass(sticky) == stickyClass) {
+          // console.log(sticky.item(0).get('fill'));
             $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
-            <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+            <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
             </div></a>`);
@@ -248,16 +318,17 @@ let stickyIsResizing = false;
 const Sticky = fabric.util.createClass(fabric.Group, {
     type: 'Sticky',
 
-    initialize: function () {
-        const options = {
+    initialize: function (options) {
+        options || (options = {
             left: currLeft,
             top: currTop,
             width: stickyOgWidth,
             height: stickyOgHeight,
             originX: 'left',
             originY: 'top',
-        };
-        const textboxValue = $('#textInputBox').val();
+        });
+        options.content || (options.content = $('#textInputBox').val())
+        const textboxValue = options.content;
         $('#textInputBox').val("");
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
         const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
@@ -265,8 +336,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
-        this.set('content', options.content || textboxValue);
-        this.set('stickyId', options.stickyId || numberOfStickies);
+        this.set('content', textboxValue);
+        this.set('stickyId', options.stickyId || -1);
         this.set('comments', options.comments || []);
         this.set('lockRotation', options.lockRotation || true);
         this.set('lockScalingFlip', options.lockScalingFlip || true);
@@ -294,7 +365,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         // Sticky fabric object (named as shape)
 
         this.on('selected', ()=>{
-            if (!stickyIsMoving && !stickyIsResizing) showSidepanel(this);
+          showSidepanel(this)
+        //     if (!stickyIsMoving && !stickyIsResizing) showSidepanel(this);
         })
 
         this.item(1).text = convertDisplay(this);
@@ -361,6 +433,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         })
         this.on('moving', ()=>{
             stickyIsMoving = true;
+            showSidepanel(this);
         });
         this.on('scaling', argHandler(this, function (sticky) {
             let width = sticky.width * sticky.scaleX;
@@ -386,7 +459,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             sticky.setCoords();
             stickyIsResizing = true;
         }))
-        numberOfStickies++;
+        // numberOfStickies++;
         currLeft += 10;
         currTop += 10;
     },
@@ -500,7 +573,7 @@ function createSticky() {
                 title: '',
                 comment: [],
                 optimalFields: {}
-            }   
+            }
         },
         success: function (resultData) {
             console.log(resultData)
@@ -509,6 +582,7 @@ function createSticky() {
             alert("Something went wrong")
         }
     });
+    showSidepanel(newSticky);
 }
 
 function removeAll() {
@@ -651,7 +725,7 @@ function displayEditForm(sticky) {
         $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function () {
             // Comment delete and send to backend
-            // send post request 
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -687,8 +761,8 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function () {        
-            // send post request 
+        $(`#${buttonId}`).click(function () {
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -724,7 +798,7 @@ function displayEditForm(sticky) {
 
     $('#colorBtn').click(function () {
         sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
-        // send post request 
+        // send post request
         $.ajax({
             type: 'POST',
             url: "/canvas/edit",
@@ -742,12 +816,13 @@ function displayEditForm(sticky) {
             }
         });
         canvas.renderAll()
+        showSidepanel(sticky);
     })
 
 
     $('#deleteBtn').click(function () {
         // delete request to server
-        // send post request 
+        // send post request
         $.ajax({
             type: 'POST',
             url: "/canvas/delete",
@@ -785,7 +860,7 @@ function displayEditForm(sticky) {
                 let key = e.keyCode;
                 if (key == '13') {
                     stickyContentEdit(sticky)
-                    // send post request 
+                    // send post request
                     $.ajax({
                         type: 'POST',
                         url: "/canvas/edit",
@@ -802,11 +877,12 @@ function displayEditForm(sticky) {
                             alert("Something went wrong")
                         }
                     });
+                    showSidepanel(sticky);
                 }
             }
         } else {
             stickyContentEdit(sticky)
-            // send post request 
+            // send post request
             $.ajax({
                 type: 'POST',
                 url: "/canvas/edit",
@@ -823,6 +899,7 @@ function displayEditForm(sticky) {
                     alert("Something went wrong")
                 }
             });
+            showSidepanel(sticky);
             // sticky.content = $('.textbox').val()
             // sticky.shape.item(1).text = convertDisplay(sticky)
             // const stickyCt = sticky.shape.item(1);
@@ -1023,58 +1100,109 @@ function returnClass(sticky) {
     }
 }
 
-function returnTestRect(sticky) {
-    const top = sticky.top;
-    const left = sticky.left;
+function returnMouseClass(top, left) {
     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-        return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+        return "BIOPHYSICAL STOCKS"
     }
     if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-        return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+        return "ECOSYSTEMSERVICES"
     }
     if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-        return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+        return "ECOSYSTEM ACTORS"
     }
     if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-        return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+        return "NEEDS"
     }
     if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-        return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+        return "COSTS"
     }
     if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-        return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+        return "GOALS"
     }
     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-        return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+        return "BENIFITS"
     }
     if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
-        return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+        return "RESOURCES"
     }
     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-        return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+        return "ACTIVITIES"
     }
     if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
-        return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+        return "PARTNERSHIP"
     }
     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-        return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+        return "GOVERNANCE"
     }
     if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
-        return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+        return "RELATIONSHIPS"
     }
     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-        return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+        return "CHANNELS"
     }
     if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
-        return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+        return "STAKEHOLDERS"
     }
     if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
-        return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+        return "VALUE CO-CREATIONS"
     }
     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-        return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
+        return "VALUE CO-DESTRUCTIONS"
     }
 }
+
+// function returnTestRect(sticky) {
+//     const top = sticky.top;
+//     const left = sticky.left;
+//     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+//         return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+//         return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+//     }
+//     if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+//         return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+//         return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+//         return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+//         return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+//     }
+//     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+//         return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+//         return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+//         return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+//         return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+//         return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+//         return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+//     }
+//     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+//         return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+//     }
+//     if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+//         return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+//     }
+//     if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+//         return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+//     }
+//     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+//         return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
+//     }
+// }
 
 function getCanvasInfo() {
     $.ajax({
@@ -1082,11 +1210,10 @@ function getCanvasInfo() {
         url: "/canvas/get",
         success: function (data) {
             console.log(data)
-            if (data == 'false') {
-                alert("Cannot get the canvas.")
-            } else if (data == 'true') {
-                console.log('got the canvas.')
-            }
+            initialize_canvas(data);          
+        },
+        error: function () {
+            alert('error getting canvas info');
         }
     });
 }
@@ -1094,7 +1221,6 @@ function getCanvasInfo() {
 // Used to call functions after page is fully loaded.
 function main() {
     getCanvasInfo();
-    initialize_canvas();
     canvas.selection = false; // disable group selection
     handleWindowResize();
     canvas.renderAll();
