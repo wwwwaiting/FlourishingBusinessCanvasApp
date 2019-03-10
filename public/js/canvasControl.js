@@ -8,7 +8,7 @@ const canvasMaxZoom = 8;
 const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
-let numberOfStickies = 0;
+// let numberOfStickies = 0;
 const ogLeft = 182;
 let currLeft = ogLeft;
 const ogTop = 292;
@@ -40,18 +40,41 @@ const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
 // Initialize the canvas
-function initialize_canvas() {
+function initialize_canvas(data) {
     // Check if there's an existing canvas
     if (canvas) {
         canvas.clear();
         canvas.dispose();
     }
     canvas = new fabric.Canvas('mainCanvas', {
-        canvasId: 1,
+        canvasId: data.canvasId,
         hoverCursor: 'pointer'
     });
+
+    $('#designedFor').attr('value', data.title);
+    $('#designedBy').attr('value', data.owner);
+    $('#designedDate').attr('value', data.createDate);
+
+    data.stickies.forEach(sticky => {
+        const options = {
+            stickyId: sticky.id,
+            left: sticky.position.left,
+            top: sticky.position.top,
+            width: sticky.size.width,
+            height: sticky.size.height,
+            originX: 'left',
+            originY: 'top',
+            content: sticky.content,
+            comment: sticky.comment
+        }
+        const newSticky = new Sticky(options);
+        newSticky.item(0).set('fill', sticky.color);
+        canvas.add(newSticky);
+    })
+    canvas.renderAll();
+
     // Reset global vars
-    numberOfStickies = 0;
+    // numberOfStickies = 0;
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
@@ -60,7 +83,6 @@ function initialize_canvas() {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
-            // if (evt.ctrlKey === true) {
             this.isDragging = true;
             this.selection = false;
             this.lastPosX = evt.clientX;
@@ -133,7 +155,6 @@ function initialize_canvas() {
         canvas.renderAll()
     });
     canvas.on('selection:cleared', ()=>{
-        console.log('cleared!')
         $('.collapse').collapse('hide');
         // $('.collapse').collapse('dispose');
     })
@@ -259,16 +280,17 @@ let stickyIsResizing = false;
 const Sticky = fabric.util.createClass(fabric.Group, {
     type: 'Sticky',
 
-    initialize: function () {
-        const options = {
+    initialize: function (options) {
+        options || (options = {
             left: currLeft,
             top: currTop,
             width: stickyOgWidth,
             height: stickyOgHeight,
             originX: 'left',
             originY: 'top',
-        };
-        const textboxValue = $('#textInputBox').val();
+        });
+        options.content || (options.content = $('#textInputBox').val())
+        const textboxValue = options.content;
         $('#textInputBox').val("");
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
         const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
@@ -276,8 +298,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
-        this.set('content', options.content || textboxValue);
-        this.set('stickyId', options.stickyId || numberOfStickies);
+        this.set('content', textboxValue);
+        this.set('stickyId', options.stickyId || -1);
         this.set('comments', options.comments || []);
         this.set('lockRotation', options.lockRotation || true);
         this.set('lockScalingFlip', options.lockScalingFlip || true);
@@ -399,7 +421,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             sticky.setCoords();
             stickyIsResizing = true;
         }))
-        numberOfStickies++;
+        // numberOfStickies++;
         currLeft += 10;
         currTop += 10;
     },
@@ -1098,11 +1120,10 @@ function getCanvasInfo() {
         url: "/canvas/get",
         success: function (data) {
             console.log(data)
-            if (data == 'false') {
-                alert("Cannot get the canvas.")
-            } else if (data == 'true') {
-                console.log('got the canvas.')
-            }
+            initialize_canvas(data);          
+        },
+        error: function () {
+            alert('error getting canvas info');
         }
     });
 }
@@ -1110,7 +1131,6 @@ function getCanvasInfo() {
 // Used to call functions after page is fully loaded.
 function main() {
     getCanvasInfo();
-    initialize_canvas();
     canvas.selection = false; // disable group selection
     handleWindowResize();
     canvas.renderAll();
