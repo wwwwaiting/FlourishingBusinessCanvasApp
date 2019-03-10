@@ -36,7 +36,10 @@
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Manage users</button>
                 </li>
                 <li class="nav-item ml-2">
-                    <button id="manageCanvasBtn" type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
+                </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getProfile()">Profile</button>
                 </li>
             </ul>
         </div>
@@ -80,6 +83,9 @@
 
     $(document).ready(main);
 
+    function getProfile() {
+        window.location.href = '/profile'
+    }
 
     // Used to call functions after page is fully loaded.
     function main() {
