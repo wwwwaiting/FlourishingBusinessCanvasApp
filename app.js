@@ -39,9 +39,13 @@ const newReg = 1;
 const regUser = 2;
 const manager = 3;
 const admin = 4;
-const registrationRquest = new Array();
-const canvasCount = 0;
 
+const registrationRquest = new Array();
+const stickyCount = 0;
+const commentCount = 0;
+const historyCount = 0;
+const canvasCount = 0;
+const changeType = ['content', 'position', 'size', 'color', 'comment'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -75,28 +79,29 @@ app.get('/password', function(req, res){
 
 
 
-
+// user login request
 app.post('/login', function(req, res) {
   var email = req.body.email;
   var pwd = req.body.pwd;
   var name;
+  // need to find the user with requested email in 'approved' status
   User.find({'email': email,'status': 2},function(err, result) {
       if (err) {
         console.log(err);
-        res.send(0);
+        res.send(err);
       } else if (result.length === 0) {
         console.log('user does not exist or does not have the authorization to login!');
         res.send(denied);
       } else {
         var user = result[0];
         name = user.name;
+        role = user.role;
+        // if the user existed, compare incoming password with the passward in the database
         if (pwd === user.pwd) {
-        	console.log(name);
-        	console.log(email);
+          // user cookie for future usage
           res.cookie('name', name);
           res.cookie('email', email);
-          console.log("login finish");
-          res.send("2");
+          res.send(role.toString());
         } else {
           res.send(fal);
         }
@@ -112,19 +117,28 @@ app.post('/register', function(req, res) {
   var pwd = req.body.pwd;
   var email = req.body.email;
   var canvasList = new Array();
+
+  // the initial status of an approved user does not have password
+  // the functionality of register is actually updating the user name and password
   User.findOneAndUpdate({'email':email,'pwd':'','status':2},{name:name, pwd:pwd},function(err, result) {
       if (err) {
         console.log(err);
-        res.send(0);
-      } else if (result === null) {
+        res.send(err);
+      } 
+      // if there is no user in initial status it can be multiple situations
+      // it can be an outside using is trying to login to this website
+      // or an outside user is signing up more than once
+      // or the password has been updated, so there is no need to signup again
+      else if (result === null) {
         User.find({email: email},function(err, registered) {
             if (err) {
               console.log(err);
-              res.send(0);
+              res.send(err);
             } else if (registered.length !== 0) {
               console.log('The email has been registered in the system!');
               res.send(fal);
             } else {
+              // only when an outside user trying to signup at the first time, then create new user
               registrationRquest.push(email);
               var user = new User({
                 name: name,
@@ -140,17 +154,21 @@ app.post('/register', function(req, res) {
               User.create(user, function(err, newlyCreated) {
                 if (err) {
                   console.log(err);
+                  res.send(err);
+                } else if (newlyCreated == null){
+                  res.send(err);
                 } else {
-                  res.cookie('name', name);    //cookie now store both name and email
-                  res.cookie('email', email);
-                  res.send(tru);
+                  res.send(newReg.toString());
                 }
               });
             }
           }
         );
       } else {
-        res.send(result.role);
+        res.cookie('name', name);    //cookie now store both name and email
+        res.cookie('email', email);
+        var resp = result.role;
+        res.send(resp.toString());
       }
     }
   );
@@ -159,7 +177,217 @@ app.post('/register', function(req, res) {
 
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
-	
+  var canvasId = req.body.canvasId;
+  Canvas.find({'id': canvasId},function(err, result) {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    } else if (result.length === 0) {
+      console.log('The requested canvas does not exist!');
+      res.send(fal);
+    } else {
+      var canvas = result[0];
+      var result = {
+        'owner':canvas.owner,
+        'title':canvas.title,
+        'createDate': canvas.createDate
+      };
+      // constract the sticky list that the result need
+      var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
+      var stickyList = stickies.map(function(id) {
+        Sticky.find({'id': id},function(err, sti) {
+          if (err) {
+            console.log(err);
+            res.send(err);
+          } else if (sti.length === 0) {
+            console.log('The requested sticky does not exist!');
+            res.render(fal);
+          } else {
+            
+            var sticky = sti[0];
+            return sticky;
+          }
+        });
+      });
+      result.stickies = stickyList;    
+      res.send(result);
+    }
+  });
+});
+
+app.put('/canvas/add', function(req, res){
+  var canvas = req.body.canvasId;
+  var sticky = req.body.sticky;
+  Canvas.find({'id':canvas}, function(err, result){
+    if(err){
+      console.log(err);
+      res.send(fal);
+    } else if (result.length == 0){
+      res.send(fal);
+    } else {
+      // create new sticky
+      sticky.id = stickyCount;
+      sticky.modifiedTime = new Date();
+      var newStic = new Sticky(sticky)
+      Sticky.create(newStic, function(err, newlyCreated) {
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        }else if ( newlyCreated == null){
+          res.send(fal);
+        } 
+        else {
+          // add sticky index to the canava
+          Canvas.findOneAndUpdate({id:canvas}, { $push: { stickies : stickyCount } });
+          stickyCount ++; // increase the stickycount since it's an global index for sticky id
+          var newHis = new History({
+            id: historyCount,
+            stickyID: newlyCreated.id,
+            user: req.cookies.email,
+            content: 'Add new sticky',
+            modifiedTime: new Date()
+          });
+      
+          History.create(newHis,function(err, Created){
+            if (err) {
+              console.log(err);
+              res.send(fal);
+            } else if (Created == null){
+              res.send(fal);
+            } else{
+              Canvas.findOneAndUpdate({id:canvas}, { $push: { editHistory : historyCount } });
+              historyCount ++;
+            };
+          });
+          res.send(tru);
+        }
+      });
+    }
+  });
+});
+
+app.delete('/canvas/delete', function(req, res){
+  var canvas = req.body.canvasId;
+  var sticky = req.body.stickyId;
+  Canvas.findOneAndUpdate({
+    id : canvas
+  }, {$pull: {
+        stickies: sticky // delete sticky id from the sticky list in canvas
+    }
+  }, function(err, result) {
+    if (err) {
+      console.log(err);
+      res.send(fal);
+    } else if (result == null){
+      res.send(fal);
+    }
+  });
+  // delete the requested id
+  Sticky.findOneAndDelete({id:sticky}, function(err, result){
+    if (err) {
+      console.log(err);
+      res.send(fal);
+    } else if (result == null){
+      res.send(fal);
+    } else{ 
+      var comment = result.comment; // the list of comment id in the Sticky
+      comment.forEach(function(commentId) { // delete all the comments related to this sticky
+        Comment.findOneAndDelete({id:commentId}, function(err, deleted){
+          if (err) {
+            console.log(err);
+            res.send(fal);
+          } else if (deleted === null) {
+            console.log('The requested comment does not exist!');
+            res.send(fal);
+          }; 
+        });
+      });
+      // add new history to the database
+      var newHis = new History({
+        id: historyCount,
+        stickyID: sticky,
+        user: req.cookies.email,
+        content: 'Delete sticky',
+        modifiedTime: new Date()
+      });
+  
+      History.create(newHis,function(err, newlyCreated){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else if (newlyCreated == null){
+          res.send(fal);
+        } else{
+          // update the list of edithistory in the corresponding canvas
+          Canvas.findOneAndUpdate({id:result.canvasId}, { $push: { editHistory : historyCount } });
+          historyCount ++;
+        };
+      });
+      res.send(tru);
+    }
+  });
+})
+
+app.post('/canvas/edit', function(req, res){
+  var canvas = req.body.canvasId;
+  var sticky = req.body.stickyId;
+  var type = req.body.type;
+  var change = req.body.change;
+  if (changeType.indexOf(type) !== -1){ 
+    if (type === 'comment'){ 
+      // create new comment
+      var newCom = new Comment({
+        id:commentCount,
+        stickyID: sticky,
+        user: req.cookies.email,
+        content: change,
+        modifiedTime: new Date()
+      });
+      Comment.create(newCom, function(err, newlyCreated) {
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else if (newlyCreated == null){
+          res.send(fal);
+        }
+        else { // link new comment to the corresponding sticky
+          Sticky.findOneAndUpdate({id:sticky}, { $push: { comment : commentCount } });
+          commentCount ++;
+        }
+      });
+    }
+    else{
+      // update sticky information only
+      Sticky.findOneAndUpdate({id:sticky}, {type:change, modifiedTime:new Data()},function(err, result){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else if (result == null){
+          res.send(fal);
+        };
+      });
+    }
+    // create new history 
+    var newHis = new History({
+      id: historyCount,
+      stickyID: sticky,
+      user: req.cookies.email,
+      content: 'Modified' + type,
+      modifiedTime: new Date()
+    });
+
+    History.create(newHis,function(err, newlyCreated){
+      if (err) {
+        console.log(err);
+        res.send(fal);
+      } else if (newlyCreated == null){
+        res.send(fal);
+      } else{
+        Canvas.findOneAndUpdate({'id':canvas}, { $push: { editHistory : historyCount } }); // link history to the canvas
+        historyCount ++;
+      };
+    });
+  }
 });
 
 
@@ -399,7 +627,6 @@ app.post('/pwd/edit', function(req, res){
 		}
 	});
 });
-
 
 // get user information from 
 app.listen(PORT, () => {
