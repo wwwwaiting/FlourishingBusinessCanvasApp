@@ -483,6 +483,7 @@ function loadJsonToCanvas(jsonOutput) {
     canvas.loadFromJSON(jsonOutput);
 }
 
+// handling all the editing/deleting/comments of sticky
 function displayEditForm(sticky) {
     console.log(sticky)
     const html = `
@@ -495,7 +496,7 @@ function displayEditForm(sticky) {
         </div>
         <div class="modal-body">
             <div id="textboxContainer">
-                <p class="textbox"></p>
+                <p id="textboxP" class="textbox">${sticky.content}</p>
             </div>
             <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
                 <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
@@ -516,7 +517,6 @@ function displayEditForm(sticky) {
     </div>`
     const editDiv = $('#editDiv')
     editDiv.html(html)
-    // <div class="input-group">
 
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
@@ -589,103 +589,51 @@ function displayEditForm(sticky) {
             textarea.className = 'textbox';
             textarea.id = 'textarea;'
             textarea.style.backgroundColor = 'rgb(236,232,238)';
+            const prevText = $('#textboxP').text()
+            textarea.innerHTML = prevText;
             $("#textboxContainer").html(textarea)
+
+            textarea.onkeydown = function (e) {
+                let key = e.keyCode;
+                if (key == '13') {
+                    stickyContentEdit(sticky)
+                }
+            }
         } else {
-            sticky.content = $('.textbox').val()
-            sticky.shape.item(1).text = convertDisplay(sticky)
-            const stickyCt = sticky.shape.item(1);
-            stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
-            stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
-            stickyCt.setCoords()
-            canvas.renderAll();
-            $(this)[0].id = 'editBtn'
-            $(this).text('Edit');
-            const p = document.createElement('p');
-            p.className = 'textbox';
-            $('#textboxContainer').html(p)
+            stickyContentEdit(sticky)
+            // sticky.content = $('.textbox').val()
+            // sticky.shape.item(1).text = convertDisplay(sticky)
+            // const stickyCt = sticky.shape.item(1);
+            // stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
+            // stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
+            // stickyCt.setCoords()
+            // canvas.renderAll();
+            // // $(this)[0].id = 'editBtn'
+            // $('#editBtn').text('Edit');
+            // const p = document.createElement('p');
+            // p.className = 'textbox';
+            // $('#textboxContainer').html(p)
         }
     })
 
 }
 
+function stickyContentEdit(sticky) {
+    sticky.content = $('.textbox').val()
+    sticky.shape.item(1).text = convertDisplay(sticky)
+    const stickyCt = sticky.shape.item(1);
+    stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
+    stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
+    stickyCt.setCoords()
+    canvas.renderAll();
+    $('#editBtn').text('Edit');
+    const p = document.createElement('p');
+    p.className = 'textbox';
+    p.id = 'textboxP'
+    p.innerHTML = sticky.content;
+    $('#textboxContainer').html(p)
+}
 
-// <button class="btn btn-primary" type="button" id="clearUpload">Clear</button>
-// <button class="btn btn-primary" id="visibleUpload" type="button">Upload</button>
-// <textarea id='newText' rows='4' cols='40'></textarea>
-
-// function displayEditForm(obj) {
-//     const shape = obj[0]
-//     const stickyId = obj[1]
-
-    // const textarea = document.createElement('textarea');
-    // textarea.rows = '4';
-    // textarea.cols = '40';
-    // textarea.id = 'newText';
-    // textarea.onkeydown = function (e) {
-    //     let key = e.keyCode;
-    //     if (key == '13') {
-    //         shape.item(1).text = $('#newText').val()
-    //         const stickyCt = shape.item(1);
-    //         stickyCt.set('width', shape.width - stickyPadding); //20 as padding
-    //         stickyCt.set('height', shape.height - stickyPadding); //20 as padding
-    //         stickyCt.setCoords()
-    //         canvas.renderAll();
-    //         const editDiv = document.querySelector('#editDiv')
-    //         editDiv.innerHTML = '';
-    //         editDiv.style.display = 'none';
-    //     }
-    // }
-//     const editRemoveBtn = document.createElement('button');
-//     // editRemoveBtn.id = 'editRemoveBtn';
-//     editRemoveBtn.innerText = 'Remove';
-//     editRemoveBtn.className = 'editFormBtns';
-//     editRemoveBtn.onclick = function () {
-//         // remove sticky in canvas
-//         const indexToRemove = stickyList.findIndex(s => s.stickyId == stickyId);
-//         const stickyToRemove = stickyList.find(s => s.stickyId == stickyId).shape;
-//         canvas.remove(stickyToRemove);
-//         canvas.discardActiveObject();
-//         // remove sticky in list
-//         stickyList.splice(indexToRemove, 1);
-
-//         const editDiv = document.querySelector('#editDiv')
-//         editDiv.innerHTML = ''
-//         editDiv.style.display = 'none';
-//     };
-
-//     const editColorBtn = document.createElement('button')
-//     // editColorBtn.id = 'editColorBtn';
-//     editColorBtn.className = 'editFormBtns'
-//     editColorBtn.innerText = 'Color';
-//     editColorBtn.onclick = function () {
-//         const targetSticky = stickyList.find(s => s.stickyId == stickyId)
-//         targetSticky.shape._objects[0].set('fill', stickyColors[(stickyColors.indexOf(targetSticky.shape._objects[0].fill) + 1) % (stickyColors.length)])
-//         canvas.renderAll()
-//     }
-
-//     const closeBtn = document.createElement('button')
-//     closeBtn.innerText = 'Close'
-//     closeBtn.className = 'editFormBtns'
-//     closeBtn.onclick = function () {
-//         const editDiv = $('#editDiv')
-//         editDiv.html('')
-//         editDiv[0].style.display = 'none';
-
-//     }
-//     const btnContainer = document.createElement('div')
-//     btnContainer.id = 'btnContainer'
-//     btnContainer.appendChild(editRemoveBtn)
-//     btnContainer.appendChild(editColorBtn)
-//     btnContainer.appendChild(closeBtn)
-
-
-//     const editDiv = document.querySelector('#editDiv')
-//     if (document.querySelector('#editRemoveBtn') == undefined) {
-//         editDiv.appendChild(textarea);
-//         editDiv.appendChild(btnContainer);
-//     }
-//     editDiv.style.display = 'block';
-// }
 
 
 function doubleClicked(obj, handler) {
