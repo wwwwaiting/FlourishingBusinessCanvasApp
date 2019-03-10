@@ -867,28 +867,24 @@ function returnClass(sticky) {
     }
 }
 
-function getCanvasInfo() {
-    $.ajax({
-        type: "GET",
-        url: "/canvas/get",
-        data: send,
-        success: function (data) {
-            if (data == 'false') {
-                modalContent.innerHTML = "Oops, invalid password!";
-                modal.style.display = "block";
-            } else if (data == 'denied') {
-                modalContent.innerHTML = "User does not exist or does not have the authorization to login!";
-                modal.style.display = "block";
-            } else if (data == 'true') {
-                // need to wait for all the user liabary pages
-            }
-        }
-    });
-}
+// function getCanvasInfo() {
+//     $.ajax({
+//         type: "GET",
+//         url: "/canvas/get",
+//         success: function (data) {
+//             alert(data)
+//             // if (data == 'false') {
+//             //     console.log('false')
+//             // } else if (data == 'true') {
+//             //     console.log('true')                
+//             // }
+//         }
+//     });
+// }
 
 // Used to call functions after page is fully loaded.
 function main() {
-
+    // getCanvasInfo();
     initialize_canvas();
     canvas.selection = false; // disable group selection
     handleWindowResize();

@@ -14,6 +14,10 @@ app.get('/', function(req, res) {
     res.render('pages/index');
 });
 
+app.get('/canvas/get', function(req, res) {
+    res.send(true);
+});
+
 app.post('/canvas/edit', function(req, res) {
     res.send(true)
 })
