@@ -9,7 +9,7 @@ const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
-let stickyList = [];
+// let stickyList = [];
 const ogLeft = 173;
 let currLeft = ogLeft;
 const ogTop = 240;
@@ -53,7 +53,7 @@ function initialize_canvas() {
     });
     // Reset global vars
     numberOfStickies = 0;
-    stickyList = [];
+    // stickyList = [];
     setCanvasBgImg();
     currLeft = ogLeft;
     currTop = ogTop;
@@ -238,7 +238,7 @@ function setupStickyListeners(stickyShape) {
         let width = sticky.width * sticky.scaleX;
         let height = sticky.height * sticky.scaleY;
         if (width > stickyMaxWidth) width = stickyMaxWidth;
-        if (height > stickyMaxHeight) height = stickyMaxHeight;// set scaling boundary so that not stikcy will have size larger than a block
+        if (height > stickyMaxHeight) height = stickyMaxHeight; // set scaling boundary so that not stikcy will have size larger than a block
         if (width < stickyMinimumWidth) width = stickyMinimumWidth;
         if (height < stickyMinimumHeight) height = stickyMinimumHeight;
         sticky.set('width', width);
@@ -589,7 +589,7 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function() {
+        $(`#${buttonId}`).click(function () {
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
@@ -610,7 +610,7 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function() {
+        $(`#${buttonId}`).click(function () {
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
@@ -644,7 +644,7 @@ function displayEditForm(sticky) {
         editDiv.html('')
     })
 
-    $('#editBtn').click(function() {
+    $('#editBtn').click(function () {
         if ($(this).text() == 'Edit') {
             console.log($(this).text())
             $(this).text('Done')
@@ -699,8 +699,6 @@ function stickyContentEdit(sticky) {
     $('#textboxContainer').html(p)
 }
 
-
-
 function doubleClicked(obj, handler) {
     return function () {
         if (obj.clicked) handler(obj);
@@ -726,7 +724,7 @@ function handleWindowResize() {
 }
 
 function searchInCanvas() {
-    document.getElementById("searchContent").addEventListener("input", function() {
+    document.getElementById("searchContent").addEventListener("input", function () {
         // reset search result
         $('#searchResult').html('');
 
@@ -765,21 +763,11 @@ function searchInCanvas() {
     }, false);
 
     // hide the search result if clicked outside
-    $('body').on('click', function(e) {
+    $('body').on('click', function (e) {
         $('#searchResult').html('');
         document.getElementById('searchContent').value = '';
     });
 }
-
-// Used to call functions after page is fully loaded.
-function main() {
-    initialize_canvas();
-    canvas.selection = false; // disable group selection
-    handleWindowResize();
-    canvas.renderAll();
-}
-$(window).resize(handleWindowResize);
-$(document).ready(main);
 
 //###################################################3
 // functions that we deleted as we coded.
@@ -820,29 +808,91 @@ $(document).ready(main);
 // }
 
 
-function inWhichBox(){
-  for (let i = 0; i < stickyList.length; i++){
-    console.log(stickyList[i].stickyId + ' in ' + returnClass(stickyList[i]));
-  }
+function inWhichBox() {
+    for (let i = 0; i < stickyList.length; i++) {
+        console.log(stickyList[i].stickyId + ' in ' + returnClass(stickyList[i]));
+    }
 }
 
-function returnClass(sticky){
-  const top = sticky.top;
-  const left = sticky.left;
-  if (top >= 243 && top <= 613 && left >= 147 && left <= 372){return "BIOPHYSICAL STOCKS"}
-  if (top >= 613 && top <= 933 && left >= 147 && left <= 372){return "ECOSYSTEMSERVICES"}
-  if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866){return "ECOSYSTEM ACTORS"}
-  if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866){return "NEEDS"}
-  if (top >= 953 && top <= 1136 && left >= 147 && left <= 764){return "COSTS"}
-  if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278){return "GOALS"}
-  if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866){return "BENIFITS"}
-  if (top >= 334 && top <= 613 && left >= 423 && left <= 654){return "RESOURCES"}
-  if (top >= 613 && top <= 933 && left >= 423 && left <= 654){return "ACTIVITIES"}
-  if (top >= 334 && top <= 613 && left >= 654 && left <= 838){return "PARTNERSHIP"}
-  if (top >= 613 && top <= 933 && left >= 654 && left <= 838){return "GOVERNANCE"}
-  if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388){return "RELATIONSHIPS"}
-  if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388){return "CHANNELS"}
-  if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620){return "STAKEHOLDERS"}
-  if (top >= 334 && top <= 732 && left >= 850 && left <= 1192){return "VALUE CO-CREATIONS"}
-  if (top >= 732 && top <= 933 && left >= 850 && left <= 1192){return "VALUE CO-DESTRUCTIONS"}
+function returnClass(sticky) {
+    const top = sticky.shape.top;
+    const left = sticky.shape.left;
+    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+        return "BIOPHYSICAL STOCKS"
+    }
+    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+        return "ECOSYSTEMSERVICES"
+    }
+    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+        return "ECOSYSTEM ACTORS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+        return "NEEDS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+        return "COSTS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+        return "GOALS"
+    }
+    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+        return "BENIFITS"
+    }
+    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+        return "RESOURCES"
+    }
+    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+        return "ACTIVITIES"
+    }
+    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+        return "PARTNERSHIP"
+    }
+    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+        return "GOVERNANCE"
+    }
+    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+        return "RELATIONSHIPS"
+    }
+    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+        return "CHANNELS"
+    }
+    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+        return "STAKEHOLDERS"
+    }
+    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+        return "VALUE CO-CREATIONS"
+    }
+    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+        return "VALUE CO-DESTRUCTIONS"
+    }
 }
+
+function getCanvasInfo() {
+    $.ajax({
+        type: "GET",
+        url: "/canvas/get",
+        data: send,
+        success: function (data) {
+            if (data == 'false') {
+                modalContent.innerHTML = "Oops, invalid password!";
+                modal.style.display = "block";
+            } else if (data == 'denied') {
+                modalContent.innerHTML = "User does not exist or does not have the authorization to login!";
+                modal.style.display = "block";
+            } else if (data == 'true') {
+                // need to wait for all the user liabary pages
+            }
+        }
+    });
+}
+
+// Used to call functions after page is fully loaded.
+function main() {
+
+    initialize_canvas();
+    canvas.selection = false; // disable group selection
+    handleWindowResize();
+    canvas.renderAll();
+}
+$(window).resize(handleWindowResize);
+$(document).ready(main);
