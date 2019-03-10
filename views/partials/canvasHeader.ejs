@@ -5,13 +5,13 @@
     </div>
     <div class="ml-auto d-flex mt-0" id="canvasInfo">
         <div class="designInfo ml-2">
-            <input class="form-control bg-light" type="text" placeholder="Designed for:">
+            <input class="form-control bg-light" id="designedFor" type="text" placeholder="Designed for:">
         </div>
         <div class="designInfo ml-2">
-            <input class="form-control bg-light" type="text" placeholder="Designed by:">
+            <input class="form-control bg-light" id="designedBy" type="text" placeholder="Designed by:">
         </div>
         <div class="designInfo ml-2">
-            <input class="form-control bg-light" type="text" placeholder="Date:">
+            <input class="form-control bg-light" id="designedDate" type="text" placeholder="Date:">
         </div>
     </div>
     <div class="ml-2 dropdown mt-0" id="exportBtn">
@@ -27,6 +27,7 @@
 
 <div id="lowerHeader" class="d-flex">
 <div id="stickyInfo" class="input-group">
+        <button class="btn btn-secondary mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" fill="white"/></svg></button>
         <input id='textInputBox' class="form-control bg-light" type="text" placeholder="Type content">
         <button id="createBtn" class="ml-2 mr-2 btn btn-secondary" type="button" onclick="createSticky()">New Sticky</button>
         <%#<button id="removeAllBtn" onclick="removeAll()">Remove All</button>%>
