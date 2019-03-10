@@ -529,49 +529,51 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var id = req.body.canvasId;
-	Canvas.findOneAndDelete({id:id}, function(err, result){
-		if (err) {
-			console.log(err);	
-			res.send(fal);	
-		} else {
-			var u = result.users;
-			var s = result.stickies;
-			var e = result.editHistory;
+	var ids = req.body.canvasId;  //now is a list of canvasId
+	ids.foreach(function(id){
+		Canvas.findOneAndDelete({id:id}, function(err, result){
+			if (err) {
+				console.log(err);	
+				res.send(fal);	
+			} else {
+				var u = result.users;
+				var s = result.stickies;
+				var e = result.editHistory;
 			
-			// loop through to delete canvasId from users
-			u.forEach(function(email){
-				User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					} 
+				// loop through to delete canvasId from users
+				u.forEach(function(email){
+					User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
+						if (err) {
+							console.log(err);
+							res.send(fal);					
+						} 
+					});
 				});
-			});
 			
-			// loop through to delete stickies
-			s.foreach(function(sid){
-				Sticky.findOneAndDelete({id:sid}, function(err, result){
-					if (err) {
-						console.log(err);	
-						res.send(fal);				
-					}
+				// loop through to delete stickies
+				s.foreach(function(sid){
+					Sticky.findOneAndDelete({id:sid}, function(err, result){
+						if (err) {
+							console.log(err);	
+							res.send(fal);				
+						}
+					});
 				});
-			});
 			
-			// loop through to delete editHistory
-			e.foreach(function(eid){
-				History.findOneAndDelete({id:eid}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					}
+				// loop through to delete editHistory
+				e.foreach(function(eid){
+					History.findOneAndDelete({id:eid}, function(err, result){
+						if (err) {
+							console.log(err);
+							res.send(fal);					
+						}
+					});
 				});
-			});
 			
-			// delete everything
-			res.send(tru);		
-		}		
+				// delete everything
+				res.send(tru);		
+			}		
+		});
 	});
 });
 
