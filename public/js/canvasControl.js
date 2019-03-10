@@ -9,9 +9,9 @@ const canvasMinZoom = 0.3;
 const mainCanvasWidth = 2040;
 const mainCanvasHeight = 1320;
 let numberOfStickies = 0;
-const ogLeft = 173;
+const ogLeft = 182;
 let currLeft = ogLeft;
-const ogTop = 240;
+const ogTop = 292;
 let currTop = ogTop;
 const stickyRadius = 3;
 const stickyOgWidth = 100;
@@ -132,6 +132,11 @@ function initialize_canvas() {
         opt.e.stopPropagation();
         canvas.renderAll()
     });
+    canvas.on('selection:cleared', ()=>{
+        console.log('cleared!')
+        $('.collapse').collapse('hide');
+        // $('.collapse').collapse('dispose');
+    })
 }
 
 // Used to set / reset background image of the canvas
@@ -219,6 +224,24 @@ function argHandler(obj, handler) {
     };
 };
 
+
+function showSidepanel (stickySelected) {
+    const stickyBoxName = returnClass(stickySelected);
+    $('#sidepanel-title').text(stickyBoxName);
+    const testRect = returnTestRect(stickySelected);
+    $('#sidepanel-list').html('')
+    canvas.getObjects().forEach(sticky => {
+        if (sticky.intersectsWithObject(testRect)) {
+            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+            <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
+                <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+                <p class="mb-1">${sticky.get('content')}</p>
+            </div></a>`);
+        }
+    });
+    $('#collapseSidepanel').collapse('show');
+}
+
 let stickyIsMoving = false;
 let stickyIsResizing = false;
 
@@ -269,6 +292,10 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         // this.comments = []
 
         // Sticky fabric object (named as shape)
+
+        this.on('selected', ()=>{
+            if (!stickyIsMoving && !stickyIsResizing) showSidepanel(this);
+        })
 
         this.item(1).text = convertDisplay(this);
 
@@ -993,6 +1020,59 @@ function returnClass(sticky) {
     }
     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
         return "VALUE CO-DESTRUCTIONS"
+    }
+}
+
+function returnTestRect(sticky) {
+    const top = sticky.top;
+    const left = sticky.left;
+    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
+        return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+    }
+    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
+        return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+    }
+    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
+        return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+    }
+    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
+        return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+    }
+    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
+        return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+    }
+    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
+        return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+    }
+    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
+        return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+    }
+    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+        return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+    }
+    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
+        return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+    }
+    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+        return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+    }
+    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
+        return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+    }
+    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+        return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+    }
+    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
+        return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+    }
+    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+        return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+    }
+    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+        return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+    }
+    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
+        return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
     }
 }
 
