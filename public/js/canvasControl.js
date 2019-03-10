@@ -338,6 +338,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
+        this.set('title', options.title || '');
         this.set('content', textboxValue);
         this.set('stickyId', options.stickyId || -1);
         this.set('comments', options.comments || []);
@@ -571,13 +572,14 @@ function createSticky() {
                     height: newSticky.get('height')
                 },
                 color: newSticky.item(0).get('fill'),
-                title: '',
+                title: newSticky.get('title'),
                 comment: [],
                 optimalFields: {}
             }
         },
         success: function (resultData) {
-            console.log(resultData)
+            console.log(resultData);
+            // newSticky.set('stickyId', resultData.id);
         },
         error: function () {
             alert("Something went wrong")
