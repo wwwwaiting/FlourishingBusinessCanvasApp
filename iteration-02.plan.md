@@ -1,6 +1,4 @@
-# YOUR PRODUCT/TEAM NAME
-
-Flourishing Business Canvas (FBC)
+# Flourishing Business Canvas / Team 09
 
 ## Iteration 02
 

@@ -1,11 +1,6 @@
-# Flourishing Business Canvas/Team 09
+# Flourishing Business Canvas / Team 09
 
- > _Note:_ This document is meant to be written during (or shortly after) your review meeting, which should happen fairly close to the due date.      
- >      
- > _Suggestion:_ Have your review meeting a day or two before the due date. This way you will have some time to go over (and edit) this document, and all team members should have a chance to make their contribution.
-
-
-## Iteration XX - Review & Retrospect
+## Iteration 02 - Review & Retrospect
 
  * When: Mar 9, 2019
  * Where: BA3185
@@ -14,55 +9,36 @@
 
 #### Decisions that turned out well
 
-List process-related (i.e. team organization) decisions that, in retrospect, turned out to be successful.
+**Having a group meeting for outlining features to be implemented and discussing schemas prior to any coding actually starts: **
 
+Before we started writing anything, we had a group meeting and used the app called "Trello" for keeping track of the meeting. In Trello, we listed the tasks that we targeted to finish during deliverable 2 and specified subtasks under each. Then we wrote out what data we should store for our schemas.
 
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Explain why (i.e. give a supporting argument) you consider a decision to be successful.
- * Feel free to refer/link to process artifact(s).
+This decision turned out to be successful because during the month of February, most of us had a lot of midterms and deadlines, therefore we could not get much chance to meet the whole team. However, because we had written most information and tasks needed for deliverable 2 on "Trello", our team was heading the right direction for completing our project. All members had a sense of what they needed to accomplish and the expected amount of work to be done so that they could plan ahead and start out if they had spare time.
 
-**Having a group meeting for discussing schemas and splitting the work into 3 teams:**
+**Having 2 to 3 members on each sub groups to work on our project: **
 
-Before we started writing anything, we had a group meeting discussing what and how we were going to store the data in our server and how we should split the work into subgroups. 
+We splited our group members into 3 teams: Front end(Canvas), Front end(User pages) and Back end.
 
-We used the app called "Trello" for the meeting. In Trello, we were able to list the tasks that we target to finish for deliverable 2, and assign our group members into groups for each tasks, as well as writing what data we should store for our schemas.
+This decision was effective because not only we were able to follow up the project progress by communicating within the subgroups, we also reduced the chance of conflicting issues since each team had at most 3 people working on it.
 
-This decision turned out to be successful because during the month of February, most of us had a lot midterms, therefore we could not get much chance to meet the whole team.  However, because we had written most information and tasks needed for deliverable 2 on "Trello", our team was heading the right direction of completing our project.
+**Working in the same room for the ease of communicating between front end and back end teams: **
 
-**Having 2 to 3 members on each sub groups to work on our project:**
+We chose to work on the project with all members in-person at the end of deliverable 2. 
 
-We split our group members into 3 teams: Front end(Canvas), Front end(User profile, manager and library) and Back end.
-
-This decision was effective because not only we were able to keep track each group members' progress by communicating within the subgroups, we also reduced the chance that we would have conflicting issues since each team at most has 3 persons working on it.
-
-**Working in the same room for the ease of communicating between front end and back end teams:**
-
-We chose to work on the project with everyone in the same room at the end of deliverable 2. 
-
-This decision turned out to be really successful because we were able to communicate between our front end and back end directly about how back end would store and send the data to front end. Our front end team quickly made adjustment and mock data that has the exactly the same schema as the back end team which helped to connect our front and back end together later.
-
+This decision turned out to be successful because we were able to communicate between front end and back end directly about how data would be fetched, stored, and sent. Both teams quickly made adjustments to ensure the correctness of data transfer between pages.
 
 
 #### Decisions that did not turn out as well as we hoped
 
-List process-related (i.e. team organization) decisions that, in retrospect, were not as successful as you thought they would be.
+**We planned too much ahead: **
 
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Feel free to refer/link to process artifact(s).
+Although we did finish in the end, we had planned to write too much for deliverable 2. If we take a look back at how we planned for deliverable 2, we implemented many additional helper functions which were not a part of the intial plan such as sticky search, auto positioning and comment system as these functions were beyond the partner requirements of the FBC. 
 
-**We planned too much ahead:**
+This decision did not turn out as well as we hoped because the overwhelming amount of tasks made us not know where to start the project or where to focus on so the beginning phase of D2 was a quite slow process.
 
-Although we did finish in the end, we had planned to write too much for deliverable 2. When we take a look back at deliverable 2, we think that we should not have implemented all the helper function such as sticky search, auto positioning and comment system as these functions were beyond the basic use of the FBC. 
+**Front end and back end did not use the same version of JavaScript at the beginning: **
 
-This decision did not turn out as well as we hoped because there was too much that we needed to focus which made us not know where to start the project.
-
-**Front end and back end did not use the same version of JavaScript at the beginning:**
-
-All of front end teams started writing their code using vanilla js, while our back end team wrote the code using ejs. This was a miscommunication and turned out that all of our front end team had to change their code to ejs for connecting front and back end together. 
-
-
+Our front end teams started writing their code using vanilla js, while the back end team wrote the code based on ejs. This was a miscommunication and turned out that all front end pages had to be rewritten and switched to ejs version in order to successfully connect front and back end together. This was time-consuming and hugely slowed down our development progress.
 
 
 #### *Planned changes
@@ -73,36 +49,30 @@ List any process-related changes you are planning to make (if there are any)
  * Explain why you are making a change.
 
 
-
-
 ## Product - Review
 
 #### Goals and/or tasks that were met/completed:
 
- * From most to least important.
- * Refer/link to artifact(s) that show that a goal/task was met/completed.
- * If a goal/task was not part of the original iteration plan, please mention it.
+**Main FBC canvas page**
 
-**Main FBC application page**
+We finished implementing our FBC canvas page with all functionalities that a physical canvas is capable of, plus some additional functions that are used to better serve user needs and help them to organize their canvas, such as:
 
-We finished implementing our FBC page with all functionalities that a real FBC has and as well as some functions which helps users to organize their canvas, such as:
+Sticky auto positioning, Search function, Comment, Export Import, Zooming, Text auto fitting, as mentioned in our plan.md.
 
-Sticky auto positioning, Search function(Sticky hashtag), Comment, Export Import, Zooming, Text auto fitting, as mentioned in our plan.md
+**User library page**
 
-**FBC library page**
+We finished implementing our library page which users can get access to all of their FBCs that they have participated in.
 
-We finished implementing our library page which users can get access to all of their FBCs that they have been invited to.
+**Sign up, log in, user profile, and reset password pages**
 
-**User log in/sign up, profile page**
+We finished implementing our sign up and log in pages, where users can register and log in. There is also a profile page where users can modify their basic information including name, phone, company, and occupation. As well as a reset password page for users to modify their credentials.
 
-We finished implementing our sign up and log in page, where user can register or log in. As well as our profile page where user can modify its basic information.
 
 #### *Goals and/or tasks that were planned but not met/completed:
 
  * From most to least important.
  * For each goal/task, explain why it was not met/completed.      
    e.g. Did you change your mind, or did you just not get to it yet?
-
 
 
 ## *Meeting Highlights
