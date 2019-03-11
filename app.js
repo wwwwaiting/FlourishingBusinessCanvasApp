@@ -229,7 +229,7 @@ app.post('/canvas/add', function(req, res){
       // create new sticky
 
       sticky.canvasId = canvas;
-      sticky.modifiedTime = (new Date()).toLocaleDateString("en-US", dataFormat);
+      sticky.modifiedTime = new Date()
       var newStic = new Sticky(sticky)
       Sticky.create(newStic, function(err, newlyCreated) {
         if (err) {
