@@ -580,7 +580,7 @@ function createSticky() {
         },
         success: function (resultData) {
             console.log(resultData);
-            // newSticky.set('stickyId', resultData.id);
+            newSticky.set('stickyId', resultData.id);
         },
         error: function () {
             alert("Something went wrong")
