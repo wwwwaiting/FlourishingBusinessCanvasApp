@@ -1075,28 +1075,28 @@ function returnClass(sticky) {
     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
         return "BENIFITS"
     }
-    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+    if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
         return "RESOURCES"
     }
     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
         return "ACTIVITIES"
     }
-    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+    if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
         return "PARTNERSHIP"
     }
     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
         return "GOVERNANCE"
     }
-    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+    if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
         return "RELATIONSHIPS"
     }
     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
         return "CHANNELS"
     }
-    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+    if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
         return "STAKEHOLDERS"
     }
-    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+    if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
         return "VALUE CO-CREATIONS"
     }
     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
@@ -1126,28 +1126,28 @@ function returnMouseClass(top, left) {
     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
         return "BENIFITS"
     }
-    if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
+    if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
         return "RESOURCES"
     }
     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
         return "ACTIVITIES"
     }
-    if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
+    if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
         return "PARTNERSHIP"
     }
     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
         return "GOVERNANCE"
     }
-    if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
+    if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
         return "RELATIONSHIPS"
     }
     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
         return "CHANNELS"
     }
-    if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
+    if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
         return "STAKEHOLDERS"
     }
-    if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
+    if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
         return "VALUE CO-CREATIONS"
     }
     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
