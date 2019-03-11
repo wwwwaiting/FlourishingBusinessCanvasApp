@@ -54,11 +54,12 @@ function initialize_canvas(data) {
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
     const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
-    $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
+    $('#designedDate').attr('value', data.createDate);
+    // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
 
     data.stickies.forEach(sticky => {
         const options = {
-            stickyId: sticky.id,
+            stickyId: sticky._id,
             left: sticky.position.left,
             top: sticky.position.top,
             width: sticky.size.width,
@@ -393,8 +394,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     data: {
                         type: "size",
                         change: {
-                            height: this.height,
-                            width: this.width
+                            height: parseInt(this.get('height')),
+                            width: parseInt(this.get('width'))
                         },
                         canvasId: canvas.canvasId,
                         stickyId: this.stickyId
@@ -415,8 +416,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     data: {
                         type: "position",
                         change: {
-                            top: this.top,
-                            left: this.left
+                            left: parseInt(this.get('left')),
+                            top: parseInt(this.get('top'))
                         },
                         canvasId: canvas.canvasId,
                         stickyId: this.stickyId
@@ -581,12 +582,12 @@ function createSticky() {
         success: function (resultData) {
             console.log(resultData);
             newSticky.set('stickyId', resultData.id);
+            showSidepanel(newSticky);
         },
         error: function () {
             alert("Something went wrong")
         }
     });
-    showSidepanel(newSticky);
 }
 
 function removeAll() {
@@ -828,7 +829,7 @@ function displayEditForm(sticky) {
         // delete request to server
         // send post request
         $.ajax({
-            type: 'POST',
+            type: 'DELETE',
             url: "/canvas/delete",
             data: {
                 canvasId: canvas.canvasId,
