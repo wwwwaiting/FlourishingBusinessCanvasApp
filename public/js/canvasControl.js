@@ -407,6 +407,25 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                         alert("Something went wrong")
                     }
                 });
+                $.ajax({
+                    type: 'POST',
+                    url: "/canvas/edit",
+                    data: {
+                        type: "position",
+                        change: {
+                            left: parseInt(left),
+                            top: parseInt(top)
+                        },
+                        canvasId: canvas.canvasId,
+                        stickyId: this.stickyId
+                    },
+                    success: function (resultData) {
+                        console.log(resultData)
+                    },
+                    error: function () {
+                        alert("Something went wrong")
+                    }
+                });
                 stickyIsResizing = false;
             } else if (stickyIsMoving) {
                 console.log('entering isMoving')
@@ -416,8 +435,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     data: {
                         type: "position",
                         change: {
-                            left: parseInt(this.get('left')),
-                            top: parseInt(this.get('top'))
+                            left: parseInt(left),
+                            top: parseInt(top)
                         },
                         canvasId: canvas.canvasId,
                         stickyId: this.stickyId
