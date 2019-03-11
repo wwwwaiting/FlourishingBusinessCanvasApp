@@ -53,7 +53,8 @@ function initialize_canvas(data) {
 
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
-    $('#designedDate').attr('value', data.createDate);
+    const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
+    $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
 
     data.stickies.forEach(sticky => {
         const options = {
