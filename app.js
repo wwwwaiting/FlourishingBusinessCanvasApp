@@ -307,7 +307,6 @@ app.post('/canvas/edit', function(req, res){
   var type = req.body.type;
   var change = req.body.change;
   var newHis = {
-    stickyID: sticky,
     user: req.cookies.email,
     content: 'Modified' + type,
     modifiedTime: new Date()
