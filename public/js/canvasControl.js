@@ -67,7 +67,7 @@ function initialize_canvas(data) {
             originX: 'left',
             originY: 'top',
             content: sticky.content,
-            comment: sticky.comment
+            comments: sticky.comment
         }
         const newSticky = new Sticky(options);
         newSticky.item(0).set('fill', sticky.color);
