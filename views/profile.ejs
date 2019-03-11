@@ -79,7 +79,7 @@
             var emailTextBox = document.querySelector('#email')
             emailTextBox.setAttribute('value', email)
 
-            var oldName = Cookies.get('name').split(" ");
+            var oldName = Cookies.get('name').split('\xa0');
 
             var oldFirstName = oldName[0];
             var firstNameTextBox = document.querySelector('#firstName')
@@ -115,7 +115,7 @@
             const occupation = document.querySelector("#occupation").value;
             const phone = document.querySelector("#phone").value;
 
-            var name = firstName + " " + lastName;
+            var name = firstName + '\xa0' + lastName;
             
             var send = {name, company, occupation, phone};
             console.log(send)
