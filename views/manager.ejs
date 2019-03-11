@@ -30,7 +30,7 @@
     </div>
 
     <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" id="mainNav">
-        <div class="container"><h1>Canvas</h1>
+        <div class="container"><h1>Flourishing Business Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Manage users</button>
@@ -39,7 +39,7 @@
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
                 </li>
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getProfile()">Profile</button>
+                    <button type="button" class="btn btn-light" onclick="getProfile()">Profile</button>
                 </li>
             </ul>
         </div>
@@ -59,8 +59,7 @@
     <script src="https://smtpjs.com/v3/smtp.js"></script>
 
     <!-- <script src="js/popup.js"></script> -->
-</body>
-</html>
+
 <script type="text/javascript">
     "use strict"
     console.log("popup.js")
@@ -77,6 +76,7 @@
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
+         console.log('haha')
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -119,10 +119,12 @@
     $('body').on('click', 'a.canvasClick', function() {
         console.log(11)
         console.log($(this)[0].id)
-        const canvasId = $(this).id
-        const send = {canvasId}
+        const canvasId = $(this)[0].id
+        const empty = "random"
+        const send = {canvasId, empty}
+        console.log(send)
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/library/id",
             data: send,
             success: function (data) {
@@ -347,3 +349,5 @@
     }
 
 </script>
+</body>
+</html>
