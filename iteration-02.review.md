@@ -41,12 +41,9 @@ This decision did not turn out as well as we hoped because the overwhelming amou
 Our front end teams started writing their code using vanilla js, while the back end team wrote the code based on ejs. This was a miscommunication and turned out that all front end pages had to be rewritten and switched to ejs version in order to successfully connect front and back end together. This was time-consuming and hugely slowed down our development progress.
 
 
-#### *Planned changes
+#### Planned changes
 
-List any process-related changes you are planning to make (if there are any)
-
- * Ordered from most to least important.
- * Explain why you are making a change.
+None. Everything is according to the plan.
 
 
 ## Product - Review
@@ -73,6 +70,9 @@ We finished implementing our sign up and log in pages, where users can register 
  * From most to least important.
  * For each goal/task, explain why it was not met/completed.      
    e.g. Did you change your mind, or did you just not get to it yet?
+   
+ - admin page (email invitation)
+ - weekly meeting with Andrew
 
 
 ## *Meeting Highlights
@@ -84,3 +84,7 @@ Going into the next iteration, our main insights are:
  * High-level concepts that should guide your work for the next iteration.
  * These concepts should help you decide on where to focus your efforts.
  * Can be related to product and/or process.
+ 
+ - edit history for each sticky
+ - admin page (email invitation)
+ - multiple users syncronization
