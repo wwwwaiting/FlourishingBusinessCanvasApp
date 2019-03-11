@@ -360,36 +360,38 @@ app.post('/canvas/edit', function(req, res){
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
-	var email = req.cookies.name;
+	var email = req.cookies.email;
 	User.find({'email':email}, function(err, result){
 		if (err) {
 			console.log(err);		
 		} else {
 			var user = result[0];
-			console.log(user.id);
 			var c_list = user.canvas;
 			
-			// loop through all canvas list
 			var title = new Array();
 			var canvasId = new Array();
 			var users = new Array();
-			for (var i = 0; i < c_list.length; i++){
-				Canvas.find({id:c_list[i]}, function(err, result){
-					if (err) {
-						console.log(err);				
-					} else {
-						var c = result[0];
-						var t = c.title;
-						var user = c.users;
-						canvasId.push(c_list[i]);
-						title.push(t);
-						users.push(user);						
-					}				
-				});			
+			if (c_list.length != 0) {
+				// loop through all canvas list
+				for (let i = 0; i < c_list.length; i++){
+					Canvas.find({_id:c_list[i]}, function(err, result){
+						if (err) {
+							console.log(err);				
+						} else {
+							var c = result[0];
+							var id = c.id
+							var t = c.title;
+							var user = c.users;
+							canvasId.push(id);
+							title.push(t);
+							users.push(user);
+							if (i == c_list.length-1){
+								res.send({title:title, canvas:canvasId, users:users});
+							}						
+						}				
+					});			
+				}
 			}
-			
-			// send back to front end
-			res.send({title:title, canvas:canvasId, users:users});
 		}
 	});
 });
@@ -420,12 +422,13 @@ app.post('/manager/user', function(req, res){
 							console.log(err);					
 						} else if (result.length == 0){
 							//user not in the db	
+							console.log("not in db")
 							var canvasList = new Array();
 							var user = new User({
                 			name: '',
                 			email: email,
                 			pwd: '',
-                			role: regReg,
+                			role: regUser,
                 			canvas: canvasList,
                 			occupation: '',
                 			status: 2,
@@ -437,16 +440,23 @@ app.post('/manager/user', function(req, res){
                   			console.log(err);
                   			res.send(fal);
                 			} else {
+                				Canvas.findOneAndUpdate({_id:id}, {$push:{users:email}}, function(err, result){
+                					if (err) {
+											console.log(err);                					
+                					}
+                				});
                   			res.send(tru);  // send true when finish create user in db.
                 			}
               			});		
 						} else {
 							//user in db
-							Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
+							console.log("in db");
+							Canvas.findOneAndUpdate({_id:id}, {$push: {users:email}}, function(err, result){
 								if (err) {
 									console.log(err);	
 									res.send(fal);						
 								} else {
+									User.findOneAndUpdate({email:email}, {$push:{canvas:id}}, function(err, result){});
 									res.send(tru);	 // send true when add user into canvas's user list.						
 								}					
 							});
@@ -455,15 +465,22 @@ app.post('/manager/user', function(req, res){
 				});
 			} else if (type == "remove"){
 				// assume user is already in the db
-				Canvas.findOneAndUpdate({id:id}, {$pull: {users:email}}, function(err, result){
-					if (err) {
-						console.log(err);	
-						res.send(fal);						
-					} else {
-						res.send(tru);	 // send true when remove user from canvas's user list.						
-					}					
+				emails.forEach(function(email){
+					Canvas.findOneAndUpdate({_id:id}, {$pull: {users:email}}, function(err, result){
+						if (err) {
+							console.log(err);	
+							res.send(fal);						
+						} else {
+							res.send(tru);	 // send true when remove user from canvas's user list.						
+						}					
+					});
+					User.findOneAndUpdate({email:email}, {$pull:{canvas:id}}, function(){
+						if (err) {
+							console.log(err)						
+						}					
+					});
 				});
-			}	 	
+			}	
 	 	}
 	 });
 });
@@ -472,6 +489,7 @@ app.post('/manager/user', function(req, res){
 // add canvas from manager page
 app.post('/manager/add', function(req, res){
 	var owner = req.cookies.name;
+	var email = req.cookies.email;
 	var title = req.body.title;
 	var empty = new Array();
 	var time = new Date();
@@ -491,27 +509,37 @@ app.post('/manager/add', function(req, res){
 		if (err) {
 			console.log(err);		
 		} else {
+			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
+				if (err) {
+					console.log(err);		
+				} 
+			});
 			res.send({id:result.id});
 		}
 	});
+
 });
 
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
 	var ids = req.body.canvasId;  //now is a list of canvasId
-	ids.foreach(function(id){
-		Canvas.findOneAndDelete({id:id}, function(err, result){
+	var owner = req.cookies.email;
+	ids.forEach(function(id){
+		Canvas.findOneAndDelete({_id:id}, function(err, result){
 			if (err) {
 				console.log(err);	
 				res.send(fal);	
 			} else {
 				var u = result.users;
 				var s = result.stickies;
-			
+				
+								
+				User.findOneAndUpdate({email:owner}, {$pull:{canvas:id}}, function(err, result){});				
+								
 				// loop through to delete canvasId from users
 				u.forEach(function(email){
-					User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
+					User.findOneAndUpdate({email:email}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
 							console.log(err);
 							res.send(fal);					
@@ -520,15 +548,15 @@ app.delete('/manager/del', function(req, res){
 				});
 			
 				// loop through to delete stickies
-				s.foreach(function(sid){
-					Sticky.findOneAndDelete({id:sid}, function(err, result){
+				s.forEach(function(sid){
+					Sticky.findOneAndDelete({_id:sid}, function(err, result){
 						if (err) {
 							console.log(err);	
 							res.send(fal);				
 						}
 					});
 				});
-			
+				
 				// delete everything
 				res.send(tru);		
 			}		

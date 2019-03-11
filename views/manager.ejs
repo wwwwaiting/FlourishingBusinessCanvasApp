@@ -56,6 +56,7 @@
             crossorigin="anonymous"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
 
     <!-- <script src="js/popup.js"></script> -->
 </body>
@@ -66,11 +67,6 @@
     let canvasUsers = []
     let canvasIds = []
     let canvasTitles = []
-
-    console.log(canvasUsers)
-    console.log(canvasIds)
-    console.log(canvasTitles)
-
 
     $(document).ready(main);
 
@@ -88,9 +84,12 @@
                  canvasTitles = data.title
                  canvasIds = data.canvas
                  canvasUsers = data.users
+                 console.log(canvasTitles)
+         		  console.log(canvasIds)
+        			  console.log(canvasUsers)
+        			  renderFbc()
              }
          })
-        renderFbc()
     }
 
     function renderFbc() {
@@ -185,14 +184,23 @@
             success: function (data) {
                 if (data == 'true') {
                     const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index].push(newUserId)
+                    canvasUsers[index].push(email)
+                    Email.send({
+							Host: "smtp.elasticemail.com",
+            			Username: "wangluya2014@gmail.com",
+            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+            			To: email,
+            			From: "wangluya2014@gmail.com",
+            			Subject: "This is the subject",
+            			Body: "Testing for register!."
+          			  });
+                    renderManageUsers()
                 } else {
                     console.log('fail add user')
                 }
             }
         })
         // console.log('here')
-        renderManageUsers()
     })
 
 
@@ -204,6 +212,14 @@
         }
         const text = selected[0].parentElement.parentElement.children[0].innerHTML.split('(')[1]
         const canvasId = text.slice(0, text.length - 1)
+        for (let i = 1; i < selected.length; i++) {
+				const temp = selected[i].parentElement.parentElement.children[0].innerHTML.split('(')[1]
+        		const tempId = text.slice(0, text.length - 1)
+        		if (tempId != canvasId) {
+					console.log('Cannot remove users in different canvas simultaneously')
+					return        		
+        		}        
+        }
         
         console.log(canvasId)
 
@@ -256,9 +272,9 @@
     }
 
     function addNewCanvas() {
-        const newCanvasTitle = $('#newCanvas').val()
+        const title = $('#newCanvas').val()
         // send post request
-        const send = {newCanvasTitle}
+        const send = {title}
         console.log(send)
         $.ajax({
             type: "POST",
@@ -267,7 +283,7 @@
             success: function (data) {
                 // if (data == 'true') {
                 canvasIds.push(data.id)
-                canvasTitles.push(newCanvasTitle)
+                canvasTitles.push(title)
                 canvasUsers.push([])
                 removeMainSection()
                 renderManageCanvas()
@@ -306,7 +322,7 @@
                         const indexToRemove = canvasIds.findIndex(id => id == canId)
                         canvasTitles.splice(indexToRemove, 1)
                         canvasIds.splice(indexToRemove, 1)
-                        canvanvasUsers.splice(indexToRemove, 1)
+                        canvasUsers.splice(indexToRemove, 1)
                     }
                     renderManageCanvas()
                     removeMainSection()
