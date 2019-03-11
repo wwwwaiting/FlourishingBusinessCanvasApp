@@ -651,7 +651,7 @@ function exportSvg() {
     revertTransformation();
     // const href = 'data:image/svg+xml,' + canvas.toSVG();
     const href = 'data:image/svg+xml,' + canvas.toSVG(null, function (svg) {
-        return svg.replace('/(filter: url\(\w*\))/g', 'filter:');
+        return svg.replace('/(filter: .*;)/g', 'filter:;');
     });
     console.log(href)
     downloadPopup(href);
