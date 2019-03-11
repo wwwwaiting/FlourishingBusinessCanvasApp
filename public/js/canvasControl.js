@@ -53,11 +53,13 @@ function initialize_canvas(data) {
 
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
+    const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
     $('#designedDate').attr('value', data.createDate);
+    // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
 
     data.stickies.forEach(sticky => {
         const options = {
-            stickyId: sticky.id,
+            stickyId: sticky._id,
             left: sticky.position.left,
             top: sticky.position.top,
             width: sticky.size.width,
@@ -242,7 +244,7 @@ function convertDisplay(sticky) {
     const width = sticky.width * sticky.scaleX;
     const height = sticky.height * sticky.scaleY;
     let printText = sticky.content;
-    console.log(printText);
+    // console.log(printText);
     if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15)) {
         printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15) - 3);
         printText = printText + '...';
@@ -275,7 +277,7 @@ function showSidepanel (stickySelected) {
     canvas.getObjects().forEach(sticky => {
         if (returnClass(sticky) == stickyClass) {
           // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-1 border-0">
+            $('#sidepanel-list').append(`<a class="list-group-item bg-light list-group-item-action p-1 border-0">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
@@ -302,7 +304,7 @@ function showMouseSidepanel (stickyBoxName) {
     canvas.getObjects().forEach(sticky => {
         if (returnClass(sticky) == stickyClass) {
           // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
+            $('#sidepanel-list').append(`<a class="list-group-item list-group-item-light list-group-item-action p-2">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
@@ -331,11 +333,14 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const textboxValue = options.content;
         $('#textInputBox').val("");
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
+        stickyBackground.width = options.width;
+        stickyBackground.height = options.height;
         const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
         this.callSuper('initialize', [stickyBackground, stickyContent], options);
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
+        this.set('title', options.title || '');
         this.set('content', textboxValue);
         this.set('stickyId', options.stickyId || -1);
         this.set('comments', options.comments || []);
@@ -356,7 +361,6 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         });
         this.set("isMoving", false);
         this.set("isResizing", false);
-
 
         // // Sticky content (text)
         // this.content = textboxValue;
@@ -390,8 +394,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     data: {
                         type: "size",
                         change: {
-                            height: this.height,
-                            width: this.width
+                            height: parseInt(this.get('height')),
+                            width: parseInt(this.get('width'))
                         },
                         canvasId: canvas.canvasId,
                         stickyId: this.stickyId
@@ -412,8 +416,8 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                     data: {
                         type: "position",
                         change: {
-                            top: this.top,
-                            left: this.left
+                            left: parseInt(this.get('left')),
+                            top: parseInt(this.get('top'))
                         },
                         canvasId: canvas.canvasId,
                         stickyId: this.stickyId
@@ -570,19 +574,20 @@ function createSticky() {
                     height: newSticky.get('height')
                 },
                 color: newSticky.item(0).get('fill'),
-                title: '',
+                title: newSticky.get('title'),
                 comment: [],
                 optimalFields: {}
             }
         },
         success: function (resultData) {
-            console.log(resultData)
+            console.log(resultData);
+            newSticky.set('stickyId', resultData.id);
+            showSidepanel(newSticky);
         },
         error: function () {
             alert("Something went wrong")
         }
     });
-    showSidepanel(newSticky);
 }
 
 function removeAll() {
@@ -824,7 +829,7 @@ function displayEditForm(sticky) {
         // delete request to server
         // send post request
         $.ajax({
-            type: 'POST',
+            type: 'DELETE',
             url: "/canvas/delete",
             data: {
                 canvasId: canvas.canvasId,
@@ -1209,8 +1214,8 @@ function getCanvasInfo() {
         type: "GET",
         url: "/canvas/get",
         success: function (data) {
-            console.log(data)
-            initialize_canvas(data);          
+            initialize_canvas(data);
+            handleWindowResize();
         },
         error: function () {
             alert('error getting canvas info');
@@ -1219,11 +1224,5 @@ function getCanvasInfo() {
 }
 
 // Used to call functions after page is fully loaded.
-function main() {
-    getCanvasInfo();
-    canvas.selection = false; // disable group selection
-    handleWindowResize();
-    canvas.renderAll();
-}
 $(window).resize(handleWindowResize);
-$(document).ready(main);
+$(document).ready(getCanvasInfo);

@@ -8,15 +8,11 @@ var http = require('http');
 
 require('./connect.js');
 require('./models/canvas.js');
-require('./models/comment.js');
-require('./models/history.js');
 require('./models/sticky.js');
 require('./models/user.js');
 
 //model name
-const Comment = mongoose.model('Comment');
 const User = mongoose.model('User');
-const History = mongoose.model('History');
 const Sticky = mongoose.model('Sticky');
 const Canvas = mongoose.model('Canvas');
 mongoose.Promise = global.Promise;
@@ -41,10 +37,6 @@ const manager = 3;
 const admin = 4;
 
 const registrationRquest = new Array();
-const stickyCount = 0;
-const commentCount = 0;
-const historyCount = 0;
-const canvasCount = 0;
 const changeType = ['content', 'position', 'size', 'color', 'comment'];
 
 // render login page
@@ -54,7 +46,7 @@ app.get('/login', function(req, res) {
 
 // render canvas page
 app.get('/canvas', function(req, res){
-	res.render('canvas', {name:req.cookies.name, email:req.cookies.email});
+	res.render('canvas', {name:req.cookies.name, email:req.cookies.email, id:req.cookies.id});
 });
 
 // render manager page
@@ -158,6 +150,7 @@ app.post('/register', function(req, res) {
                 } else if (newlyCreated == null){
                   res.send(err);
                 } else {
+                	//console.log(newlyCreated.id);
                   res.send(newReg.toString());
                 }
               });
@@ -175,91 +168,99 @@ app.post('/register', function(req, res) {
 });
 
 
+
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
-  var canvasId = req.body.canvasId;
-  Canvas.find({'id': canvasId},function(err, result) {
+  var canvasId = req.cookies.id;
+  var stickyList = [];
+  Canvas.find({_id: canvasId},function(err, result) {
     if (err) {
       console.log(err);
       res.send(err);
-    } else if (result.length === 0) {
-      console.log('The requested canvas does not exist!');
-      res.send(fal);
-    } else {
+    } else if (result.length !== 0) {
       var canvas = result[0];
       var result = {
+        'canvasId': canvasId,
         'owner':canvas.owner,
         'title':canvas.title,
         'createDate': canvas.createDate
       };
       // constract the sticky list that the result need
       var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
-      var stickyList = stickies.map(function(id) {
-        Sticky.find({'id': id},function(err, sti) {
+      let count = 1;
+      if (stickies.length == 0) {
+        result.stickies = stickyList; 
+        res.send(result);
+      }else{
+        for (i = 0; i < stickies.length; i++){
+        let ID = stickies[i];
+        Sticky.find({_id: ID},function(err, sti) {
           if (err) {
             console.log(err);
             res.send(err);
-          } else if (sti.length === 0) {
-            console.log('The requested sticky does not exist!');
-            res.render(fal);
-          } else {
-            
+          } else if (sti.length !== 0) {
             var sticky = sti[0];
-            return sticky;
+            stickyList.push(sticky);
+            if (count === stickies.length){
+              result.stickies = stickyList;
+              res.send(result);
+            }
+            count ++;
           }
         });
-      });
-      result.stickies = stickyList;    
-      res.send(result);
+      }
+      }
     }
   });
 });
 
-app.put('/canvas/add', function(req, res){
-  var canvas = req.body.canvasId;
+app.post('/canvas/add', function(req, res){
+  var canvas =  req.body.canvasId;
   var sticky = req.body.sticky;
-  Canvas.find({'id':canvas}, function(err, result){
+  var re = {};
+  re.status = fal;
+  Canvas.find({_id:canvas}, function(err, result){
     if(err){
       console.log(err);
-      res.send(fal);
+      res.send(re);
     } else if (result.length == 0){
-      res.send(fal);
+      res.send(re);
     } else {
       // create new sticky
-      sticky.id = stickyCount;
-      sticky.modifiedTime = new Date();
+
+      sticky.canvasId = canvas;
+      sticky.modifiedTime = (new Date()).toLocaleDateString("en-US", dataFormat);
       var newStic = new Sticky(sticky)
       Sticky.create(newStic, function(err, newlyCreated) {
         if (err) {
           console.log(err);
-          res.send(fal);
+          res.send(re);
         }else if ( newlyCreated == null){
-          res.send(fal);
+          res.send(re);
         } 
         else {
           // add sticky index to the canava
-          Canvas.findOneAndUpdate({id:canvas}, { $push: { stickies : stickyCount } });
-          stickyCount ++; // increase the stickycount since it's an global index for sticky id
-          var newHis = new History({
-            id: historyCount,
-            stickyID: newlyCreated.id,
+          var newHistory = {
+            stickyID: newlyCreated._id,
             user: req.cookies.email,
             content: 'Add new sticky',
             modifiedTime: new Date()
+          };
+          Canvas.findOneAndUpdate( {_id:canvas}, 
+            { $push: { stickies : newlyCreated._id, editHistory : newHistory } }, 
+            function(err, updated){
+              if (err) {
+                console.log(err);
+                res.send(re);
+              } else if (updated == null){
+                re.status = fal;
+                res.send(re);
+              } else{
+                re.status = tru;
+                re.id = newlyCreated._id;
+                res.send(re);
+              };
           });
-      
-          History.create(newHis,function(err, Created){
-            if (err) {
-              console.log(err);
-              res.send(fal);
-            } else if (Created == null){
-              res.send(fal);
-            } else{
-              Canvas.findOneAndUpdate({id:canvas}, { $push: { editHistory : historyCount } });
-              historyCount ++;
-            };
-          });
-          res.send(tru);
         }
       });
     }
@@ -269,136 +270,114 @@ app.put('/canvas/add', function(req, res){
 app.delete('/canvas/delete', function(req, res){
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
-  Canvas.findOneAndUpdate({
-    id : canvas
-  }, {$pull: {
-        stickies: sticky // delete sticky id from the sticky list in canvas
-    }
-  }, function(err, result) {
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (result == null){
-      res.send(fal);
-    }
-  });
-  // delete the requested id
-  Sticky.findOneAndDelete({id:sticky}, function(err, result){
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (result == null){
-      res.send(fal);
-    } else{ 
-      var comment = result.comment; // the list of comment id in the Sticky
-      comment.forEach(function(commentId) { // delete all the comments related to this sticky
-        Comment.findOneAndDelete({id:commentId}, function(err, deleted){
+  var newHistory = {
+    stickyID: sticky,
+    user: req.cookies.email,
+    content: 'Delete sticky',
+    modifiedTime: new Date()
+  };
+  Canvas.findOneAndUpdate({_id: canvas}, {
+      $pull: { stickies: sticky }, // delete sticky id from the sticky list in canvas
+      $push: { editHistory: newHistory } // add new history to the canvas
+    }, function (err, result) {
+      if (err) {
+        console.log(err);
+        res.send(fal);
+      } else if (result == null) {
+        res.send(fal);
+      } else {
+        // delete the canvas by the requested id
+        Sticky.findOneAndDelete({_id:sticky}, function(err, deleted){
           if (err) {
             console.log(err);
             res.send(fal);
-          } else if (deleted === null) {
-            console.log('The requested comment does not exist!');
+          } else if (deleted == null){
             res.send(fal);
+          } else{ 
+            res.send(tru);
           }; 
         });
-      });
-      // add new history to the database
-      var newHis = new History({
-        id: historyCount,
-        stickyID: sticky,
-        user: req.cookies.email,
-        content: 'Delete sticky',
-        modifiedTime: new Date()
-      });
-  
-      History.create(newHis,function(err, newlyCreated){
-        if (err) {
-          console.log(err);
-          res.send(fal);
-        } else if (newlyCreated == null){
-          res.send(fal);
-        } else{
-          // update the list of edithistory in the corresponding canvas
-          Canvas.findOneAndUpdate({id:result.canvasId}, { $push: { editHistory : historyCount } });
-          historyCount ++;
-        };
-      });
-      res.send(tru);
-    }
-  });
-})
+      };
+    });
+});
 
 app.post('/canvas/edit', function(req, res){
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
   var type = req.body.type;
   var change = req.body.change;
+  var newHis = {
+    stickyID: sticky,
+    user: req.cookies.email,
+    content: 'Modified' + type,
+    modifiedTime: new Date()
+  };
   if (changeType.indexOf(type) !== -1){ 
     if (type === 'comment'){ 
       // create new comment
-      var newCom = new Comment({
-        id:commentCount,
+      var newCom = {
         stickyID: sticky,
         user: req.cookies.email,
         content: change,
         modifiedTime: new Date()
-      });
-      Comment.create(newCom, function(err, newlyCreated) {
-        if (err) {
-          console.log(err);
-          res.send(fal);
-        } else if (newlyCreated == null){
-          res.send(fal);
-        }
-        else { // link new comment to the corresponding sticky
-          Sticky.findOneAndUpdate({id:sticky}, { $push: { comment : commentCount } });
-          commentCount ++;
-        }
-      });
-    }
-    else{
-      // update sticky information only
-      Sticky.findOneAndUpdate({id:sticky}, {type:change, modifiedTime:new Data()},function(err, result){
+      };
+      // add new comment to the corresponding sticky
+      Sticky.findOneAndUpdate({_id:sticky}, { $push: { comment : newCom } }, function(err, result){
         if (err) {
           console.log(err);
           res.send(fal);
         } else if (result == null){
           res.send(fal);
+        }else{
+          Canvas.findOneAndUpdate({_id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
+            if (err) {
+              console.log(err);
+              res.send(fal);
+            } else if (result == null){
+              res.send(fal);
+            } else{
+              res.send(tru);
+            }
+          });
         };
       });
     }
-    // create new history 
-    var newHis = new History({
-      id: historyCount,
-      stickyID: sticky,
-      user: req.cookies.email,
-      content: 'Modified' + type,
-      modifiedTime: new Date()
-    });
+    else{
+      // update sticky information only
+      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},function(err, result){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else if (result == null){
+          res.send(fal);
+        }else{
+          Canvas.findOneAndUpdate({_id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
+            if (err) {
+              console.log(err);
+              res.send(fal);
+            } else if (result == null){
+              res.send(fal);
+            } else{
+              res.send(tru);
+            }
+          });
 
-    History.create(newHis,function(err, newlyCreated){
-      if (err) {
-        console.log(err);
-        res.send(fal);
-      } else if (newlyCreated == null){
-        res.send(fal);
-      } else{
-        Canvas.findOneAndUpdate({'id':canvas}, { $push: { editHistory : historyCount } }); // link history to the canvas
-        historyCount ++;
-      };
-    });
+        }
+      });
+    }
   }
 });
 
-
 // get canvas from library page
 app.get('/library/get', function(req, res){
+	res.clearCookie('id');
 	var email = req.cookies.name;
 	User.find({'email':email}, function(err, result){
 		if (err) {
 			console.log(err);		
 		} else {
 			var user = result[0];
+			console.log(user.id);
 			var c_list = user.canvas;
 			
 			// loop through all canvas list
@@ -406,12 +385,18 @@ app.get('/library/get', function(req, res){
 			var canvasId = new Array();
 			var users = new Array();
 			for (var i = 0; i < c_list.length; i++){
-				var t = c_list[i].title;
-				var id = c_list[i].id;
-				var user = c_list.users;
-				title.push(t);
-				canvasId.push(id);
-				users.push(user);				
+				Canvas.find({id:c_list[i]}, function(err, result){
+					if (err) {
+						console.log(err);				
+					} else {
+						var c = result[0];
+						var t = c.title;
+						var user = c.users;
+						canvasId.push(c_list[i]);
+						title.push(t);
+						users.push(user);						
+					}				
+				});			
 			}
 			
 			// send back to front end
@@ -421,11 +406,19 @@ app.get('/library/get', function(req, res){
 });
 
 
+// store the canvas id into cookie
+app.get('/library/id', function(req, res){
+	var cavasId = req.body.cavasId;
+	res.cookie('id', canvasId);
+	res.send(tru);
+});
+
+
 // edit user in manage page
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-	 var emails = req.cookies.email;   // now is a list of email
+	 var emails = req.body.email;   // now is a list of email
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);	 	
@@ -460,7 +453,7 @@ app.post('/manager/user', function(req, res){
               			});		
 						} else {
 							//user in db
-							Canvas.findOneAndUpdate({id:id}, {users:email}, function(err, result){
+							Canvas.findOneAndUpdate({id:id}, {$push: {users:email}}, function(err, result){
 								if (err) {
 									console.log(err);	
 									res.send(fal);						
@@ -489,14 +482,13 @@ app.post('/manager/user', function(req, res){
 
 // add canvas from manager page
 app.post('/manager/add', function(req, res){
-	var owner = req.body.owner;
+	var owner = req.cookies.name;
 	var title = req.body.title;
 	var empty = new Array();
 	var time = new Date();
 	
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
-		id: canvasCount,
 		owner: owner,
 		title: title,
 		users: empty,
@@ -506,13 +498,11 @@ app.post('/manager/add', function(req, res){
 	});
 	
 	// add canvas to database
-	Canvas.create(canvas, function(err, result){
+	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
-			console.log(err);
-			res.send(fal);		
+			console.log(err);		
 		} else {
-			canvasCount += 1;  // update global count number.
-			res.send(tru);
+			res.send({id:result.id});
 		}
 	});
 });
@@ -520,49 +510,40 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var id = req.body.canvasId;
-	Canvas.findOneAndDelete({id:id}, function(err, result){
-		if (err) {
-			console.log(err);	
-			res.send(fal);	
-		} else {
-			var u = result.users;
-			var s = result.stickies;
-			var e = result.editHistory;
+	var ids = req.body.canvasId;  //now is a list of canvasId
+	ids.foreach(function(id){
+		Canvas.findOneAndDelete({id:id}, function(err, result){
+			if (err) {
+				console.log(err);	
+				res.send(fal);	
+			} else {
+				var u = result.users;
+				var s = result.stickies;
 			
-			// loop through to delete canvasId from users
-			u.forEach(function(email){
-				User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					} 
+				// loop through to delete canvasId from users
+				u.forEach(function(email){
+					User.findOneAndUpdate({email:email}, {$pull: {cavas:id}}, function(err, result){
+						if (err) {
+							console.log(err);
+							res.send(fal);					
+						} 
+					});
 				});
-			});
 			
-			// loop through to delete stickies
-			s.foreach(function(sid){
-				Sticky.findOneAndDelete({id:sid}, function(err, result){
-					if (err) {
-						console.log(err);	
-						res.send(fal);				
-					}
+				// loop through to delete stickies
+				s.foreach(function(sid){
+					Sticky.findOneAndDelete({id:sid}, function(err, result){
+						if (err) {
+							console.log(err);	
+							res.send(fal);				
+						}
+					});
 				});
-			});
 			
-			// loop through to delete editHistory
-			e.foreach(function(eid){
-				History.findOneAndDelete({id:eid}, function(err, result){
-					if (err) {
-						console.log(err);
-						res.send(fal);					
-					}
-				});
-			});
-			
-			// delete everything
-			res.send(tru);		
-		}		
+				// delete everything
+				res.send(tru);		
+			}		
+		});
 	});
 });
 

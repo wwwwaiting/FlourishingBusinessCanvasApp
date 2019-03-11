@@ -15,7 +15,27 @@ app.get('/', function(req, res) {
 });
 
 app.get('/canvas/get', function(req, res) {
-    res.send(true);
+    res.send({
+        canvasId: 1,
+        owner: 'Andrew',
+        title: 'Example',
+        createDate: new Date(),
+        stickies: [{
+            id: 1,
+            content: "hello",
+            position: {
+                left: 500,
+                top: 500
+            },
+            size: {
+                width: 150,
+                height: 150
+            },
+            color: 'rgb(123,21,123)',
+            title: '',
+            comment: []
+        }]
+    });
 });
 
 app.post('/canvas/edit', function(req, res) {
