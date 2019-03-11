@@ -75,6 +75,8 @@ When we initially had the meeting with our partner, we planned that we should ha
 
 We initially planned that we should meet Andrew once per week to show our work. However, due to the slow progress we made in the early February, we cancelled some of the meetings.
 
+**Comment system on the main FBC application page**
+The comment system of the stickies work on the website but not on the server. In other words, even though on the website we can add and delete comments under stickies, the server, for now cannot receive this information. This problem was found few minutes before due and will be fixed in deliverable 3.
 
 ## Meeting Highlights
 
