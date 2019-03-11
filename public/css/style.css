@@ -189,7 +189,7 @@ textarea {
 #sidepanel {
     z-index: 1020; /* Stay on top */
     width: 12rem;
-    height: 80%;
+    max-height: 80%;
     top: 102px;
     left: 0;
 } 
