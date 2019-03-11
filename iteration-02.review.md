@@ -43,7 +43,7 @@ Our front end teams started writing their code using vanilla js, while the back 
 
 #### Planned changes
 
-None. Everything is according to the plan.
+We will change the frequency of meeting our partner from once per week to once per two weeks. Since the progress we made per week during deliverable 2 was not enough for a meeting.
 
 
 ## Product - Review
@@ -65,26 +65,32 @@ We finished implementing our library page which users can get access to all of t
 We finished implementing our sign up and log in pages, where users can register and log in. There is also a profile page where users can modify their basic information including name, phone, company, and occupation. As well as a reset password page for users to modify their credentials.
 
 
-#### *Goals and/or tasks that were planned but not met/completed:
+#### Goals and/or tasks that were planned but not met/completed:
 
- * From most to least important.
- * For each goal/task, explain why it was not met/completed.      
-   e.g. Did you change your mind, or did you just not get to it yet?
-   
- - admin page (email invitation)
- - weekly meeting with Andrew
+**Admin page (email invitation)**
+
+When we initially had the meeting with our partner, we planned that we should have an admin page for our partner where he can send invitation to users so they can have access to our website. As well as functionalities such as manage users, canvases and search. However, as deliverable 2 went on we thought that admin page is not part of the basic functionalities of FBC. Therefore we decide to postpone it to deliverable 3.
+
+**Weekly meeting with Andrew**
+
+We initially planned that we should meet Andrew once per week to show our work. However, due to the slow progress we made in the early February, we cancelled some of the meetings.
 
 
-## *Meeting Highlights
+## Meeting Highlights
 
-Going into the next iteration, our main insights are:
+Going into the next iteration, our main insights are(from the most to least important):
 
- * 2 - 4 items
- * Short (no more than one short paragraph per item)
- * High-level concepts that should guide your work for the next iteration.
- * These concepts should help you decide on where to focus your efforts.
- * Can be related to product and/or process.
- 
- - edit history for each sticky
- - admin page (email invitation)
- - multiple users syncronization
+**Multiple users synchronization**
+
+Users will be able to access the same FBC at the same time.
+
+**Admin page (email invitation)**
+
+Admin will be able to send invitation to users to have access to our website. Whoever receives the email will become the manager who can create canvas and invite others to work on their canvases.
+
+Basic admin functionalities will be implemented such as manage users, canvases and possibly search for canvases of all canvases if necessary.
+
+**Edit history for each sticky**
+
+Edit history will be added to the sticky, users will be able to view how a sticky progressed.
+
