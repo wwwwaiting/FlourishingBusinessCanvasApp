@@ -15,25 +15,26 @@ Enter h@p as email and magic as password will log in to a manager page.
 
 **Library page(Manager)**
 
-Click any FBC shown under the header will move user to the main FBC application page of a specific FBC.
+Click any FBC shown under the header will direct user to the main canvas page of a specific FBC.
 
-On the right side of the header there three buttons, **Manage users**, **Manage canvas** and **Profile**.
+On the right side of the header there are three buttons, **Manage users**, **Manage canvas** and **Profile**.
 
-By clicking **Manage users**, the list of canvases that the manager has currently, as well as the users of each canvases will be shown in the pop up window. Manager can **add** users to any canvas by clicking the add button under the specific canvas and enter their emails, or **remove** users from a canvas by checking the users under that canvas and click remove.
+By clicking **Manage users**, a list of canvases that the manager has currently, as well as the users of each canvas will be shown in the pop up window. Manager can **add** users to any canvas by clicking the add button under a specific canvas and enter their emails, or **remove** users from a canvas by checking the username boxes under that canvas and clicking remove.
 
-By clicking **Manage canvas**, the manager can **add** new canvas by entering the title of the new canvas, or **remove** previous canvases by checking the canvases and the remove button.
+By clicking **Manage canvas**, manager can **add** a new canvas by entering the title of the new canvas, or **remove** a previous canvas by checking the canvas name box and clicking on the remove button.
 
 By clicking **Profile**, manager will be moved to the profile page.
+ 
 
 **Library page(User)**
 
-All functionalities are the same as **Library page(Manager)** except that a user can not manage users or canvas.
+All functionalities are the same as **Library page(Manager)** except that a regular user cannot manage other users or canvases. 
 
 **Profile page**
 
 Users can modify their information in this page and click **Save changes** for it to take effect. However, email cannot be changed.
 
-When clicking **Want to change password?**, users can change their password by entering their old and new password.
+When clicking **Want to change password?**, users can change password by entering their old and new passwords. Only if old password matches with previous record and new password aligns with the confirm password, the password is then successfully changed. 
 
 **Main FBC application page**
 

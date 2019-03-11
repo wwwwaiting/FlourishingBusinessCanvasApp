@@ -82,13 +82,14 @@ Going into the next iteration, our main insights are(from the most to least impo
 
 **Multiple users synchronization**
 
-Users will be able to access the same FBC at the same time.
+Users will be able to access the same FBC at the same time and changes made on one canvas will be synchronized real-time through all canvases.
 
 **Admin page (email invitation)**
 
-Admin will be able to send invitation to users to have access to our website. Whoever receives the email will become the manager who can create canvas and invite others to work on their canvases.
+Admin will be able to send invitations for users to have access to our website. Whoever receives the email is identified as a manager who is given the power to create canvases and invite others to work on their canvases.
 
-Basic admin functionalities will be implemented such as manage users, canvases and possibly search for canvases of all canvases if necessary.
+Basic admin functionalities will be implemented such as manage users, canvases and possibly search for a particular sticky not only within a single canvas but also across all canvases if necessary.
+ 
 
 **Edit history for each sticky**
 
