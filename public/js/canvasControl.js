@@ -93,8 +93,17 @@ function initialize_canvas(data) {
         if (!canvas.getActiveObject()) {
             this.isDragging = true;
             this.selection = false;
-            this.lastPosX = evt.clientX;
-            this.lastPosY = evt.clientY;
+            let lastX;
+            let lastY;
+            if (evt.touches) {
+                lastX = evt.touches[0].clientX;
+                lastY = evt.touches[0].clientY;
+            } else {
+                lastX = evt.clientX;
+                lastY = evt.clientY;
+            }
+            this.lastPosX = lastX;
+            this.lastPosY = lastY;
         } else {
             // let temp = canvas.getActiveObject()
             // let temp0 = temp.item(0);
@@ -110,11 +119,21 @@ function initialize_canvas(data) {
         if (this.isDragging) {
             canvas.setCursor('move');
             const e = opt.e;
-            this.viewportTransform[4] += e.clientX - this.lastPosX;
-            this.viewportTransform[5] += e.clientY - this.lastPosY;
+            let clientX;
+            let clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            this.viewportTransform[4] += clientX - this.lastPosX;
+            this.viewportTransform[5] += clientY - this.lastPosY;
+
             this.requestRenderAll();
-            this.lastPosX = e.clientX;
-            this.lastPosY = e.clientY;
+            this.lastPosX = clientX;
+            this.lastPosY = clientY;
         }
         // else {
         //     const e = opt.e
@@ -1392,4 +1411,17 @@ socket.on('stickyUpdateContent', function stickyUpdateContent(result) {
     // console.log('got: ', result);
     const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
     stickyContentEditCore(changingSticky, result.change)
+});
+
+$('#canvasHeader').on('show.bs.collapse', function() {
+    $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M7 14l5-5 5 5z" /></svg>`);
+    $('#sidepanel').css("height", "calc(100% - 120px)");
+    $('#sidepanel').css("top", "102px");
+});
+$('#canvasHeader').on('hide.bs.collapse', function() {
+    $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M7 10l5 5 5-5z" /></svg>`);
+    $('#sidepanel').css("height", "calc(100% - 75px)");
+    $('#sidepanel').css("top", "57px");
 });
