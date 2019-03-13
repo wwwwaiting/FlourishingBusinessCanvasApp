@@ -4,7 +4,8 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var methodOverride = require('method-override');
-var http = require('http');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 require('./connect.js');
 require('./models/canvas.js');
@@ -27,6 +28,37 @@ app.use(cookieParser());
 app.use(express.static('public'));
 app.use(express.static('files'));
 app.use('/static', express.static('public'));
+
+
+// socket.io settings
+io.on("connection", (socket) => {
+  console.log("Socket connection is established.")
+  socket.on('stickyUpdateSize', function(data) {
+    socket.broadcast.emit('stickyUpdateSize', data);
+  });
+  socket.on('stickyUpdatePos', function(data) {
+    socket.broadcast.emit('stickyUpdatePos', data);
+  });
+  socket.on('stickyAdd', function(data) {
+    socket.broadcast.emit('stickyAdd', data);
+  });
+  socket.on('stickyUpdateComment', function(data) {
+    socket.broadcast.emit('stickyUpdateComment', data);
+  });
+  socket.on('stickyUpdateColor', function(data) {
+    socket.broadcast.emit('stickyUpdateColor', data);
+  });
+  socket.on('stickyDelete', function(data) {
+    socket.broadcast.emit('stickyDelete', data);
+  });
+  socket.on('stickyUpdateContent', function(data) {
+    socket.broadcast.emit('stickyUpdateContent', data);
+  });
+  socket.on('disconnect', function() {
+    console.log("Socket has disconnected");
+  });
+})
+
 
 const fal = 'false';
 const denied = 'denied';
@@ -116,7 +148,7 @@ app.post('/register', function(req, res) {
       if (err) {
         console.log(err);
         res.send(err);
-      } 
+      }
       // if there is no user in initial status it can be multiple situations
       // it can be an outside using is trying to login to this website
       // or an outside user is signing up more than once
@@ -189,7 +221,7 @@ app.get('/canvas/get', function(req, res){
       var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
       let count = 1;
       if (stickies.length == 0) {
-        result.stickies = stickyList; 
+        result.stickies = stickyList;
         res.send(result);
       }else{
         for (i = 0; i < stickies.length; i++){
@@ -237,7 +269,7 @@ app.post('/canvas/add', function(req, res){
           res.send(re);
         }else if ( newlyCreated == null){
           res.send(re);
-        } 
+        }
         else {
           // add sticky index to the canava
           var newHistory = {
@@ -246,8 +278,8 @@ app.post('/canvas/add', function(req, res){
             content: 'Add new sticky',
             modifiedTime: new Date()
           };
-          Canvas.findOneAndUpdate( {_id:canvas}, 
-            { $push: { stickies : newlyCreated._id, editHistory : newHistory } }, 
+          Canvas.findOneAndUpdate( {_id:canvas},
+            { $push: { stickies : newlyCreated._id, editHistory : newHistory } },
             function(err, updated){
               if (err) {
                 console.log(err);
@@ -293,9 +325,9 @@ app.delete('/canvas/delete', function(req, res){
             res.send(fal);
           } else if (deleted == null){
             res.send(fal);
-          } else{ 
+          } else{
             res.send(tru);
-          }; 
+          };
         });
       };
     });
@@ -311,8 +343,8 @@ app.post('/canvas/edit', function(req, res){
     content: 'Modified' + type,
     modifiedTime: new Date()
   };
-  if (changeType.indexOf(type) !== -1){ 
-    if (type === 'comment'){ 
+  if (changeType.indexOf(type) !== -1){
+    if (type === 'comment'){
       // create new comment
       var newCom = {
         stickyID: sticky,
@@ -373,12 +405,12 @@ app.get('/library/get', function(req, res){
 	var email = req.cookies.email;
 	User.find({'email':email}, function(err, result){
 		if (err) {
-			console.log(err);		
+			console.log(err);
 		} else {
 			var user = result[0];
 			var c_list = user.canvas;
 			console.log(c_list)
-			
+
 			var title = new Array();
 			var canvasId = new Array();
 			var users = new Array();
@@ -388,7 +420,7 @@ app.get('/library/get', function(req, res){
 				for (let i = 0; i < c_list.length; i++){
 					Canvas.find({_id:c_list[i]}, function(err, result){
 						if (err) {
-							console.log(err);				
+							console.log(err);
 						} else {
 							var c = result[0];
 							var id = c.id
@@ -399,10 +431,10 @@ app.get('/library/get', function(req, res){
 							users.push(user);
 							if (count == c_list.length){
 								res.send({title:title, canvas:canvasId, users:users});
-							}	
-							count ++;					
-						}				
-					});			
+							}
+							count ++;
+						}
+					});
 				}
 			}
 		}
@@ -426,16 +458,16 @@ app.post('/manager/user', function(req, res){
 	 var emails = req.body.email;   // now is a list of email
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
-			console.log(err);	 	
+			console.log(err);
 	 	} else {
 			if (type == "add"){
 				emails.forEach(function(email){
 					//check if user is in the db
 					User.find({'email':email}, function(err, result){
 						if (err){
-							console.log(err);					
+							console.log(err);
 						} else if (result.length == 0){
-							//user not in the db	
+							//user not in the db
 							console.log("not in db")
 							var canvasList = new Array();
 							var user = new User({
@@ -448,7 +480,7 @@ app.post('/manager/user', function(req, res){
                 			status: 2,
                 			phone: '',
                 			company: ''
-              			});	
+              			});
               			User.create(user, function(err, result) {
                			if (err) {
                   			console.log(err);
@@ -456,23 +488,23 @@ app.post('/manager/user', function(req, res){
                 			} else {
                 				Canvas.findOneAndUpdate({_id:id}, {$push:{users:email}}, function(err, result){
                 					if (err) {
-											console.log(err);                					
+											console.log(err);
                 					}
                 				});
                   			res.send(tru);  // send true when finish create user in db.
                 			}
-              			});		
+              			});
 						} else {
 							//user in db
 							console.log("in db");
 							Canvas.findOneAndUpdate({_id:id}, {$push: {users:email}}, function(err, result){
 								if (err) {
-									console.log(err);	
-									res.send(fal);						
+									console.log(err);
+									res.send(fal);
 								} else {
 									User.findOneAndUpdate({email:email}, {$push:{canvas:id}}, function(err, result){});
-									res.send(tru);	 // send true when add user into canvas's user list.						
-								}					
+									res.send(tru);	 // send true when add user into canvas's user list.
+								}
 							});
 						}
 					});
@@ -482,19 +514,19 @@ app.post('/manager/user', function(req, res){
 				emails.forEach(function(email){
 					Canvas.findOneAndUpdate({_id:id}, {$pull: {users:email}}, function(err, result){
 						if (err) {
-							console.log(err);	
-							res.send(fal);						
+							console.log(err);
+							res.send(fal);
 						} else {
-							res.send(tru);	 // send true when remove user from canvas's user list.						
-						}					
+							res.send(tru);	 // send true when remove user from canvas's user list.
+						}
 					});
 					User.findOneAndUpdate({email:email}, {$pull:{canvas:id}}, function(){
 						if (err) {
-							console.log(err)						
-						}					
+							console.log(err)
+						}
 					});
 				});
-			}	
+			}
 	 	}
 	 });
 });
@@ -507,7 +539,7 @@ app.post('/manager/add', function(req, res){
 	var title = req.body.title;
 	var empty = new Array();
 	var time = new Date();
-	
+
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
 		owner: owner,
@@ -517,16 +549,16 @@ app.post('/manager/add', function(req, res){
 		createDate: time,
 		editHistory: empty
 	});
-	
+
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
-			console.log(err);		
+			console.log(err);
 		} else {
 			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
 				if (err) {
-					console.log(err);		
-				} 
+					console.log(err);
+				}
 			});
 			res.send({id:result.id});
 		}
@@ -542,38 +574,38 @@ app.delete('/manager/del', function(req, res){
 	ids.forEach(function(id){
 		Canvas.findOneAndDelete({_id:id}, function(err, result){
 			if (err) {
-				console.log(err);	
-				res.send(fal);	
+				console.log(err);
+				res.send(fal);
 			} else {
 				var u = result.users;
 				var s = result.stickies;
-				
-								
-				User.findOneAndUpdate({email:owner}, {$pull:{canvas:id}}, function(err, result){});				
-								
+
+
+				User.findOneAndUpdate({email:owner}, {$pull:{canvas:id}}, function(err, result){});
+
 				// loop through to delete canvasId from users
 				u.forEach(function(email){
 					User.findOneAndUpdate({email:email}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
 							console.log(err);
-							res.send(fal);					
-						} 
+							res.send(fal);
+						}
 					});
 				});
-			
+
 				// loop through to delete stickies
 				s.forEach(function(sid){
 					Sticky.findOneAndDelete({_id:sid}, function(err, result){
 						if (err) {
-							console.log(err);	
-							res.send(fal);				
+							console.log(err);
+							res.send(fal);
 						}
 					});
 				});
-				
+
 				// delete everything
-				res.send(tru);		
-			}		
+				res.send(tru);
+			}
 		});
 	});
 });
@@ -585,10 +617,10 @@ app.get('/profile/get', function(req, res){
 	User.find({email:email}, function(err, result){
 		if (err) {
 			console.log(err);
-			res.send(fal);		
+			res.send(fal);
 		} else {
 			var user = result[0];
-			res.send({phone:user.phone, company:user.company, occupation:user.occupation});		
+			res.send({phone:user.phone, company:user.company, occupation:user.occupation});
 		}
 	});
 });
@@ -601,13 +633,13 @@ app.post('/profile/edit', function(req, res){
 	var c = req.body.company;
 	var o = req.body.occupation;
 	var e = req.cookies.email;
-	
+
 	User.findOneAndUpdate({email:e}, {$set: {name:n, phone:p, company:c, occupation:o}}, function(err, result){
 		if (err) {
 			console.log(err);
-			res.send(fal);		
+			res.send(fal);
 		} else {
-			res.send(tru);		
+			res.send(tru);
 		}
 	});
 });
@@ -619,7 +651,7 @@ app.get('/pwd/get', function(req, res){
 	User.find({email:email}, function(err, result){
 		if (err) {
 			console.log(err);
-			res.send(fal);		
+			res.send(fal);
 		} else {
 			var user = result[0];
 			res.send({pwd:user.pwd});
@@ -635,14 +667,17 @@ app.post('/pwd/edit', function(req, res){
 	User.findOneAndUpdate({email:email}, {pwd:pwd}, function(err, result){
 		if (err) {
 			console.log(err);
-			res.send(fal);		
+			res.send(fal);
 		} else {
-			res.send(tru);		
+			res.send(tru);
 		}
 	});
 });
 
-// get user information from 
-app.listen(PORT, () => {
+// get user information from
+// app.listen(PORT, () => {
+//   console.log(`Server listening on port ${PORT}`);
+// });
+http.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
