@@ -37,7 +37,8 @@ const stickyOlive = 'rgb(222,225,171)';
 const stickyBrown = 'rgb(252,215,193)';
 const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
-const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
+const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 5px 20px';
+const stickyFocusShadow = 'rgba(3, 3, 3, 0.3) 0px 3px 3px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
@@ -55,11 +56,6 @@ function initialize_canvas(data) {
 
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
-    const dataFormat = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    };
     $('#designedDate').attr('value', data.createDate);
     // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
 
@@ -91,8 +87,10 @@ function initialize_canvas(data) {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
+            canvas.setCursor('move');
             this.isDragging = true;
             this.selection = false;
+
             let lastX;
             let lastY;
             if (evt.touches) {
@@ -115,9 +113,15 @@ function initialize_canvas(data) {
         }
         $('#editDiv').html('')
     });
+    canvas.on('mouse:move:before', function () {
+        if (this.isDragging) {
+            canvas.setCursor('move');
+        }
+    })
     canvas.on('mouse:move', function (opt) {
         if (this.isDragging) {
             canvas.setCursor('move');
+
             const e = opt.e;
             let clientX;
             let clientY;
@@ -167,9 +171,8 @@ function initialize_canvas(data) {
             canvas.renderAll();
             backUpSticky = "";
         }
-
-        this.isDragging = false;
         canvas.setCursor('default');
+        this.isDragging = false;
         this.selection = true;
         canvas.forEachObject(obj => {
             obj.selectable = true;
@@ -283,8 +286,30 @@ function argHandler(obj, handler) {
     };
 };
 
+function sidepanelStickyHoverOver(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    targetSticky.item(0).set('shadow', stickyFocusShadow);
+    canvas.renderAll();
+}
+
+function sidepanelStickyHoverOut(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    targetSticky.item(0).set('shadow', stickyShadow);
+    canvas.renderAll();
+}
+
+function sidepanelClick(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    displayEditForm(targetSticky);
+}
+
 
 function showSidepanel(stickySelected) {
+    focusOnSticky(stickySelected);
+
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
     // const testRect = returnTestRect(stickySelected);
@@ -302,7 +327,7 @@ function showSidepanel(stickySelected) {
     canvas.getObjects().forEach(sticky => {
         if (returnClass(sticky) == stickyClass) {
             // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item bg-light list-group-item-action p-1 border-0">
+            $('#sidepanel-list').append(`<a id="sideSticky-${sticky.get('stickyId')}" class="list-group-item bg-light list-group-item-action p-1 border-0" onmouseover="sidepanelStickyHoverOver(this)" onmouseout="sidepanelStickyHoverOut(this)" onclick="sidepanelClick(this)">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
                 <p class="mb-1">${sticky.get('content')}</p>
@@ -400,10 +425,23 @@ const Sticky = fabric.util.createClass(fabric.Group, {
 
         this.item(1).text = convertDisplay(this);
 
-        this.on('mousedown', doubleClicked(this, function (sticky) {
-            $('#editDiv').html('')
-            displayEditForm(sticky)
-        }));
+        // this.on('mousedown', doubleClicked(this, function (sticky) {
+        //     $('#editDiv').html('')
+        //     displayEditForm(sticky)
+        // }));
+        this.on('mousedblclick', function () {
+            displayEditForm(this)
+        });
+
+        this.on('mouseover', function () {
+            this.item(0).set('shadow', stickyFocusShadow);
+            canvas.renderAll();
+        });
+
+        this.on('mouseout', function () {
+            this.item(0).set('shadow', stickyShadow);
+            canvas.renderAll();
+        });
 
         this.on('mouseup', function () {
             let top = vertical_restrict(this);
@@ -411,7 +449,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             smoothMoveH(this, left);
             smoothMoveV(this, top);
             this.setCoords()
-            console.log(this.left + ', ' + this.top);
+            console.log('L:' + this.left + ', T:' + this.top);
             if (stickyIsResizing) {
 
                 socket.emit('stickyUpdateSize', {
@@ -677,6 +715,38 @@ function revertTransformation() {
     canvas.set('width', mainCanvasWidth);
     canvas.set('height', mainCanvasHeight);
     canvas.requestRenderAll();
+}
+
+function focusOnSticky(sticky) {
+    if (stickyIsMoving || stickyIsResizing) {
+        return
+    }
+    const lastVPX = canvas.viewportTransform[4];
+    const lastVPY = canvas.viewportTransform[5];
+    const sidepanelWidth = $('#sidepanel').width();
+    const x = -(sticky.left - canvas.width / 2);
+    const y = -(sticky.top - canvas.height / 2);
+    const rightLimit = -(canvas.width / 2) + sticky.width + 60;
+    const leftLimit = canvas.width / 2 - sidepanelWidth - 20;
+    console.log(x- lastVPX, y- lastVPY, leftLimit, rightLimit);
+    if (x - lastVPX > leftLimit || x - lastVPX < rightLimit) {
+        const vpObj = { vpx: lastVPX, vpy: lastVPY, a: canvas.viewportTransform[0], b: canvas.viewportTransform[3]};
+        $(vpObj).animate(
+            { vpx: x - sidepanelWidth, vpy: y, a: 1.2, b: 1.2 },{
+                duration: 400,
+                specialEasing: {vpx: "swing", vpy: "swing"},
+                step: function() {
+                    canvas.viewportTransform[0] = vpObj.a;
+                    canvas.viewportTransform[3] = vpObj.b;
+                    canvas.viewportTransform[4] = vpObj.vpx;
+                    canvas.viewportTransform[5] = vpObj.vpy;
+                },
+                complete: function() {
+                    canvas.requestRenderAll();
+                }
+            }
+        );
+    }
 }
 
 // download popup helper function
@@ -1080,6 +1150,11 @@ function handleWindowResize() {
     canvas.set('width', $(window).width());
     canvas.set('height', $(window).height());
     canvas.requestRenderAll();
+
+    const activeObj = canvas.getActiveObject();
+    if (activeObj) {
+        focusOnSticky(activeObj)
+    }
 }
 
 function searchInCanvas() {

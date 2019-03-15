@@ -232,3 +232,43 @@ textarea {
 #collapseBtn:focus, #collapseBtn.focus {
     box-shadow: none;
 }
+
+/* .collapsing {
+    -webkit-transition: none;
+    transition: none;
+    visibility: hidden;
+}
+
+.collapse.show {
+    -webkit-transition: none;
+    transition: none;
+    visibility: visible;
+} */
+
+#collapseSidepanel.collapse {
+    visibility: hidden;
+}
+
+#collapseSidepanel.collapse.show {
+    visibility: visible;
+    display: block;
+}
+
+#collapseSidepanel.collapsing {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    -webkit-transition-property: height, visibility;
+    transition-property: height, visibility;
+    -webkit-transition-duration: 0.35s;
+    transition-duration: 0.35s;
+    -webkit-transition-timing-function: ease;
+    transition-timing-function: ease;
+}
+
+#collapseSidepanel.collapsing.width {
+    -webkit-transition-property: width, visibility;
+    transition-property: width, visibility;
+    width: 0;
+    height: auto;
+}
