@@ -11,19 +11,14 @@ body {
     overflow: hidden;
 }
 
-/* #mainCanvas {
-    border: 1px solid black;
-} */
-
-/* #infoBarContainer span, #infoBarContainer button {
-    margin-right: 10px;
-} */
+#headerContainer {
+    background-color: rgba(255, 255, 255, 1);
+}
 
 #editDiv {
     position: fixed;
     top: 30%;
     left: 50%;
-
 }
 
 #commentContainer {
@@ -126,11 +121,6 @@ textarea {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
 }
 
-#stickyInfo {
-    width: 400px;
-    border-radius: 0.25rem;
-}
-
 #searchBar {
     /* display: block; */
     /* float: right; */
@@ -189,11 +179,17 @@ textarea {
 
 #sidepanel {
     z-index: 1020; /* Stay on top */
-    width: 14rem;
+    width: 12rem;
     height: calc(100% - 120px);
     top: 102px;
     left: 0;
     overflow: hidden;
+}
+
+@media (min-width: 992px) {
+    #sidepanel {
+        width: 16rem;
+    }
 }
 
 #sidepanel-list {
@@ -300,5 +296,9 @@ textarea {
 }
 
 #stickyInfo {
+    position: fixed;
+    z-index: 1030;
+    width: 400px;
+    border-radius: 0.25rem;
     box-shadow: 0 0 0 0.1rem rgba(130, 138, 145, 0.2);
 }

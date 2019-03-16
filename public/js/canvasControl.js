@@ -15,7 +15,7 @@ const ogLeft = 182;
 let currLeft = ogLeft;
 const ogTop = 292;
 let currTop = ogTop;
-const stickyRadius = 2;
+const stickyRadius = 0;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
@@ -23,6 +23,7 @@ const stickyMinimumWidth = 80;
 const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
+const stickyStrokeWidth = 0.5;
 
 
 // Define colors
@@ -37,9 +38,9 @@ const stickyOlive = 'rgb(222,225,171)';
 const stickyBrown = 'rgb(252,215,193)';
 const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
-const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 5px 20px';
-const stickyFocusShadow = 'rgba(3, 3, 3, 0.3) 0px 3px 8px';
-const stickyStroke = 'rgba(255,255,255,0.1)';
+const stickyShadow = 'rgba(130, 138, 145, 0.3) 0px 3px 10px';
+const stickyFocusShadow = 'rgba(130, 138, 145, 0.5) 0px 3px 10px';
+const stickyStroke = 'rgba(130, 138, 145, 0.3)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
 // Initialize the canvas
@@ -601,7 +602,7 @@ const getBackgroundJson = function () {
         originY: 'center', // centered within the group
         fill: stickyColors[stickyColorIndex],
         shadow: stickyShadow,
-        strokeWidth: 3,
+        strokeWidth: stickyStrokeWidth,
         stroke: stickyStroke,
         width: stickyOgWidth,
         height: stickyOgHeight,
