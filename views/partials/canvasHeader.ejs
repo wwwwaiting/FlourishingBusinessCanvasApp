@@ -28,14 +28,14 @@
     </div>
 
     <div id="lowerHeader" class="d-flex">
-        <div id="stickyInfo" class="input-group">
-            <%#<button class="btn btn-secondary mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" fill="white"/></svg></button>%>
-            <input id='textInputBox' class="form-control bg-light" type="text" placeholder="Type content">
-            <button id="createBtn" class="ml-2 mr-2 btn btn-secondary" type="button" onclick="createSticky()">New
-                Sticky</button>
-            <%#<button id="removeAllBtn" onclick="removeAll()">Remove All</button>%>
-            <%#<button id="importBtn" onclick="importJson()">Import JSON</button>%>
-            <%#<button id="whichBox" onclick="inWhichBox()">Which box?</button>%>
+        <div id="stickyInfo" class="stickyInfoInput row ml-1">
+            <div class="stickyInfoInput input-group">
+                <%#<button class="btn btn-secondary mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" fill="white"/></svg></button>%>
+                <input id='textInputBox' class="stickyInfoInput form-control" type="text" placeholder="Type content...">
+                <div class="stickyInfoInput input-group-append">
+                    <button id="createBtn" class="stickyInfoInput btn btn-secondary" type="button" onclick="createSticky()" disabled>New Sticky</button>
+                </div>
+            </div>
         </div>
         <div id="searchBar" class="ml-auto mr-4">
             <input id="searchContent" onclick="searchInCanvas()" class="form-control" type="text" placeholder="Search within the canvas">

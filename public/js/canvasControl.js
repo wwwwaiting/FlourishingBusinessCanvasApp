@@ -15,7 +15,7 @@ const ogLeft = 182;
 let currLeft = ogLeft;
 const ogTop = 292;
 let currTop = ogTop;
-const stickyRadius = 3;
+const stickyRadius = 2;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
@@ -38,7 +38,7 @@ const stickyBrown = 'rgb(252,215,193)';
 const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
 const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 5px 20px';
-const stickyFocusShadow = 'rgba(3, 3, 3, 0.3) 0px 3px 3px';
+const stickyFocusShadow = 'rgba(3, 3, 3, 0.3) 0px 3px 8px';
 const stickyStroke = 'rgba(255,255,255,0.1)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
@@ -68,6 +68,7 @@ function initialize_canvas(data) {
             height: sticky.size.height,
             originX: 'left',
             originY: 'top',
+            title: sticky.title,
             content: sticky.content,
             comments: sticky.comment
         }
@@ -121,6 +122,7 @@ function initialize_canvas(data) {
     canvas.on('mouse:move', function (opt) {
         if (this.isDragging) {
             canvas.setCursor('move');
+            $('#collapseSidepanel').collapse('hide');
 
             const e = opt.e;
             let clientX;
@@ -196,7 +198,7 @@ function initialize_canvas(data) {
     });
     canvas.on('selection:cleared', () => {
         // console.log('cleared!')
-        $('.collapse').collapse('hide');
+        $('#collapseSidepanel').collapse('hide');
         // $('.collapse').collapse('dispose');
     })
 }
@@ -325,11 +327,15 @@ function showSidepanel(stickySelected) {
     //     }
     // });
     canvas.getObjects().forEach(sticky => {
+        let titleText = 'Sticky';
+        if (sticky.get('title').length > 0) {
+            titleText = sticky.get('title');
+        }
         if (returnClass(sticky) == stickyClass) {
             // console.log(sticky.item(0).get('fill'));
             $('#sidepanel-list').append(`<a id="sideSticky-${sticky.get('stickyId')}" class="list-group-item bg-light list-group-item-action p-1 border-0" onmouseover="sidepanelStickyHoverOver(this)" onmouseout="sidepanelStickyHoverOut(this)" onclick="sidepanelClick(this)">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
-                <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+                <h6 class="mb-1">${titleText}</h6>
                 <p class="mb-1">${sticky.get('content')}</p>
             </div></a>`);
         }
@@ -382,6 +388,9 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         options.content || (options.content = $('#textInputBox').val())
         const textboxValue = options.content;
         $('#textInputBox').val("");
+        options.title || (options.title = $("#stickyTitleInput").val())
+        const textboxTitle = options.title;
+        $("#stickyTitleInput").val("")
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
         stickyBackground.width = options.width;
         stickyBackground.height = options.height;
@@ -390,7 +399,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
-        this.set('title', options.title || '');
+        this.set('title', textboxTitle || '');
         this.set('content', textboxValue);
         this.set('stickyId', options.stickyId || 'no_id');
         this.set('comments', options.comment || []);
@@ -581,12 +590,16 @@ const Sticky = fabric.util.createClass(fabric.Group, {
 });
 
 const getBackgroundJson = function () {
+    let stickyColorIndex = 0;
+    $('#stickyColorRow').find('label').each(function () {
+        if ($(this).hasClass('active')) stickyColorIndex = parseInt($(this).attr('id').split('-')[1]);
+    });
     const backgroundJson = {
         left: 0,
         top: 0, // position offset the center
         originX: 'center',
         originY: 'center', // centered within the group
-        fill: stickyYellow,
+        fill: stickyColors[stickyColorIndex],
         shadow: stickyShadow,
         strokeWidth: 3,
         stroke: stickyStroke,
@@ -1500,3 +1513,58 @@ $('#canvasHeader').on('hide.bs.collapse', function() {
     $('#sidepanel').css("height", "calc(100% - 75px)");
     $('#sidepanel').css("top", "57px");
 });
+
+let inputExtended = false;
+
+function extendNewStickyInput() {
+    inputExtended = true;
+    $('#stickyInfo').addClass('p-3');
+    $('#stickyInfo').prepend(`<div class="stickyInfoInput extendInput input-group mb-2"><input id="stickyTitleInput" class="stickyInfoInput form-control" type="text" placeholder="Title"></div>`)
+    $('#stickyInfo').prepend(`<div id="stickyColorRow" class="stickyInfoInput extendInput d-flex mb-2 position-relative btn-group btn-group-toggle" data-toggle="buttons"><button id="stickyInfoInputCloseBtn" class="btn p-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#6c757d"/></svg></button></div>`)
+    let i = 0;
+    stickyColors.forEach(color => {
+        $('#stickyColorRow').append(`<label id="colorLabel-${i}" class="btn btn-secondary m-1 stickyInfoInput btn-circle"><input id="color-${i}" class="stickyInfoInput" type="radio" name="options" autocomplete="off"><span class="stickyInfoInput"></span></label>`)
+        $(`#colorLabel-${i}`).css({ 'color': 'black', 'background-color': `${ color }`, 'border-color': `${ color }` });
+        i += 1;
+    })
+    $(`#colorLabel-${0}`).button('toggle'); // default color
+    $(`#colorLabel-${0}`).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+    $('#stickyInfo').css({ 'background-color': `${stickyColors[0]}`, 'border-color': `${stickyColors[0]}` })
+    $('#stickyTitleInput').css({'background-color': `${stickyColors[0]}`})
+    $('#textInputBox').css({'background-color': `${stickyColors[0]}`})
+}
+
+function blurNewStickyInput() {
+    inputExtended = false;
+    $('#stickyInfo').css({ 'background-color': '', 'border-color': '' })
+    $('#stickyInfo').removeClass('p-3')
+    $('.extendInput').remove();
+}
+
+$('body').on('click', function (e) {
+    if (!($(e.target).hasClass('stickyInfoInput'))) blurNewStickyInput();
+})
+
+$('#stickyInfo').on('click', function (e) {
+    console.log($(e.target));
+    if (($(e.target).hasClass('stickyInfoInput')) && !inputExtended) {
+        extendNewStickyInput()
+    } else if ($(e.target).parent().attr('id') == 'stickyColorRow') {
+        $(e.target).siblings('label').each(function () {
+            $(this).find('span').html('');
+        });
+        $(e.target).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+        const colorIndex = parseInt($(e.target).attr('id').split('-')[1]);
+        $('#stickyInfo').css({ 'background-color': `${stickyColors[colorIndex]}`, 'border-color': `${stickyColors[colorIndex]}` })
+        $('#stickyTitleInput').css({'background-color': `${stickyColors[colorIndex]}`})
+        $('#textInputBox').css({'background-color': `${stickyColors[colorIndex]}`})
+    }
+})
+
+$('#textInputBox').on('input', function (e) {
+    if (e.target.value.length > 0) {
+        $('#createBtn').removeAttr('disabled');
+    } else {
+        $('#createBtn').attr('disabled', '');
+    }
+})
