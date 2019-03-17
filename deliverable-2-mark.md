@@ -20,3 +20,18 @@ _Reminder:_ The 0-4 marking scale means:
  * 1 : Below Expectations (50%)
  * 0 : Missing (0%)
 
+
+Product
+- Excellent progress so far - keep up the good work. 
+
+README.md
+- Missing description of application and problem context.
+- Key features and how-to instructions are merged.
+
+plan.md
+- Try to use better Markdown formatting.
+- Very thorough process w.r.t to events and Github workflow. 
+
+review.md
+- Meets expectations.
+- Again, try to use better Markdown formatting.
