@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manager page</title>
+    <title>User page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -11,9 +11,9 @@
 </head>
 
 <body>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <%#<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <!-- <div class="modal-content">
+             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel"></h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -25,12 +25,12 @@
                 <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
-            </div> -->
+            </div> 
         </div>
-    </div>
+    </div>%>
 
     <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" id="mainNav">
-        <div class="container"><h1>Canvas</h1>
+        <div class="container"><h1>Flourishing Business Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getProfile()">Profile</button>
@@ -111,12 +111,13 @@
     }
 
     $('body').on('click', 'a.canvasClick', function() {
-        console.log(11)
         console.log($(this)[0].id)
-        const canvasId = $(this).id
+        const canvasId = $(this)[0].id
+        console.log("print id")
+        console.log(canvasId)
         const send = {canvasId}
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/library/id",
             data: send,
             success: function (data) {
@@ -130,212 +131,7 @@
 
     })
 
-    function renderManageUsers() {
-
-        let manageUsersContent = '<div class="modal-body"><form>'
-        for(let i = 0; i < canvasTitles.length; i++){
-            manageUsersContent += `<div><h5>${canvasTitles[i]} (${canvasIds[i]})</h5>`
-            for (let j = 0; j < canvasUsers[i].length; j++){
-                manageUsersContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox">
-            <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
-            }
-            manageUsersContent += `<div class="btnContainer" style="text-align:right">
-            <button type="button" class="btn btn-light addUserPrompt">Add</button>
-            <button type="button" class="btn btn-light" onclick="removeUsers()">Remove</button></div></div>`
-        }
-        manageUsersContent += '</form></div>'
-        $(".modal-title").html("Manage users")
-        $(".modal-body").html(manageUsersContent)
-        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
-    }
-
-    $('body').on('click', 'button.addUserPrompt', function() {
-        const html = `<div class="input-group">
-        <input type="text" class="form-control" placeholder="New user email" >
-        <div class="input-group-append">
-            <button class="btn btn-primary addUserDone" type="button">Add</button>
-        </div></div>`
-        $(this).parent().html(html)
-    })
-
-    $('body').on('click', 'button.addUserDone', function() {
-        const email = [$(this).parent().prev().val()]
-        const text = $(this).parent().parent().parent().parent().children()[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
-        // const index = canvasIds.findIndex(id => id == canvasId)
-        // canvasUsers[index].push(newUserId)
-        console.log(canvasUsers)
-        //send update request
-        console.log(canvasId)
-        const type = "add"
-        const send = {type, canvasId, email}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index].push(email)
-                    Email.send({
-							Host: "smtp.elasticemail.com",
-            			Username: "wangluya2014@gmail.com",
-            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-            			To: email,
-            			From: "wangluya2014@gmail.com",
-            			Subject: "This is the subject",
-            			Body: "Testing for register!."
-          			  });
-                    renderManageUsers()
-                } else {
-                    console.log('fail add user')
-                }
-            }
-        })
-        // console.log('here')
-    })
-
-
-    function removeUsers() {
-        const selected = $('.form-check-input:checked')
-        const usersToRemove = []
-        for (let e of selected) {
-            usersToRemove.push(e.nextElementSibling.innerHTML)
-        }
-        const text = selected[0].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
-        for (let i = 1; i < selected.length; i++) {
-				const temp = selected[i].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        		const tempId = text.slice(0, text.length - 1)
-        		if (tempId != canvasId) {
-					console.log('Cannot remove users in different canvas simultaneously')
-					return        		
-        		}        
-        }
-        
-        console.log(canvasId)
-
-        // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-        console.log(canvasUsers)
-        // renderManageUsers()
-        const email = usersToRemove
-        
-        //send POST request
-        const type = "remove"
-        const send = {type, canvasId, email}
-        console.log(send)
-        
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-                    renderManageUsers()
-                } else {
-                    console.log('fail remove user')
-                }
-            }
-        })
-    }
-
-
-    function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body"><form>'
-        for (let i = 0; i < canvasTitles.length; i++){
-            manageCanvasContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]} (${canvasIds[i]})</label>
-        </div>`
-        }
-        manageCanvasContent += '</form></div>'
-        manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
-        <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title" >
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button" onclick="addNewCanvas()">Add</button>
-        </div></div>`
-
-        $(".modal-title").html("Manage Canvas")
-        $(".modal-body").html(manageCanvasContent)
-        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-    }
-
-    function addNewCanvas() {
-        const title = $('#newCanvas').val()
-        // send post request
-        const send = {title}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/add",
-            data: send,
-            success: function (data) {
-                // if (data == 'true') {
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push([])
-                removeMainSection()
-                renderManageCanvas()
-                renderFbc()
-                // } else {
-                //     console.log('fail add canvas')
-                }
-            
-        })
-    }
-
-    function removeCanvas() {
-        const selected = $('.form-check-input:checked')
-        const canvasId = []
-        for (let e of selected) {
-            const text = e.nextElementSibling.innerHTML.split('(')[1]
-            const canId = text.slice(0, text.length - 1)
-            canvasId.push(canId)
-            // console.log(canId)
-            // const indexToRemove = canvasIds.findIndex(id => id == canId)
-            // canvasTitles.splice(indexToRemove, 1)
-            // canvasIds.splice(indexToRemove, 1)
-            // canvasUsers.splice(indexToRemove, 1)
-        }
-
-        const send = {canvasId}
-        console.log(send)
-        
-        $.ajax({
-            type: "DELETE",
-            url: "/manager/del",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    for (let canId of canvasId) {
-                        const indexToRemove = canvasIds.findIndex(id => id == canId)
-                        canvasTitles.splice(indexToRemove, 1)
-                        canvasIds.splice(indexToRemove, 1)
-                        canvasUsers.splice(indexToRemove, 1)
-                    }
-                    renderManageCanvas()
-                    removeMainSection()
-                    renderFbc()
-                } else {
-                    console.log('fail remove canvas')
-                }
-            }
-        })
-
-            // console.log(canvasId)
-            // console.log(canvasTitles)
-            // console.log(canvasIds)
-            // console.log(canvasUsers)
-            // renderManageCanvas()
-            // removeMainSection()
-            // renderFbc()
-    }
-
+   
     function removeMainSection() {
         $('section').html('')
     }

@@ -229,7 +229,7 @@ app.post('/canvas/add', function(req, res){
       // create new sticky
 
       sticky.canvasId = canvas;
-      sticky.modifiedTime = (new Date()).toLocaleDateString("en-US", dataFormat);
+      sticky.modifiedTime = new Date()
       var newStic = new Sticky(sticky)
       Sticky.create(newStic, function(err, newlyCreated) {
         if (err) {
@@ -307,7 +307,6 @@ app.post('/canvas/edit', function(req, res){
   var type = req.body.type;
   var change = req.body.change;
   var newHis = {
-    stickyID: sticky,
     user: req.cookies.email,
     content: 'Modified' + type,
     modifiedTime: new Date()
@@ -378,11 +377,13 @@ app.get('/library/get', function(req, res){
 		} else {
 			var user = result[0];
 			var c_list = user.canvas;
+			console.log(c_list)
 			
 			var title = new Array();
 			var canvasId = new Array();
 			var users = new Array();
 			if (c_list.length != 0) {
+				let count = 1;
 				// loop through all canvas list
 				for (let i = 0; i < c_list.length; i++){
 					Canvas.find({_id:c_list[i]}, function(err, result){
@@ -396,9 +397,10 @@ app.get('/library/get', function(req, res){
 							canvasId.push(id);
 							title.push(t);
 							users.push(user);
-							if (i == c_list.length-1){
+							if (count == c_list.length){
 								res.send({title:title, canvas:canvasId, users:users});
-							}						
+							}	
+							count ++;					
 						}				
 					});			
 				}
@@ -409,8 +411,9 @@ app.get('/library/get', function(req, res){
 
 
 // store the canvas id into cookie
-app.get('/library/id', function(req, res){
-	var cavasId = req.body.cavasId;
+app.post('/library/id', function(req, res){
+	var canvasId = req.body.canvasId;
+	console.log(canvasId);
 	res.cookie('id', canvasId);
 	res.send(tru);
 });
