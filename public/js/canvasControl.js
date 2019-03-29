@@ -1,6 +1,8 @@
 "use strict";
 console.log("canvasControl.js");
 
+var socket =io();
+
 // Global vars
 let canvas;
 let backUpSticky;
@@ -13,7 +15,7 @@ const ogLeft = 182;
 let currLeft = ogLeft;
 const ogTop = 292;
 let currTop = ogTop;
-const stickyRadius = 3;
+const stickyRadius = 0;
 const stickyOgWidth = 100;
 const stickyOgHeight = 100;
 const stickyPadding = 20;
@@ -21,6 +23,7 @@ const stickyMinimumWidth = 80;
 const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
+const stickyStrokeWidth = 0.5;
 
 
 // Define colors
@@ -35,8 +38,9 @@ const stickyOlive = 'rgb(222,225,171)';
 const stickyBrown = 'rgb(252,215,193)';
 const stickyPurple = 'rgb(234,233,253)';
 const stickyColors = [stickyWhite, stickyPink, stickyOrange, stickyYellow, stickyGold, stickyBlue, stickyOlive, stickyBrown, stickyPurple]
-const stickyShadow = 'rgba(3, 3, 3, 0.1) 0px 10px 20px';
-const stickyStroke = 'rgba(255,255,255,0.1)';
+const stickyShadow = 'rgba(130, 138, 145, 0.3) 0px 3px 10px';
+const stickyFocusShadow = 'rgba(130, 138, 145, 0.5) 0px 3px 10px';
+const stickyStroke = 'rgba(130, 138, 145, 0.3)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
 // Initialize the canvas
@@ -53,11 +57,6 @@ function initialize_canvas(data) {
 
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
-    const dataFormat = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    };
     $('#designedDate').attr('value', data.createDate);
     // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
 
@@ -70,6 +69,7 @@ function initialize_canvas(data) {
             height: sticky.size.height,
             originX: 'left',
             originY: 'top',
+            title: sticky.title,
             content: sticky.content,
             comments: sticky.comment
         }
@@ -89,10 +89,21 @@ function initialize_canvas(data) {
     canvas.on('mouse:down', function (opt) {
         const evt = opt.e;
         if (!canvas.getActiveObject()) {
+            canvas.setCursor('move');
             this.isDragging = true;
             this.selection = false;
-            this.lastPosX = evt.clientX;
-            this.lastPosY = evt.clientY;
+
+            let lastX;
+            let lastY;
+            if (evt.touches) {
+                lastX = evt.touches[0].clientX;
+                lastY = evt.touches[0].clientY;
+            } else {
+                lastX = evt.clientX;
+                lastY = evt.clientY;
+            }
+            this.lastPosX = lastX;
+            this.lastPosY = lastY;
         } else {
             // let temp = canvas.getActiveObject()
             // let temp0 = temp.item(0);
@@ -104,15 +115,32 @@ function initialize_canvas(data) {
         }
         $('#editDiv').html('')
     });
+    canvas.on('mouse:move:before', function () {
+        if (this.isDragging) {
+            canvas.setCursor('move');
+        }
+    })
     canvas.on('mouse:move', function (opt) {
         if (this.isDragging) {
             canvas.setCursor('move');
+            $('#collapseSidepanel').collapse('hide');
+
             const e = opt.e;
-            this.viewportTransform[4] += e.clientX - this.lastPosX;
-            this.viewportTransform[5] += e.clientY - this.lastPosY;
+            let clientX;
+            let clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            this.viewportTransform[4] += clientX - this.lastPosX;
+            this.viewportTransform[5] += clientY - this.lastPosY;
+
             this.requestRenderAll();
-            this.lastPosX = e.clientX;
-            this.lastPosY = e.clientY;
+            this.lastPosX = clientX;
+            this.lastPosY = clientY;
         }
         // else {
         //     const e = opt.e
@@ -146,9 +174,8 @@ function initialize_canvas(data) {
             canvas.renderAll();
             backUpSticky = "";
         }
-
-        this.isDragging = false;
         canvas.setCursor('default');
+        this.isDragging = false;
         this.selection = true;
         canvas.forEachObject(obj => {
             obj.selectable = true;
@@ -172,7 +199,7 @@ function initialize_canvas(data) {
     });
     canvas.on('selection:cleared', () => {
         // console.log('cleared!')
-        $('.collapse').collapse('hide');
+        $('#collapseSidepanel').collapse('hide');
         // $('.collapse').collapse('dispose');
     })
 }
@@ -262,8 +289,30 @@ function argHandler(obj, handler) {
     };
 };
 
+function sidepanelStickyHoverOver(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    targetSticky.item(0).set('shadow', stickyFocusShadow);
+    canvas.renderAll();
+}
+
+function sidepanelStickyHoverOut(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    targetSticky.item(0).set('shadow', stickyShadow);
+    canvas.renderAll();
+}
+
+function sidepanelClick(sideSticky) {
+    const targetStickyId = sideSticky.id.split('-')[1];
+    const targetSticky = canvas.getObjects().find(s => s.get('stickyId') == targetStickyId);
+    displayEditForm(targetSticky);
+}
+
 
 function showSidepanel(stickySelected) {
+    focusOnSticky(stickySelected);
+
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
     // const testRect = returnTestRect(stickySelected);
@@ -279,11 +328,15 @@ function showSidepanel(stickySelected) {
     //     }
     // });
     canvas.getObjects().forEach(sticky => {
+        let titleText = 'Sticky';
+        if (sticky.get('title').length > 0) {
+            titleText = sticky.get('title');
+        }
         if (returnClass(sticky) == stickyClass) {
             // console.log(sticky.item(0).get('fill'));
-            $('#sidepanel-list').append(`<a class="list-group-item bg-light list-group-item-action p-1 border-0">
+            $('#sidepanel-list').append(`<a id="sideSticky-${sticky.get('stickyId')}" class="list-group-item bg-light list-group-item-action p-1 border-0" onmouseover="sidepanelStickyHoverOver(this)" onmouseout="sidepanelStickyHoverOut(this)" onclick="sidepanelClick(this)">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
-                <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
+                <h6 class="mb-1">${titleText}</h6>
                 <p class="mb-1">${sticky.get('content')}</p>
             </div></a>`);
         }
@@ -336,6 +389,9 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         options.content || (options.content = $('#textInputBox').val())
         const textboxValue = options.content;
         $('#textInputBox').val("");
+        options.title || (options.title = $("#stickyTitleInput").val())
+        const textboxTitle = options.title;
+        $("#stickyTitleInput").val("")
         const stickyBackground = new fabric.Rect(new getBackgroundJson());
         stickyBackground.width = options.width;
         stickyBackground.height = options.height;
@@ -344,10 +400,10 @@ const Sticky = fabric.util.createClass(fabric.Group, {
         const stickyCt = this.item(1);
         stickyCt.set('width', this.width - stickyPadding); //20 as padding
         stickyCt.set('height', this.height - stickyPadding); //20 as padding
-        this.set('title', options.title || '');
+        this.set('title', textboxTitle || '');
         this.set('content', textboxValue);
-        this.set('stickyId', options.stickyId || -1);
-        this.set('comments', options.comments || []);
+        this.set('stickyId', options.stickyId || 'no_id');
+        this.set('comments', options.comment || []);
         this.set('lockRotation', options.lockRotation || true);
         this.set('lockScalingFlip', options.lockScalingFlip || true);
         this.set('transparentCorners', options.transparentCorners || false);
@@ -379,10 +435,23 @@ const Sticky = fabric.util.createClass(fabric.Group, {
 
         this.item(1).text = convertDisplay(this);
 
-        this.on('mousedown', doubleClicked(this, function (sticky) {
-            $('#editDiv').html('')
-            displayEditForm(sticky)
-        }));
+        // this.on('mousedown', doubleClicked(this, function (sticky) {
+        //     $('#editDiv').html('')
+        //     displayEditForm(sticky)
+        // }));
+        this.on('mousedblclick', function () {
+            displayEditForm(this)
+        });
+
+        this.on('mouseover', function () {
+            this.item(0).set('shadow', stickyFocusShadow);
+            canvas.renderAll();
+        });
+
+        this.on('mouseout', function () {
+            this.item(0).set('shadow', stickyShadow);
+            canvas.renderAll();
+        });
 
         this.on('mouseup', function () {
             let top = vertical_restrict(this);
@@ -390,8 +459,17 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             smoothMoveH(this, left);
             smoothMoveV(this, top);
             this.setCoords()
-            console.log(this.left + ', ' + this.top);
+            console.log('L:' + this.left + ', T:' + this.top);
             if (stickyIsResizing) {
+
+                socket.emit('stickyUpdateSize', {
+                    stickyId: this.stickyId,
+                    height: parseInt(this.get('height')),
+                    width: parseInt(this.get('width')),
+                    left: parseInt(left),
+                    top: parseInt(top)
+                });
+
                 $.ajax({
                     type: 'POST',
                     url: "/canvas/edit",
@@ -432,7 +510,13 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                 });
                 stickyIsResizing = false;
             } else if (stickyIsMoving) {
-                console.log('entering isMoving')
+
+                socket.emit('stickyUpdatePos', {
+                    stickyId: this.stickyId,
+                    left: parseInt(left),
+                    top: parseInt(top)
+                });
+
                 $.ajax({
                     type: 'POST',
                     url: "/canvas/edit",
@@ -507,14 +591,18 @@ const Sticky = fabric.util.createClass(fabric.Group, {
 });
 
 const getBackgroundJson = function () {
+    let stickyColorIndex = 0;
+    $('#stickyColorRow').find('label').each(function () {
+        if ($(this).hasClass('active')) stickyColorIndex = parseInt($(this).attr('id').split('-')[1]);
+    });
     const backgroundJson = {
         left: 0,
         top: 0, // position offset the center
         originX: 'center',
         originY: 'center', // centered within the group
-        fill: stickyYellow,
+        fill: stickyColors[stickyColorIndex],
         shadow: stickyShadow,
-        strokeWidth: 3,
+        strokeWidth: stickyStrokeWidth,
         stroke: stickyStroke,
         width: stickyOgWidth,
         height: stickyOgHeight,
@@ -606,6 +694,19 @@ function createSticky() {
             console.log(resultData);
             newSticky.set('stickyId', resultData.id);
             showSidepanel(newSticky);
+
+            socket.emit('stickyAdd', {
+                stickyId: newSticky.get('stickyId'),
+                content: newSticky.get('content'),
+                left: newSticky.get('left'),
+                top: newSticky.get('top'),
+                width: newSticky.get('width'),
+                height: newSticky.get('height'),
+                color: newSticky.item(0).get('fill'),
+                title: newSticky.get('title'),
+                comment: [],
+                optimalFields: {}
+            })
         },
         error: function () {
             alert("Something went wrong")
@@ -628,6 +729,38 @@ function revertTransformation() {
     canvas.set('width', mainCanvasWidth);
     canvas.set('height', mainCanvasHeight);
     canvas.requestRenderAll();
+}
+
+function focusOnSticky(sticky) {
+    if (stickyIsMoving || stickyIsResizing) {
+        return
+    }
+    const lastVPX = canvas.viewportTransform[4];
+    const lastVPY = canvas.viewportTransform[5];
+    const sidepanelWidth = $('#sidepanel').width();
+    const x = -(sticky.left - canvas.width / 2);
+    const y = -(sticky.top - canvas.height / 2);
+    const rightLimit = -(canvas.width / 2) + sticky.width + 60;
+    const leftLimit = canvas.width / 2 - sidepanelWidth - 20;
+    console.log(x- lastVPX, y- lastVPY, leftLimit, rightLimit);
+    if (x - lastVPX > leftLimit || x - lastVPX < rightLimit) {
+        const vpObj = { vpx: lastVPX, vpy: lastVPY, a: canvas.viewportTransform[0], b: canvas.viewportTransform[3]};
+        $(vpObj).animate(
+            { vpx: x - sidepanelWidth, vpy: y, a: 1.2, b: 1.2 },{
+                duration: 400,
+                specialEasing: {vpx: "swing", vpy: "swing"},
+                step: function() {
+                    canvas.viewportTransform[0] = vpObj.a;
+                    canvas.viewportTransform[3] = vpObj.b;
+                    canvas.viewportTransform[4] = vpObj.vpx;
+                    canvas.viewportTransform[5] = vpObj.vpy;
+                },
+                complete: function() {
+                    canvas.requestRenderAll();
+                }
+            }
+        );
+    }
 }
 
 // download popup helper function
@@ -746,6 +879,7 @@ function displayEditForm(sticky) {
     const editDiv = $('#editDiv')
     editDiv.html(html)
 
+    // Reconstructing previous comments
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
         const li = document.createElement('li')
@@ -773,16 +907,24 @@ function displayEditForm(sticky) {
                     alert("Something went wrong")
                 }
             });
+
             const content = $(this).prev().text()
             const index = sticky.comments.findIndex(c => c == content)
             if (index >= 0) {
                 sticky.comments.splice(index, 1)
             }
             console.log(sticky.comments)
+
+            socket.emit('stickyUpdateComment', {
+                change: sticky.get('comments'),
+                stickyId: sticky.get('stickyId')
+            })
+
             $(this).parent().remove()
         })
     }
 
+    // Adding new comment
     $('#addComment').click(function addComments() {
         const content = $('#commentContent').val();
         const buttonId = `delComment${sticky.comments.length}`;
@@ -792,6 +934,12 @@ function displayEditForm(sticky) {
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
+
+        socket.emit('stickyUpdateComment', {
+            change: sticky.get('comments'),
+            stickyId: sticky.get('stickyId')
+        })
+
         $(`#${buttonId}`).click(function () {
             // send post request
             $.ajax({
@@ -816,6 +964,12 @@ function displayEditForm(sticky) {
                 sticky.comments.splice(index, 1)
             }
             console.log(sticky.comments)
+
+            socket.emit('stickyUpdateComment', {
+                change: sticky.get('comments'),
+                stickyId: sticky.get('stickyId')
+            })
+
             $(this).parent().remove()
         })
         $('#commentContent').remove()
@@ -848,6 +1002,12 @@ function displayEditForm(sticky) {
                 alert("Something went wrong")
             }
         });
+
+        socket.emit('stickyUpdateColor', {
+            change: sticky.item(0).get('fill'),
+            stickyId: sticky.stickyId
+        })
+
         canvas.renderAll()
         showSidepanel(sticky);
     })
@@ -870,6 +1030,11 @@ function displayEditForm(sticky) {
                 alert("Something went wrong")
             }
         });
+
+        socket.emit('stickyDelete', {
+            stickyId: sticky.stickyId
+        })
+
         canvas.remove(sticky);
         canvas.discardActiveObject();
         editDiv.html('')
@@ -910,6 +1075,11 @@ function displayEditForm(sticky) {
                             alert("Something went wrong")
                         }
                     });
+
+                    socket.emit('stickyUpdateContent', {
+                        change: sticky.content,
+                        stickyId: sticky.stickyId
+                    });
                     showSidepanel(sticky);
                 }
             }
@@ -932,6 +1102,10 @@ function displayEditForm(sticky) {
                     alert("Something went wrong")
                 }
             });
+            socket.emit('stickyUpdateContent', {
+                change: sticky.content,
+                stickyId: sticky.stickyId
+            });
             showSidepanel(sticky);
             // sticky.content = $('.textbox').val()
             // sticky.shape.item(1).text = convertDisplay(sticky)
@@ -950,14 +1124,18 @@ function displayEditForm(sticky) {
 
 }
 
-function stickyContentEdit(sticky) {
-    sticky.content = $('.textbox').val()
+function stickyContentEditCore(sticky, newContent) {
+    sticky.content = newContent;
     sticky.item(1).text = convertDisplay(sticky)
     const stickyCt = sticky.item(1);
     stickyCt.set('width', sticky.width - stickyPadding); //20 as padding
     stickyCt.set('height', sticky.height - stickyPadding); //20 as padding
     stickyCt.setCoords()
     canvas.renderAll();
+}
+
+function stickyContentEdit(sticky) {
+    stickyContentEditCore(sticky, $('.textbox').val());
     $('#editBtn').text('Edit');
     const p = document.createElement('p');
     p.className = 'textbox';
@@ -988,6 +1166,11 @@ function handleWindowResize() {
     canvas.set('width', $(window).width());
     canvas.set('height', $(window).height());
     canvas.requestRenderAll();
+
+    const activeObj = canvas.getActiveObject();
+    if (activeObj) {
+        focusOnSticky(activeObj)
+    }
 }
 
 function searchInCanvas() {
@@ -1254,3 +1437,137 @@ function getCanvasInfo() {
 // Used to call functions after page is fully loaded.
 $(window).resize(handleWindowResize);
 $(document).ready(getCanvasInfo);
+
+socket.on('testLog', testLog);
+function testLog(gotResult) {
+    console.log('got: ', gotResult);
+}
+socket.on('stickyUpdateSize', function stickyUpdateSize(result) {
+    console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    changingSticky.set('width', result.width);
+    changingSticky.set('height', result.height);
+    // changingSticky.set('scaleX', 1);
+    // changingSticky.set('scaleY', 1);
+    const stickyBg = changingSticky.item(0);
+    stickyBg.set('width', result.width);
+    stickyBg.set('height', result.height);
+    stickyBg.setCoords();
+    const stickyCt = changingSticky.item(1);
+    stickyCt.set('width', result.width - stickyPadding); //20 as padding
+    stickyCt.set('height', result.height - stickyPadding); //20 as padding
+    stickyCt.setCoords();
+    // console.log(sticky.content);
+    stickyCt.text = convertDisplay(changingSticky);
+    changingSticky.setCoords();
+    canvas.renderAll();
+    smoothMoveH(changingSticky,  result.left);
+    smoothMoveV(changingSticky, result.top);
+    changingSticky.setCoords();
+});
+socket.on('stickyUpdatePos',  function stickyUpdatePos(result) {
+    // console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    smoothMoveH(changingSticky,  result.left);
+    smoothMoveV(changingSticky, result.top);
+    changingSticky.setCoords();
+});
+socket.on('stickyAdd', function stickyAdd(result) {
+    // console.log('got: ', result);
+    const newSticky = new Sticky(result);
+    canvas.add(newSticky);
+    canvas.renderAll();
+});
+socket.on('stickyUpdateComment', function stickyUpdateComment(result) {
+    // console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    changingSticky.set('comments', result.change);
+    canvas.renderAll();
+});
+socket.on('stickyUpdateColor', function stickyUpdateColor(result) {
+    // console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    changingSticky.item(0).set('fill', result.change);
+    canvas.renderAll();
+});
+socket.on('stickyDelete', function stickyDelete(result) {
+    // console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    canvas.remove(changingSticky);
+    canvas.discardActiveObject();
+    $('#editDiv').html('');
+    canvas.renderAll();
+});
+socket.on('stickyUpdateContent', function stickyUpdateContent(result) {
+    // console.log('got: ', result);
+    const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+    stickyContentEditCore(changingSticky, result.change)
+});
+
+$('#canvasHeader').on('show.bs.collapse', function() {
+    $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M7 14l5-5 5 5z" /></svg>`);
+    $('#sidepanel').css("height", "calc(100% - 120px)");
+    $('#sidepanel').css("top", "102px");
+});
+$('#canvasHeader').on('hide.bs.collapse', function() {
+    $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M7 10l5 5 5-5z" /></svg>`);
+    $('#sidepanel').css("height", "calc(100% - 75px)");
+    $('#sidepanel').css("top", "57px");
+});
+
+let inputExtended = false;
+
+function extendNewStickyInput() {
+    inputExtended = true;
+    $('#stickyInfo').addClass('p-3');
+    $('#stickyInfo').prepend(`<div class="stickyInfoInput extendInput input-group mb-2"><input id="stickyTitleInput" class="stickyInfoInput form-control" type="text" placeholder="Title"></div>`)
+    $('#stickyInfo').prepend(`<div id="stickyColorRow" class="stickyInfoInput extendInput d-flex mb-2 position-relative btn-group btn-group-toggle" data-toggle="buttons"><button id="stickyInfoInputCloseBtn" class="btn p-0"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" fill="#6c757d"/></svg></button></div>`)
+    let i = 0;
+    stickyColors.forEach(color => {
+        $('#stickyColorRow').append(`<label id="colorLabel-${i}" class="btn btn-secondary m-1 stickyInfoInput btn-circle"><input id="color-${i}" class="stickyInfoInput" type="radio" name="options" autocomplete="off"><span class="stickyInfoInput"></span></label>`)
+        $(`#colorLabel-${i}`).css({ 'color': 'black', 'background-color': `${ color }`, 'border-color': `${ color }` });
+        i += 1;
+    })
+    $(`#colorLabel-${0}`).button('toggle'); // default color
+    $(`#colorLabel-${0}`).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+    $('#stickyInfo').css({ 'background-color': `${stickyColors[0]}`, 'border-color': `${stickyColors[0]}` })
+    $('#stickyTitleInput').css({'background-color': `${stickyColors[0]}`})
+    $('#textInputBox').css({'background-color': `${stickyColors[0]}`})
+}
+
+function blurNewStickyInput() {
+    inputExtended = false;
+    $('#stickyInfo').css({ 'background-color': '', 'border-color': '' })
+    $('#stickyInfo').removeClass('p-3')
+    $('.extendInput').remove();
+}
+
+$('body').on('click', function (e) {
+    if (!($(e.target).hasClass('stickyInfoInput'))) blurNewStickyInput();
+})
+
+$('#stickyInfo').on('click', function (e) {
+    console.log($(e.target));
+    if (($(e.target).hasClass('stickyInfoInput')) && !inputExtended) {
+        extendNewStickyInput()
+    } else if ($(e.target).parent().attr('id') == 'stickyColorRow') {
+        $(e.target).siblings('label').each(function () {
+            $(this).find('span').html('');
+        });
+        $(e.target).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+        const colorIndex = parseInt($(e.target).attr('id').split('-')[1]);
+        $('#stickyInfo').css({ 'background-color': `${stickyColors[colorIndex]}`, 'border-color': `${stickyColors[colorIndex]}` })
+        $('#stickyTitleInput').css({'background-color': `${stickyColors[colorIndex]}`})
+        $('#textInputBox').css({'background-color': `${stickyColors[colorIndex]}`})
+    }
+})
+
+$('#textInputBox').on('input', function (e) {
+    if (e.target.value.length > 0) {
+        $('#createBtn').removeAttr('disabled');
+    } else {
+        $('#createBtn').attr('disabled', '');
+    }
+})
