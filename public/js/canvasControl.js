@@ -743,6 +743,7 @@ function displayEditForm(sticky) {
             </div>
         </div>
     </div>`
+    // <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
     const editDiv = $('#editDiv')
     editDiv.html(html)
 
@@ -933,21 +934,8 @@ function displayEditForm(sticky) {
                 }
             });
             showSidepanel(sticky);
-            // sticky.content = $('.textbox').val()
-            // sticky.shape.item(1).text = convertDisplay(sticky)
-            // const stickyCt = sticky.shape.item(1);
-            // stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
-            // stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
-            // stickyCt.setCoords()
-            // canvas.renderAll();
-            // // $(this)[0].id = 'editBtn'
-            // $('#editBtn').text('Edit');
-            // const p = document.createElement('p');
-            // p.className = 'textbox';
-            // $('#textboxContainer').html(p)
         }
     })
-
 }
 
 function stickyContentEdit(sticky) {
@@ -958,7 +946,7 @@ function stickyContentEdit(sticky) {
     stickyCt.set('height', sticky.height - stickyPadding); //20 as padding
     stickyCt.setCoords()
     canvas.renderAll();
-    $('#editBtn').text('Edit');
+    // $('#editBtn').text('Edit');
     const p = document.createElement('p');
     p.className = 'textbox';
     p.id = 'textboxP'
@@ -1254,3 +1242,77 @@ function getCanvasInfo() {
 // Used to call functions after page is fully loaded.
 $(window).resize(handleWindowResize);
 $(document).ready(getCanvasInfo);
+
+
+    // $('#editBtn').click(function () {
+    //     if ($(this).text() == 'Edit') {
+    //         console.log($(this).text())
+    //         $(this).text('Done')
+    //         const textarea = document.createElement('textarea');
+    //         textarea.rows = '4';
+    //         textarea.cols = '40';
+    //         textarea.className = 'textbox';
+    //         textarea.id = 'textarea;'
+    //         textarea.style.backgroundColor = 'rgb(236,232,238)';
+    //         const prevText = $('#textboxP').text()
+    //         textarea.innerHTML = prevText;
+    //         $("#textboxContainer").html(textarea)
+
+    //         textarea.onkeydown = function (e) {
+    //             let key = e.keyCode;
+    //             if (key == '13') {
+    //                 stickyContentEdit(sticky)
+    //                 // send post request
+    //                 $.ajax({
+    //                     type: 'POST',
+    //                     url: "/canvas/edit",
+    //                     data: {
+    //                         type: "content",
+    //                         change: sticky.content,
+    //                         canvasId: canvas.canvasId,
+    //                         stickyId: sticky.stickyId
+    //                     },
+    //                     success: function (resultData) {
+    //                         console.log(resultData)
+    //                     },
+    //                     error: function () {
+    //                         alert("Something went wrong")
+    //                     }
+    //                 });
+    //                 showSidepanel(sticky);
+    //             }
+    //         }
+    //     } else {
+    //         stickyContentEdit(sticky)
+    //         // send post request
+    //         $.ajax({
+    //             type: 'POST',
+    //             url: "/canvas/edit",
+    //             data: {
+    //                 type: "content",
+    //                 change: sticky.content,
+    //                 canvasId: canvas.canvasId,
+    //                 stickyId: sticky.stickyId
+    //             },
+    //             success: function (resultData) {
+    //                 console.log(resultData)
+    //             },
+    //             error: function () {
+    //                 alert("Something went wrong")
+    //             }
+    //         });
+    //         showSidepanel(sticky);
+    //         // sticky.content = $('.textbox').val()
+    //         // sticky.shape.item(1).text = convertDisplay(sticky)
+    //         // const stickyCt = sticky.shape.item(1);
+    //         // stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
+    //         // stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
+    //         // stickyCt.setCoords()
+    //         // canvas.renderAll();
+    //         // // $(this)[0].id = 'editBtn'
+    //         // $('#editBtn').text('Edit');
+    //         // const p = document.createElement('p');
+    //         // p.className = 'textbox';
+    //         // $('#textboxContainer').html(p)
+    //     }
+    // })
