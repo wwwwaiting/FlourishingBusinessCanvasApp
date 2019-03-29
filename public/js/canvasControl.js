@@ -715,7 +715,7 @@ function loadJsonToCanvas(jsonOutput) {
 function displayEditForm(sticky) {
     console.log(sticky)
     const html = `
-    <div id="editForm" class="modal-content">
+    <div id="editForm" class="modal-content" style="background-color:${sticky.item(0).fill}">
         <div class="modal-header">
             <h5 class="modal-title">Sticky Information</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -735,7 +735,7 @@ function displayEditForm(sticky) {
             </div>
             <div id="commentInputContainer" class="input-group">
 
-                    <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >
+                    <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}">
                     <div class="input-group-append">
                         <button id="addComment" class="btn btn-primary" type="button">Add</button>
                     </div>
@@ -829,6 +829,8 @@ function displayEditForm(sticky) {
 
     $('#colorBtn').click(function () {
         sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
+        $('#editForm').css('background-color', sticky.item(0).fill)
+        $('#commentContent').css('background-color', sticky.item(0).fill)
         // send post request
         $.ajax({
             type: 'POST',
