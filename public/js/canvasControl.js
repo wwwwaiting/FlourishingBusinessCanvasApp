@@ -857,11 +857,10 @@ function displayEditForm(sticky) {
         </div>
         <div class="modal-body">
             <div id="textboxContainer">
-                <p id="textboxP" class="textbox">${sticky.content}</p>
+                <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
             </div>
             <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
                 <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
-                <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
                 <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
             </div>
             <div><ul id="commentContainer"></ul>
@@ -1041,75 +1040,51 @@ function displayEditForm(sticky) {
         editDiv.html('')
     })
 
-    $('#editBtn').click(function () {
-        if ($(this).text() == 'Edit') {
-            console.log($(this).text())
-            $(this).text('Done')
-            const textarea = document.createElement('textarea');
-            textarea.rows = '4';
-            textarea.cols = '40';
-            textarea.className = 'textbox';
-            textarea.id = 'textarea;'
-            textarea.style.backgroundColor = 'rgb(236,232,238)';
-            const prevText = $('#textboxP').text()
-            textarea.innerHTML = prevText;
-            $("#textboxContainer").html(textarea)
+    $('body').on('click', '#textboxP', function () {
+         
+        const textarea = document.createElement('textarea');
+        textarea.rows = '4';
+        textarea.cols = '40';
+        textarea.className = 'textbox';
+        textarea.id = 'textarea;'
+        textarea.style.backgroundColor = sticky.item(0).fill
+        textarea.innerHTML = sticky.content;
+        
+        textarea.autofocus = "autofocus";
+        
+        $("#textboxContainer").html(textarea)
 
-            textarea.onkeydown = function (e) {
-                let key = e.keyCode;
-                if (key == '13') {
-                    stickyContentEdit(sticky)
-                    // send post request
-                    $.ajax({
-                        type: 'POST',
-                        url: "/canvas/edit",
-                        data: {
-                            type: "content",
-                            change: sticky.content,
-                            canvasId: canvas.canvasId,
-                            stickyId: sticky.stickyId
-                        },
-                        success: function (resultData) {
-                            console.log(resultData)
-                        },
-                        error: function () {
-                            alert("Something went wrong")
-                        }
-                    });
-
-                    socket.emit('stickyUpdateContent', {
+        textarea.onkeydown = function (e) {
+            let key = e.keyCode;
+            if (key == '13') {
+                stickyContentEditCore(sticky, textarea.value)
+                // send post request
+                $.ajax({
+                    type: 'POST',
+                    url: "/canvas/edit",
+                    data: {
+                        type: "content",
                         change: sticky.content,
+                        canvasId: canvas.canvasId,
                         stickyId: sticky.stickyId
-                    });
-                    showSidepanel(sticky);
-                }
-            }
-        } else {
-            stickyContentEdit(sticky)
-            // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "content",
+                    },
+                    success: function (resultData) {
+                        console.log(resultData)
+                    },
+                    error: function () {
+                        alert("Something went wrong")
+                    }
+                });
+
+                socket.emit('stickyUpdateContent', {
                     change: sticky.content,
-                    canvasId: canvas.canvasId,
                     stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-            socket.emit('stickyUpdateContent', {
-                change: sticky.content,
-                stickyId: sticky.stickyId
-            });
-            showSidepanel(sticky);
+                });
+                showSidepanel(sticky);
+            }
         }
     })
+   
 }
 
 function stickyContentEditCore(sticky, newContent) {
