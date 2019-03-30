@@ -1,4 +1,7 @@
 "use strict";
+
+import { deepEqual } from "assert";
+
 console.log("canvasControl.js");
 
 var socket =io();
@@ -1174,19 +1177,12 @@ function searchInCanvas() {
                 const title = sticky.title;
                 const content = sticky.content;
 
-                if (searchContent == title)
+                if (searchContent == title || content.includes(searchContent)) {
+                    const listItem = document.createElement('a');
+                    listItem.setAttribute('class', "list-group-item list-group-item-action");
+                    listItem.appendChild(document.createTextNode(sticky.content));
 
-                const words = content.split(" ")
-                for (let j = 0; j < words.length; j++) {
-                    const word = words[j];
-
-                    if (searchContent == word) {
-                        const listItem = document.createElement('a');
-                        listItem.setAttribute('class', "list-group-item list-group-item-action");
-                        listItem.appendChild(document.createTextNode(sticky.content));
-
-                        dropDownMenu.appendChild(listItem);
-                    }
+                    dropDownMenu.appendChild(listItem);
                 }
             })
 
@@ -1205,6 +1201,28 @@ function searchInCanvas() {
         $('#searchResult').html('');
         document.getElementById('searchContent').value = '';
     });
+
+    // when hovering, highlight the corresponding sticky
+    document.getElementById("searchResult").addEventListener("mouseover", function (e) {
+        const content = e.target.val
+
+        canvas.getObjects().forEach(sticky => {
+            if (content == sticky.content) {
+                focusOnSticky(sticky)
+            }
+        })
+    })
+
+    // when clicking, pop up the corresponding sticky
+    document.getElementById("searchResult").addEventListener("click", function (e) {
+        const content = e.target.val
+
+        canvas.getObjects().forEach(sticky => {
+            if (content == sticky.content) {
+                displayEditForm(sticky)
+            }
+        })
+    })
 }
 
 //###################################################3
