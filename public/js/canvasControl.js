@@ -1162,7 +1162,8 @@ function searchInCanvas() {
         // reset search result
         $('#searchResult').html('');
 
-        const searchContent = $('#searchContent').val();
+        // make search less case-sensitive
+        const searchContent = $('#searchContent').val().toLowerCase();
 
         if (searchContent != "") {
             const dropDownMenu = document.querySelector('#searchResult')
@@ -1170,7 +1171,11 @@ function searchInCanvas() {
             // for (let i = 0; i < stickyList.length; i++) {
             // const sticky = stickyList[i];
             canvas.getObjects().forEach(sticky => {
+                const title = sticky.title;
                 const content = sticky.content;
+
+                if (searchContent == title)
+
                 const words = content.split(" ")
                 for (let j = 0; j < words.length; j++) {
                     const word = words[j];
