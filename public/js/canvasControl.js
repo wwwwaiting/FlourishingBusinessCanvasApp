@@ -71,7 +71,7 @@ function initialize_canvas(data) {
             originY: 'top',
             title: sticky.title,
             content: sticky.content,
-            comments: sticky.comment
+            comment: sticky.comment
         }
         const newSticky = new Sticky(options);
         newSticky.item(0).set('fill', sticky.color);
@@ -931,9 +931,10 @@ function displayEditForm(sticky) {
     // Reconstructing previous comments
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
+        console.log(c);
         const li = document.createElement('li')
         const buttonId = `delComment${i}`
-        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
@@ -943,10 +944,9 @@ function displayEditForm(sticky) {
             const content = $(this).prev().text()
             const date = $(this).prev().prev().text()
             const user = $(this).prev().prev().prev().text()
-            const index = sticky.comments.findIndex(c => (c.date == date && c.user == user && c.content == content))
+            const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && c.modifiedTime.toString()== date))
             if (index >= 0) {
               const commentData = sticky.comments[index]
-              console.log(commentData)
               $.ajax({
                   type: 'POST',
                   url: "/canvas/edit",
@@ -979,9 +979,7 @@ function displayEditForm(sticky) {
     $('#addComment').click(function addComments() {
         const content = $('#commentContent').val();
         const buttonId = `delComment${sticky.comments.length}`;
-        const user = Cookies.get("name");
-        console.log(user);
-        console.log(content);
+        const user = Cookies.get("email");
         $.ajax({
             type: 'POST',
             url: "/canvas/edit",
@@ -993,11 +991,11 @@ function displayEditForm(sticky) {
             },
             success: function (resultData) {
               const date = resultData
-              const c = {date:date, user:user, content:content}
+              const c = {modifiedTime:date, user:user, content:content}
               sticky.comments.push(c)
 
               const li = document.createElement('li')
-              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
           </button>`
               $('#commentContainer').append(li)
@@ -1007,10 +1005,10 @@ function displayEditForm(sticky) {
                   const content = $(this).prev().text()
                   const date = $(this).prev().prev().text()
                   const user = $(this).prev().prev().prev().text()
-                  const index = sticky.comments.findIndex(c => (c.date == date && c.user == user && c.content == content))
+                  const index = sticky.comments.findIndex(comment => (comment.user == user && comment.content == content && comment.modifiedTime.toString() == date))
                   if (index >= 0) {
                     const commentData = sticky.comments[index]
-                    console.log(commentData)
+                    console.log(commentData);
                     $.ajax({
                         type: 'POST',
                         url: "/canvas/edit",
@@ -1021,7 +1019,7 @@ function displayEditForm(sticky) {
                             stickyId: sticky.stickyId
                         },
                         success: function (resultData) {
-                            console.log(resultData)
+                            console.log(resultData);
                             sticky.comments.splice(index, 1)
                         },
                         error: function () {
