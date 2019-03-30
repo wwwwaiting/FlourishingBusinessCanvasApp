@@ -34,6 +34,7 @@ function canvasCreate(canvasOwner, canvasTitle, userList, cb) {
     const canvasDetail = {
         owner: canvasOwner,
         title: canvasTitle,
+        company:'',
         users: userList,  //email
         stickies: [],
         createDate: new Date(),
@@ -98,13 +99,13 @@ function createCanvases(cb) {
 function createUsers(cb) {
     async.parallel([
             function (callback) {
-                userCreate('userA', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '4168888888', 'UofT',callback);
+                userCreate('userA\xa0Baril', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '416788888', 'UofT',callback);
             },
             function (callback) {
-                userCreate('userB', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Manager', 2, '4167777777', 'Company1',callback);
+                userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Manager', 2, '4167777777', 'Company1',callback);
             },
             function (callback) {
-                userCreate('userC', 'userC@gmail.com', '123', regUser, ['Canvas for Ben'], 'Assistant', 2, '4166666666', 'Company1',callback);
+                userCreate('userC\xa0Milway', 'userC@gmail.com', '123', regUser, ['Canvas for Ben'], 'Assistant', 2, '4166666666', 'Company1',callback);
             },
         ],
         // optional callback
