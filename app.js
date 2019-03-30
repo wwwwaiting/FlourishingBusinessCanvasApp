@@ -402,6 +402,19 @@ app.post('/canvas/edit', function(req, res){
   }
 });
 
+// get role of current user
+app.get('/canvas/role', function(req, res){
+  var email = req.cookies.email;
+  User.find({'email':email}, function(err, result){
+    if (err){
+      console.log(err);
+    } else {
+      var user = result[0];
+      res.send(user.role);
+    }
+  });
+});
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -546,7 +559,8 @@ app.post('/manager/add', function(req, res){
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
 		owner: owner,
-		title: title,
+    title: title,
+    company:'',
 		users: empty,
 		stickies: empty,
 		createDate: time,
@@ -676,6 +690,8 @@ app.post('/pwd/edit', function(req, res){
 		}
 	});
 });
+
+
 
 // get user information from
 // app.listen(PORT, () => {
