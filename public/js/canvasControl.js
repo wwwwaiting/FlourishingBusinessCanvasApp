@@ -315,7 +315,6 @@ function showSidepanel(stickySelected) {
 
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
-    // const testRect = returnTestRect(stickySelected);
     const stickyClass = returnClass(stickySelected)
     $('#sidepanel-list').html('')
     // canvas.getObjects().forEach(sticky => {
@@ -346,7 +345,6 @@ function showSidepanel(stickySelected) {
 
 function showMouseSidepanel(stickyBoxName) {
     $('#sidepanel-title').text(stickyBoxName);
-    // const testRect = returnTestRect(stickySelected);
     const stickyClass = stickyBoxName;
     $('#sidepanel-list').html('')
     // canvas.getObjects().forEach(sticky => {
@@ -1294,107 +1292,54 @@ function returnClass(sticky) {
     }
 }
 
-function returnMouseClass(top, left) {
-    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-        return "BIOPHYSICAL STOCKS"
-    }
-    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-        return "ECOSYSTEMSERVICES"
-    }
-    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-        return "ECOSYSTEM ACTORS"
-    }
-    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-        return "NEEDS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-        return "COSTS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-        return "GOALS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-        return "BENIFITS"
-    }
-    if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
-        return "RESOURCES"
-    }
-    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-        return "ACTIVITIES"
-    }
-    if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
-        return "PARTNERSHIP"
-    }
-    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-        return "GOVERNANCE"
-    }
-    if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
-        return "RELATIONSHIPS"
-    }
-    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-        return "CHANNELS"
-    }
-    if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
-        return "STAKEHOLDERS"
-    }
-    if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
-        return "VALUE CO-CREATIONS"
-    }
-    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-        return "VALUE CO-DESTRUCTIONS"
-    }
-}
-
-// function returnTestRect(sticky) {
-//     const top = sticky.top;
-//     const left = sticky.left;
+// function returnMouseClass(top, left) {
 //     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-//         return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+//         return "BIOPHYSICAL STOCKS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-//         return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+//         return "ECOSYSTEMSERVICES"
 //     }
 //     if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-//         return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+//         return "ECOSYSTEM ACTORS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-//         return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+//         return "NEEDS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-//         return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+//         return "COSTS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-//         return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+//         return "GOALS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-//         return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+//         return "BENIFITS"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
-//         return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
+//         return "RESOURCES"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-//         return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+//         return "ACTIVITIES"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
-//         return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
+//         return "PARTNERSHIP"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-//         return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+//         return "GOVERNANCE"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
-//         return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
+//         return "RELATIONSHIPS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-//         return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+//         return "CHANNELS"
 //     }
-//     if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
-//         return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+//     if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
+//         return "STAKEHOLDERS"
 //     }
-//     if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
-//         return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+//     if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
+//         return "VALUE CO-CREATIONS"
 //     }
 //     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-//         return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
+//         return "VALUE CO-DESTRUCTIONS"
 //     }
 // }
 
