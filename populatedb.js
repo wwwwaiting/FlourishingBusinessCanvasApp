@@ -3,6 +3,7 @@
 console.log('Usage: populatedb mongodb+srv://dbuser:password@cluster0-mbdj7.mongodb.net/mydb?retryWrites=true');
 const regUser = 2;
 const manager = 3;
+const admin = 4;
 
 // Get arguments passed on command line
 var userArgs = process.argv.slice(2);
@@ -107,6 +108,9 @@ function createUsers(cb) {
             function (callback) {
                 userCreate('userC\xa0Milway', 'userC@gmail.com', '123', regUser, ['Canvas for Ben'], 'Assistant', 2, '4166666666', 'Company1',callback);
             },
+            function (callback) {
+                userCreate('Andrew\xa0Simpson', 'andrew@ecotonesoftware.com', 'admin', admin, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Administrator', 2, '', '', callback);
+            }
         ],
         // optional callback
         cb);

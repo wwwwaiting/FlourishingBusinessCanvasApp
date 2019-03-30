@@ -89,6 +89,11 @@ app.get('/manager', function(req, res){
 	res.render('manager', {name:req.cookies.name, email:req.cookies.email});
 });
 
+// render admin page
+app.get('/admin', function(req, res){
+	res.render('admin', {name:req.cookies.name, email:req.cookies.email});
+});
+
 // render user page
 app.get('/user', function(req, res){
 	res.render('user', {name:req.cookies.name, email:req.cookies.email});
@@ -166,7 +171,7 @@ app.post('/register', function(req, res) {
               res.send(fal);
             } else {
               // only when an outside user trying to signup at the first time, then create new user
-              registrationRquest.push(email);
+              var newRequest = {userEmail: email, userTime:new Date(), userName: name};
               var user = new User({
                 name: name,
                 email: email,
@@ -176,7 +181,8 @@ app.post('/register', function(req, res) {
                 occupation: '',
                 status: 1,
                 phone: '',
-                company: ''
+                company: '',
+                notification: canvasList
               });
               User.create(user, function(err, newlyCreated) {
                 if (err) {
@@ -185,24 +191,30 @@ app.post('/register', function(req, res) {
                 } else if (newlyCreated == null){
                   res.send(err);
                 } else {
-                	//console.log(newlyCreated.id);
-                  res.send(newReg.toString());
+                  User.findOneAndUpdate({role:admin},{ $push: { notification :  newRequest }},
+                    function(err, updated){
+                    if (err) {
+                      console.log(err);
+                      res.send(re);
+                    } else if (updated == null){
+                      res.send(fal);
+                    } else{
+                      res.send(newReg.toString()); 
+                    };
+                  });
                 }
               });
             }
-          }
-        );
+          });
       } else {
         res.cookie('name', name);    //cookie now store both name and email
         res.cookie('email', email);
         var resp = result.role;
         res.send(resp.toString());
       }
-    }
-  );
+    
+    });
 });
-
-
 
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
@@ -394,6 +406,34 @@ app.post('/canvas/edit', function(req, res){
     }
   }
 });
+// helper function for creating history
+function createHistory(email, type, newDate, canvasId, res){
+  var cont;
+  if(type.includes('comment')) {
+    cont = type;
+  } else{
+    cont = 'Modified' + type;
+  }
+  var newHis = {
+    user: email,
+    content: cont,
+    modifiedTime: newDate
+  };
+  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
+    if (err) {
+      console.log(err);
+      res.send(fal);
+    } else if (updated == null){
+      res.send(fal);
+    } else{
+      if (type === 'add comment'){
+        res.send(newDate)
+      }else{
+        res.send(tru);
+      }
+    }
+  });
+}
 
 // get role of current user
 app.get('/canvas/role', function(req, res){
@@ -481,7 +521,8 @@ app.post('/library/id', function(req, res){
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-	 var emails = req.body.email;   // now is a list of email
+   var emails = req.body.email;   // now is a list of email
+   var notification = new Array();
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);
@@ -505,7 +546,8 @@ app.post('/manager/user', function(req, res){
                 			occupation: '',
                 			status: 2,
                 			phone: '',
-                			company: ''
+                      company: '',
+                      notification: notification
               			});
               			User.create(user, function(err, result) {
                			if (err) {
@@ -701,33 +743,48 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
-function createHistory(email, type, newDate, canvasId, res){
-  var cont;
-  if(type.includes('comment')) {
-    cont = type;
-  } else{
-    cont = 'Modified' + type;
-  }
-  var newHis = {
-    user: email,
-    content: cont,
-    modifiedTime: newDate
-  };
-  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (updated == null){
-      res.send(fal);
-    } else{
-      if (type === 'add comment'){
-        res.send(newDate)
-      }else{
-        res.send(tru);
-      }
-    }
-  });
-}
+// get user information that the admin wants to decline the register request
+app.get('/admin/decline', function(req, res){
+  var adminEmail = req.cookies.email;
+	var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {$set: {status:0}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);
+		} else {
+      User.findOneAndUpdate({email:adminEmail}, {$pull: {notification: { userEmail: email } }}, function(err, updated){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else {
+          res.send(tru);
+        }
+      });
+		}
+	});
+});
+
+// get user information that the admin wants to approve the register request
+app.get('/admin/approve', function(req, res){
+  var adminEmail = req.cookies.email;
+	var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);
+		} else {
+      User.findOneAndUpdate({email:adminEmail}, {$pull: {notification: { userEmail: email } }}, function(err, updated){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else {
+          res.send(tru);
+        }
+      });
+		}
+	});
+});
+
 
 // get user information from
 // app.listen(PORT, () => {
