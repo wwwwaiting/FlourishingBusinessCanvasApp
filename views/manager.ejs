@@ -289,6 +289,11 @@
 
     function removeUsers() {
         const selected = $('.form-check-input:checked')
+        if (selected.length == 0) {
+            alert("No User Selected.")
+            return
+        }
+
         const usersToRemove = []
         for (let e of selected) {
             usersToRemove.push(e.nextElementSibling.innerHTML)
