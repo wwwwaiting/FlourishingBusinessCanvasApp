@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <!-- <link rel="stylesheet" href="../css/canvasHeader.css"> -->
-</head>
-
 <body>
     <div class="fixed-top p-2 m-0" id="headerContainer">
         <div id="topHeader" class="row m-0 mb-2">
@@ -88,4 +84,40 @@
             }
         });
     }
+
+    function changeCanvasBasicInfo(type, change) {
+        var send = {type, change}
+
+        $.ajax({
+            type: "POST",
+            url: "/canvas/change",
+            data: send,
+            success: function(data) {
+                if (data == 'false') {
+                    alert("Oops! An error occurred. Failed to change!")
+                }
+            }
+        });
+    }
+
+    document.getElementById("title").addEventListener("blur", function() {
+        const type = "title";
+        const title = document.querySelector("#title").value;
+
+        changeCanvasBasicInfo(type, title)
+    })
+
+    document.getElementById("designedFor").addEventListener("blur", function() {
+        const type = "company";
+        const company = document.querySelector("#designedFor").value;
+
+        changeCanvasBasicInfo(type, company)
+    })
+
+    document.getElementById("designedBy").addEventListener("blur", function() {
+        const type = "owner";
+        const owner = document.querySelector("#designedBy").value;
+
+        changeCanvasBasicInfo(type, owner)
+    })
 </script>
