@@ -169,7 +169,7 @@
 
     function renderManageUsers() {
 
-        let manageUsersContent = '<div class="modal-body"><form>'
+        let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
         for(let i = 0; i < canvasTitles.length; i++){
             manageUsersContent += `<div class="manageUsersCanvas"><h5>${canvasTitles[i]}<span style="display: none">${canvasIds[i]}</span></h5>`
             for (let j = 0; j < canvasUsers[i].length; j++){
@@ -177,12 +177,12 @@
                     continue;
                 }
                 manageUsersContent += `<div class="form-check">
-                <input class="form-check-input" type="checkbox">
+                <input class="form-check-input semantic" type="checkbox">
                 <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
-            <button type="button" class="btn btn-light addUserPrompt">Add</button>
-            <button type="button" class="btn btn-light" onclick="removeUsers()">Remove</button></div></div>`
+            <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
+            <button type="button" class="btn btn-light semantic" onclick="removeUsers()">Remove</button></div></div>`
         }
         manageUsersContent += '</form></div>'
         $(".modal-title").html("Manage users")
@@ -217,9 +217,9 @@
 
     $('body').on('click', 'button.addUserPrompt', function() {
         const html = `<div class="input-group">
-        <input type="text" class="form-control" placeholder="New user email" >
+        <input type="text" class="form-control semantic" placeholder="New user email" >
         <div class="input-group-append">
-            <button class="btn btn-primary addUserDone" type="button">Add</button>
+            <button class="btn btn-primary addUserDone semantic" type="button">Add</button>
         </div></div>`
         $(this).parent().html(html)
     })
@@ -232,15 +232,26 @@
     		return false;
     	}
     	return true;
-	}
+    }
+    
+    $('body').on('click', '.manageUserContainer', function(e) {
+        const name = e.target.classList
+        if (!name.contains('semantic')) {
+            renderManageUsers()
+
+        }
+    })
 
     $('body').on('click', 'button.addUserDone', function() {
         const email = [$(this).parent().prev().val()]
-        const text = $(this).parent().parent().parent().parent().children().find('span').text();
-        console.log(text)
-        const canvasId = text
-        // const index = canvasIds.findIndex(id => id == canvasId)
-        // canvasUsers[index].push(newUserId)
+        const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
+        
+        const index = canvasIds.findIndex(id => id == canvasId)
+        if (canvasUsers[index].includes(email[0])) {
+            alert("Duplicate user email.")
+            $(this).parent().prev().val('')
+            return;
+        }
         console.log(canvasUsers)
         //send update request
         console.log(canvasId)
@@ -256,9 +267,9 @@
 	            success: function (data) {
 	                if (data == 'true') {
 	                    const index = canvasIds.findIndex(id => id == canvasId)
-	                    canvasUsers[index].push(email)
+	                    canvasUsers[index].push(email[0])
 	                    Email.send({
-								Host: "smtp.elasticemail.com",
+							Host: "smtp.elasticemail.com",
 	            			Username: "wangluya2014@gmail.com",
 	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
 	            			To: email,
@@ -273,7 +284,6 @@
 	            }
 	        })
     	}
-        // console.log('here')
     })
 
 
@@ -321,11 +331,11 @@
 
 
     function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body"><form>'
+        let manageCanvasContent = '<div class="modal-body manageCanvasContainer"><form>'
         for (let i = 0; i < canvasTitles.length; i++){
             manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]} (${canvasIds[i]})</label>
+            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]}<span style="display:none">${canvasIds[i]}</span></label>
         </div>`
         }
         manageCanvasContent += '</form></div>'
@@ -369,14 +379,10 @@
         const selected = $('.form-check-input:checked')
         const canvasId = []
         for (let e of selected) {
-            const text = e.nextElementSibling.innerHTML.split('(')[1]
-            const canId = text.slice(0, text.length - 1)
+
+            const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+            console.log(canId)
             canvasId.push(canId)
-            // console.log(canId)
-            // const indexToRemove = canvasIds.findIndex(id => id == canId)
-            // canvasTitles.splice(indexToRemove, 1)
-            // canvasIds.splice(indexToRemove, 1)
-            // canvasUsers.splice(indexToRemove, 1)
         }
 
         const send = {canvasId}
@@ -402,14 +408,6 @@
                 }
             }
         })
-
-            // console.log(canvasId)
-            // console.log(canvasTitles)
-            // console.log(canvasIds)
-            // console.log(canvasUsers)
-            // renderManageCanvas()
-            // removeMainSection()
-            // renderFbc()
     }
 
     function removeMainSection() {
