@@ -26,6 +26,8 @@ body {
 #commentContainer {
     list-style-type: none;
     padding: 0;
+    height: 200px;
+    overflow: scroll;
 }
 
 #commentContainer li {
@@ -35,7 +37,7 @@ body {
     word-wrap: break-word;
 }
 #editForm {
-    width: 500px
+    width: 550px
 }
 
 .delComment {
@@ -52,7 +54,6 @@ body {
 
 .editFormBtns {
     /* float: right; */
-    width: 80px;
     margin-left: 10px;
     margin-right: 10px;
     /* display: block; */
@@ -65,7 +66,9 @@ body {
     margin-bottom: 1rem;
     min-height: 100px;
     width: 100%;
-    border: 1px solid black;
+    border: 1px solid #6c757d;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
 }
 #btnContainer {
     /* float: right;

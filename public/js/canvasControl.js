@@ -14,7 +14,7 @@ const mainCanvasHeight = 1320;
 // let numberOfStickies = 0;
 const ogLeft = 182;
 let currLeft = ogLeft;
-const ogTop = 292;
+const ogTop = 243;
 let currTop = ogTop;
 const stickyRadius = 0;
 const stickyOgWidth = 100;
@@ -227,7 +227,7 @@ function vertical_restrict(sticky) {
     if (top > 932 - sticky.height * sticky.scaleY && top < ((1942 - sticky.height * sticky.scaleY) / 2)) top = 932 - sticky.height * sticky.scaleY;
     if (top < 1010 && top > ((1888 - sticky.height * sticky.scaleY) / 2)) top = 956;
     if (left > (796 - sticky.width * sticky.scaleX) / 2 && left < (3288 - sticky.width * sticky.scaleX) / 2) { //only for the middle part
-        if (top < 330) top = 330;
+        if (top < 334) top = 334;
     }
     return top
 }
@@ -539,9 +539,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
                 });
                 stickyIsMoving = false;
             }
-            // } else {
-            //     // alert('Neither isMoving, nor isResizing')
-            // }
+            showSidepanel(this);
         })
         this.on('moving', () => {
             stickyIsMoving = true;
@@ -850,7 +848,7 @@ function displayEditForm(sticky) {
     console.log(sticky)
     const html = `
     <div id="editForm" class="modal-content" style="background-color:${sticky.item(0).fill}">
-        <div class="modal-header">
+        <div class="modal-header border-0">
             <h5 class="modal-title">Sticky Information</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
@@ -860,17 +858,17 @@ function displayEditForm(sticky) {
             <div id="textboxContainer">
                 <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
             </div>
-            <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
-                <div id="editColorRow" class="colorRow d-flex mb-2 position-relative btn-group btn-group-toggle" data-toggle="buttons"></div>
-                <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
+            <div id="btnContainer" class="d-flex input-group mb-3 mt-3 pr-3 pl-3">
+                <div id="editColorRow" class="colorRow d-flex position-relative btn-group btn-group-toggle ml-auto" data-toggle="buttons"></div>
+                <button class="btn btn-outline-secondary editFormBtns mr-auto btn-sm" id="deleteBtn" type="button">Delete</button>
             </div>
             <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer" class="input-group">
 
-                    <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}">
+                    <input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}; border: 1px solid #6c757d">
                     <div class="input-group-append">
-                        <button id="addComment" class="btn btn-primary" type="button">Add</button>
+                        <button id="addComment" class="btn btn-outline-secondary" type="button">Add</button>
                     </div>
 
             </div>
@@ -937,7 +935,7 @@ function displayEditForm(sticky) {
         console.log(c);
         const li = document.createElement('li')
         const buttonId = `delComment${i}`
-        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment btn btn-outline-secondary btn-sm" type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
@@ -998,7 +996,7 @@ function displayEditForm(sticky) {
               sticky.comments.push(c)
 
               const li = document.createElement('li')
-              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment btn btn-outline-secondary btn-sm" type="button" class="delComment" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
           </button>`
               $('#commentContainer').append(li)
@@ -1039,7 +1037,7 @@ function displayEditForm(sticky) {
                   $(this).parent().remove()
                 })
                 $('#commentContent').remove()
-                $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
+                $('#commentInputContainer').prepend(`<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}; border: 1px solid #6c757d">`)
 
               },
             error: function () {
@@ -1591,6 +1589,10 @@ $('#stickyInfo').on('click', function (e) {
         $('#stickyInfo').css({ 'background-color': `${stickyColors[colorIndex]}`, 'border-color': `${stickyColors[colorIndex]}` })
         $('#stickyTitleInput').css({'background-color': `${stickyColors[colorIndex]}`})
         $('#textInputBox').css({'background-color': `${stickyColors[colorIndex]}`})
+    } else if ($(e.target).attr('id') == 'createBtn'){
+        createSticky()
+        $('#createBtn').attr('disabled', '');
+        blurNewStickyInput()
     }
 })
 
