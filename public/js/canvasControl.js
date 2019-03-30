@@ -860,7 +860,7 @@ function displayEditForm(sticky) {
                 <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
             </div>
             <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
-                <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
+                <div id="editColorRow" class="colorRow d-flex mb-2 position-relative btn-group btn-group-toggle" data-toggle="buttons"></div>
                 <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
             </div>
             <div><ul id="commentContainer"></ul>
@@ -878,6 +878,57 @@ function displayEditForm(sticky) {
     // <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
     const editDiv = $('#editDiv')
     editDiv.html(html)
+    let i = 0;
+    stickyColors.forEach(color => {
+        $('#editColorRow').append(`<label id="colorLabel-${i}" class="btn btn-secondary m-1 stickyInfoInput btn-circle"><input id="color-${i}" class="stickyInfoInput" type="radio" name="options" autocomplete="off"><span class="stickyInfoInput"></span></label>`)
+        $(`#colorLabel-${i}`).css({ 'color': 'black', 'background-color': `${ color }`, 'border-color': `${ color }` });
+        i += 1;
+    })
+    const index = stickyColors.indexOf(sticky.item(0).fill)
+    $(`#colorLabel-${index}`).button('toggle'); // default color
+    $(`#colorLabel-${index}`).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+    $('#colorRow').css({ 'background-color': `${sticky.item(0).fill}`, 'border-color': `${sticky.item(0).fill}` })
+
+    $('#editColorRow').on('click', function (e) {
+      if ($(e.target).parent().attr('id') == 'editColorRow') {
+        $(e.target).siblings('label').each(function () {
+            $(this).find('span').html('');
+        });
+        $(e.target).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+        const index = parseInt($(e.target).attr('id').split('-')[1]);
+        sticky.item(0).set('fill', stickyColors[index])
+        $('#editForm').css('background-color', sticky.item(0).fill)
+        $('#commentContent').css('background-color', sticky.item(0).fill)
+        $('#editForm').find('p').css('background-color', sticky.item(0).fill)
+        $('#editForm').find('textarea').css('background-color', sticky.item(0).fill)
+
+        $.ajax({
+            type: 'POST',
+            url: "/canvas/edit",
+            data: {
+                type: "color",
+                change: sticky.item(0).get('fill'),
+                canvasId: canvas.canvasId,
+                stickyId: sticky.stickyId
+            },
+            success: function (resultData) {
+                console.log(resultData)
+            },
+            error: function () {
+                alert("Something went wrong")
+            }
+        });
+
+        socket.emit('stickyUpdateColor', {
+            change: sticky.item(0).get('fill'),
+            stickyId: sticky.stickyId
+        })
+
+        canvas.renderAll()
+        showSidepanel(sticky);
+
+      }
+    })
 
     // Reconstructing previous comments
     for (let i = 0; i < sticky.comments.length; i++) {
@@ -981,38 +1032,6 @@ function displayEditForm(sticky) {
         editDiv.html('')
     })
 
-    $('#colorBtn').click(function () {
-        sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
-        $('#editForm').css('background-color', sticky.item(0).fill)
-        $('#commentContent').css('background-color', sticky.item(0).fill)
-        // send post request
-        $.ajax({
-            type: 'POST',
-            url: "/canvas/edit",
-            data: {
-                type: "color",
-                change: sticky.item(0).get('fill'),
-                canvasId: canvas.canvasId,
-                stickyId: sticky.stickyId
-            },
-            success: function (resultData) {
-                console.log(resultData)
-            },
-            error: function () {
-                alert("Something went wrong")
-            }
-        });
-
-        socket.emit('stickyUpdateColor', {
-            change: sticky.item(0).get('fill'),
-            stickyId: sticky.stickyId
-        })
-
-        canvas.renderAll()
-        showSidepanel(sticky);
-    })
-
-
     $('#deleteBtn').click(function () {
         // delete request to server
         // send post request
@@ -1041,7 +1060,7 @@ function displayEditForm(sticky) {
     })
 
     $('body').on('click', '#textboxP', function () {
-         
+
         const textarea = document.createElement('textarea');
         textarea.rows = '4';
         textarea.cols = '40';
@@ -1049,9 +1068,9 @@ function displayEditForm(sticky) {
         textarea.id = 'textarea;'
         textarea.style.backgroundColor = sticky.item(0).fill
         textarea.innerHTML = sticky.content;
-        
+
         textarea.autofocus = "autofocus";
-        
+
         $("#textboxContainer").html(textarea)
 
         textarea.onkeydown = function (e) {
@@ -1084,7 +1103,7 @@ function displayEditForm(sticky) {
             }
         }
     })
-   
+
 }
 
 function stickyContentEditCore(sticky, newContent) {
