@@ -27,14 +27,14 @@
             <label>
               Email Address<span class="req">*</span>
             </label>
-            <input class="log-email" type="email" name="log_email" required autocomplete="off" />
+            <input class="log-email" id="email" type="email" name="log_email" required autocomplete="off" />
           </div>
 
           <div class="field-wrap">
             <label>
               Password<span class="req">*</span>
             </label>
-            <input class="log-pwd" type="password" name="log_pwd" required autocomplete="off" />
+            <input class="log-pwd" id="pwd" type="password" name="log_pwd" required autocomplete="off" />
           </div>
         </form>
         <button class="button button-block" id="login_submit" />Log In</button>
@@ -50,28 +50,28 @@
             <label>
               First Name<span class="req">*</span>
             </label>
-            <input class="req-fname" type="text" name="reg_name" required autocomplete="off" />
+            <input class="req-fname" id="first_name" type="text" name="reg_name" required autocomplete="off" />
           </div>
 
           <div class="field-wrap">
             <label>
               Last Name<span class="req">*</span>
             </label>
-            <input class="req-lname" type="text" name="reg_name" required autocomplete="off" />
+            <input class="req-lname" id="last_name" type="text" name="reg_name" required autocomplete="off" />
           </div>
 
           <div class="field-wrap">
             <label>
               Email Address<span class="req">*</span>
             </label>
-            <input class="req-email" type="email" name="reg_email" required autocomplete="off" />
+            <input class="req-email" id="email_sign" type="email" name="reg_email" required autocomplete="off" />
           </div>
 
           <div class="field-wrap">
             <label>
               Set A Password<span class="req">*</span>
             </label>
-            <input class="req-pwd" type="password" name="reg_pwd" required autocomplete="off" />
+            <input class="req-pwd" id="pwd_sign" type="password" name="reg_pwd" required autocomplete="off" />
           </div>
         </form>
         <button class="button button-block" id="register_submit" />Get Started</button>
@@ -115,6 +115,39 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+var inputSub = ["pwd", "email"]
+var inputSign = ["pwd_sign", "email_sign", "last_name", "first_name"]
+
+for (i=0;i<inputSub.length;i++){
+  console.log(i);
+  var input = document.getElementById(inputSub[i]);
+// Execute a function when the user releases a key on the keyboard
+  input.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("login_submit").click();
+    }
+  });
+};
+
+for (i=0;i<inputSign.length;i++){
+  console.log(i);
+  var input = document.getElementById(inputSign[i]);
+  // Execute a function when the user releases a key on the keyboard
+  input.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("register_submit").click();
+    }
+  });
+};
 
 $('.form').find('input, textarea').on('keyup blur focus', function (e) {
 
