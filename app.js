@@ -69,7 +69,7 @@ const manager = 3;
 const admin = 4;
 
 const registrationRquest = new Array();
-const changeType = ['content', 'position', 'size', 'color', 'comment'];
+const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -340,6 +340,7 @@ app.post('/canvas/edit', function(req, res){
   var type = req.body.type;
   var change = req.body.change;
   var newDate = new Date();
+  console.log(req.body);
   if (changeType.indexOf(type) !== -1){
     if (type.includes('comment')){
       if (type === 'add comment'){
@@ -357,7 +358,7 @@ app.post('/canvas/edit', function(req, res){
           } else if (result == null){
             res.send(fal);
           }else{
-            createHistory(req.cookies.email, type, newDate, canvas);
+            createHistory(req.cookies.email, type, newDate, canvas, res);
           };
         });
       }
@@ -370,7 +371,7 @@ app.post('/canvas/edit', function(req, res){
           } else if (result == null){
             res.send(fal);
           }else{
-            createHistory(email, type, newDate, canvas);
+            createHistory(email, type, newDate, canvas, res);
           };
         });
       }
@@ -384,7 +385,7 @@ app.post('/canvas/edit', function(req, res){
         } else if (result == null){
           res.send(fal);
         }else{
-          createHistory(email, type, newDate, canvas);
+          createHistory(email, type, newDate, canvas, res);
         }
       });
     }
@@ -666,7 +667,7 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
-function createHistory(email, type, newDate, canvasId){
+function createHistory(email, type, newDate, canvasId, res){
   var cont;
   if(type.includes('comment')) {
     cont = type;
@@ -682,7 +683,7 @@ function createHistory(email, type, newDate, canvasId){
     if (err) {
       console.log(err);
       res.send(fal);
-    } else if (result == null){
+    } else if (updated == null){
       res.send(fal);
     } else{
       if (type === 'add comment'){
