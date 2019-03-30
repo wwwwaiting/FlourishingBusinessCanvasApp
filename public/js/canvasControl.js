@@ -1,4 +1,5 @@
 "use strict";
+
 console.log("canvasControl.js");
 
 var socket =io();
@@ -56,7 +57,8 @@ function initialize_canvas(data) {
         hoverCursor: 'pointer'
     });
 
-    $('#designedFor').attr('value', data.title);
+    $('#title').attr('value', data.title);
+    $('#designedFor').attr('value', data.company);
     $('#designedBy').attr('value', data.owner);
     // $('#designedDate').attr('value', data.createDate);
     $('#designedDate').attr('value', new Date(data.createDate).toLocaleDateString("en-US", dataFormat));
@@ -1174,7 +1176,8 @@ function searchInCanvas() {
         // reset search result
         $('#searchResult').html('');
 
-        const searchContent = $('#searchContent').val();
+        // make search less case-sensitive
+        const searchContent = $('#searchContent').val().toLowerCase();
 
         if (searchContent != "") {
             const dropDownMenu = document.querySelector('#searchResult')
@@ -1182,18 +1185,15 @@ function searchInCanvas() {
             // for (let i = 0; i < stickyList.length; i++) {
             // const sticky = stickyList[i];
             canvas.getObjects().forEach(sticky => {
+                const title = sticky.title;
                 const content = sticky.content;
-                const words = content.split(" ")
-                for (let j = 0; j < words.length; j++) {
-                    const word = words[j];
 
-                    if (searchContent == word) {
-                        const listItem = document.createElement('a');
-                        listItem.setAttribute('class', "list-group-item list-group-item-action");
-                        listItem.appendChild(document.createTextNode(sticky.content));
+                if (searchContent == title || content.includes(searchContent)) {
+                    const listItem = document.createElement('a');
+                    listItem.setAttribute('class', "list-group-item list-group-item-action");
+                    listItem.appendChild(document.createTextNode(sticky.content));
 
-                        dropDownMenu.appendChild(listItem);
-                    }
+                    dropDownMenu.appendChild(listItem);
                 }
             })
 
@@ -1212,6 +1212,17 @@ function searchInCanvas() {
         $('#searchResult').html('');
         document.getElementById('searchContent').value = '';
     });
+
+    // when clicking, pop up the corresponding sticky
+    document.getElementById("searchResult").addEventListener("click", function (e) {
+        const content = e.target.innerText
+
+        canvas.getObjects().forEach(sticky => {
+            if (content === sticky.content) {
+                displayEditForm(sticky)
+            }
+        })
+    })
 }
 
 //###################################################3

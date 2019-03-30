@@ -73,6 +73,9 @@ const changeType = ['content', 'position', 'size', 'color', 'add comment', 'dele
 
 // render login page
 app.get('/login', function(req, res) {
+  res.clearCookie('id');
+  res.clearCookie('email');
+  res.clearCookie('name');
   res.render('login');
 });
 
@@ -214,6 +217,7 @@ app.get('/canvas/get', function(req, res){
       var result = {
         'canvasId': canvasId,
         'owner':canvas.owner,
+        'company':canvas.company,
         'title':canvas.title,
         'createDate': canvas.createDate
       };
@@ -391,6 +395,19 @@ app.post('/canvas/edit', function(req, res){
   }
 });
 
+// get role of current user
+app.get('/canvas/role', function(req, res){
+  var email = req.cookies.email;
+  User.find({'email':email}, function(err, result){
+    if (err){
+      console.log(err);
+    } else {
+      var user = result[0];
+      res.send({role:user.role});
+    }
+  });
+});
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -534,7 +551,8 @@ app.post('/manager/add', function(req, res){
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
 		owner: owner,
-		title: title,
+    title: title,
+    company:'',
 		users: empty,
 		stickies: empty,
 		createDate: time,
@@ -665,33 +683,6 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
-function createHistory(email, type, newDate, canvasId, res){
-  var cont;
-  if(type.includes('comment')) {
-    cont = type;
-  } else{
-    cont = 'Modified' + type;
-  }
-  var newHis = {
-    user: email,
-    content: cont,
-    modifiedTime: newDate
-  };
-  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (updated == null){
-      res.send(fal);
-    } else{
-      if (type === 'add comment'){
-        res.send(newDate)
-      }else{
-        res.send(tru);
-      }
-    }
-  });
-}
 
 // get user information from
 // app.listen(PORT, () => {
