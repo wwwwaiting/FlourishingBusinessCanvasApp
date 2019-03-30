@@ -408,6 +408,24 @@ app.get('/canvas/role', function(req, res){
   });
 });
 
+// change owner, title and company in one post request
+app.post('/canvas/change', function(req, res){
+  var change = req.body.change;
+  var type = req.body.type;
+  var canvasId = req.cookies.id;
+
+  Canvas.findOneAndUpdate({_id:canvasId}, {[type]:change}, function(err, result){
+    if (err){
+      console.log(err);
+      res.send(fal);
+    } else {
+      res.send(tru);
+    }
+  });
+});
+
+
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
