@@ -546,7 +546,8 @@ app.post('/manager/add', function(req, res){
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
 		owner: owner,
-		title: title,
+    title: title,
+    company:'',
 		users: empty,
 		stickies: empty,
 		createDate: time,
