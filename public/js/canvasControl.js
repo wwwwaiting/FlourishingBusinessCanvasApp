@@ -1,7 +1,5 @@
 "use strict";
 
-import { deepEqual } from "assert";
-
 console.log("canvasControl.js");
 
 var socket =io();
