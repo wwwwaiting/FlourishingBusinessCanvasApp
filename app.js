@@ -410,7 +410,7 @@ app.get('/canvas/role', function(req, res){
       console.log(err);
     } else {
       var user = result[0];
-      res.send(user.role);
+      res.send({role:user.role});
     }
   });
 });

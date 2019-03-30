@@ -93,11 +93,11 @@
             type: "GET",
             url: "/canvas/role",
             success: function(data) {
-                if (data == 2) {
+                if (data.role == 2) {
                     window.location.href = '/user'
-                } else if (data == 3) {
+                } else if (data.role == 3) {
                     window.location.href = '/manager'
-                } else if (data == 4) {
+                } else if (data.role == 4) {
                     window.location.href = '/admin'
                 }
             }
