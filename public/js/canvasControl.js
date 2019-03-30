@@ -1200,23 +1200,12 @@ function searchInCanvas() {
         document.getElementById('searchContent').value = '';
     });
 
-    // when hovering, highlight the corresponding sticky
-    document.getElementById("searchResult").addEventListener("mouseover", function (e) {
-        const content = e.target.value
-
-        canvas.getObjects().forEach(sticky => {
-            if (content == sticky.content) {
-                focusOnSticky(sticky)
-            }
-        })
-    })
-
     // when clicking, pop up the corresponding sticky
     document.getElementById("searchResult").addEventListener("click", function (e) {
-        const content = e.target.value
+        const content = e.target.innerText
 
         canvas.getObjects().forEach(sticky => {
-            if (content == sticky.content) {
+            if (content === sticky.content) {
                 displayEditForm(sticky)
             }
         })
