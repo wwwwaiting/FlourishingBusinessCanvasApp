@@ -191,21 +191,26 @@
     }
 
     $('body').on('change', '.form-check-input', function() {
+        const canvases = document.getElementsByClassName('manageUsersCanvas')
         if ($(this).is(':checked')) {
             const canvasId = $(this).parent().parent().find('span').text()
             console.log(canvasId)
             // all the canvas divs in manage user form
-            const canvases = document.getElementsByClassName('manageUsersCanvas')
+            
             for (let canvas of canvases) {
                 if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
-                    console.log(canvas)
-                    canvas.style = 'display: none;'
+                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                    for (let checkbox of checkBoxes) {
+                        checkbox.disabled = true;
+                    }
                 }
             }
         } else {
-            const canvases = document.getElementsByClassName('manageUsersCanvas')
             for (let canvas of canvases) {
-                canvas.style='display: block;'
+                const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                for (let checkbox of checkBoxes) {
+                    checkbox.disabled = false;
+                }
             }
         }
     })
