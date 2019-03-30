@@ -58,9 +58,8 @@
 <script type="text/javascript">
     "use strict"
     console.log("popup.js")
-    let canvasUsers = []
-    let canvasIds = []
-    let canvasTitles = []
+    let regTitle = []
+    let regId =[]
 
     $(document).ready(main);
 
@@ -75,29 +74,27 @@
              type: "GET",
              url: "/library/get",
              success: function (data) {
-                 canvasTitles = data.title
-                 canvasIds = data.canvas
-                 canvasUsers = data.users
-                 console.log(canvasTitles)
-         		  console.log(canvasIds)
-        			  console.log(canvasUsers)
-        			  renderFbc()
+                 regTitle = data.regTitle
+                 regId = data.regId
+                 console.log(regTitle)
+         		 console.log(regId)
+        		 renderFbc()
              }
          })
     }
 
     function renderFbc() {
         const imgUrl = '/images/fbc.png'
-        for (let i = 0; i < canvasIds.length; i++) {
+        for (let i = 0; i < regId.length; i++) {
             const html = `
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-                <a id="${canvasIds[i]}" class="canvasClick" style="cursor:pointer">
+                <a id="${regId[i]}" class="canvasClick" style="cursor:pointer">
                     <div class="card shadow postCard">
                         <div class="image-constrain">
                             <img src="${imgUrl}" class="card-img-top post-img p-3">
                         </div>
                         <div class="card-body text-center">
-                            <h6 class="post-title font-weight-bold font-italic text-truncate">${canvasTitles[i]}</h6>
+                            <h6 class="post-title font-weight-bold font-italic text-truncate">${regTitle[i]}</h6>
                         </div>
                     </div>
                 </a>
