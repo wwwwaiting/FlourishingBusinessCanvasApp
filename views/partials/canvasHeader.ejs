@@ -1,53 +1,106 @@
-<div class="fixed-top p-2 m-0" id="headerContainer">
-    <div class="collapse show" id="canvasHeader">
-        <div class="d-flex ">
-            <div class="mb-2" id="canvasTitle">
-                <input class="p-0 pl-1 bg-light" type="text" placeholder="Flourishing Business Canvas">
-            </div>
-            <div class="ml-auto d-flex mt-0" id="canvasInfo">
-                <div class="designInfo ml-2">
-                    <input class="form-control bg-light" id="designedFor" type="text" placeholder="Designed for:">
-                </div>
-                <div class="designInfo ml-2">
-                    <input class="form-control bg-light" id="designedBy" type="text" placeholder="Designed by:">
-                </div>
-                <div class="designInfo ml-2">
-                    <input class="form-control bg-light" id="designedDate" type="text" placeholder="Date:">
-                </div>
-            </div>
-            <div class="ml-2 dropdown mt-0" id="exportBtn">
-                <button class="dropbtn btn btn-secondary">Export</button>
-                <div class="dropdown-content">
-                    <a id="exportJson" onclick="exportJson()">Export as JSON</a>
-                    <a id="exportSvg" onclick="exportSvg()">Export as SVG</a>
-                    <a id="exportPng" onclick="exportPng()">Export as PNG</a>
-                    <a id="exportPdf" onclick="exportPdf()">Export as PDF</a>
-                </div>
-            </div>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
 
-    <div id="lowerHeader" class="d-flex">
-        <div id="stickyInfo" class="stickyInfoInput row ml-1">
-            <div class="stickyInfoInput input-group">
-                <%#<button class="btn btn-secondary mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" fill="white"/></svg></button>%>
-                <input id='textInputBox' class="stickyInfoInput form-control" type="text" placeholder="Type content...">
-                <div class="stickyInfoInput input-group-append">
-                    <button id="createBtn" class="stickyInfoInput btn btn-secondary" type="button" onclick="createSticky()" disabled>New Sticky</button>
+<head>
+    <!-- <link rel="stylesheet" href="../css/canvasHeader.css"> -->
+</head>
+
+<body>
+    <div class="fixed-top p-2 m-0" id="headerContainer">
+        <div id="topHeader" class="row m-0 mb-2">
+            <div class="col-12 p-0">
+            <div id="headerOptions" class="d-flex">
+                <button class="btn btn-light" onclick="goBack()">Canvases</button>
+                <h4 id="FBC" class="ml-auto mr-auto">Flourishing Business Canvas</h4>
+                <button class="btn btn-light" onclick="logOut()">Logout</button>
+            </div>
+        </div>
+        </div>
+        <div class="collapse show" id="canvasHeader">
+            <div class="d-flex ">
+                <div class="mb-2" id="canvasTitle">
+                    <input class="form-control bg-light" type="text" placeholder="Untitled">
+                </div>
+                <div class="ml-auto d-flex mb-2" id="canvasInfo">
+                    <div class="designInfo ml-2">
+                        <input class="form-control bg-light" id="designedFor" type="text" placeholder="Designed for:">
+                    </div>
+                    <div class="designInfo ml-2">
+                        <input class="form-control bg-light" id="designedBy" type="text" placeholder="Designed by:">
+                    </div>
+                    <div class="designInfo ml-2">
+                        <input class="form-control bg-light" id="designedDate" type="text" placeholder="Date:">
+                    </div>
+                </div>
+                <div class="ml-2 dropdown mb-2" id="exportBtn">
+                    <button class="dropbtn btn btn-secondary">Export</button>
+                    <div class="dropdown-content">
+                        <a id="exportJson" onclick="exportJson()">Export as JSON</a>
+                        <a id="exportSvg" onclick="exportSvg()">Export as SVG</a>
+                        <a id="exportPng" onclick="exportPng()">Export as PNG</a>
+                        <a id="exportPdf" onclick="exportPdf()">Export as PDF</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div id="searchBar" class="ml-auto mr-4">
-            <input id="searchContent" onclick="searchInCanvas()" class="form-control" type="text" placeholder="Search within the canvas">
-            <div id="searchResult" class="list-group position-fixed"></div>
+
+        <div id="lowerHeader" class="d-flex">
+            <div id="stickyInfo" class="stickyInfoInput row ml-1">
+                <div class="stickyInfoInput input-group">
+                    <%#<button class="btn btn-secondary mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M11.67 3.87L9.9 2.1 0 12l9.9 9.9 1.77-1.77L3.54 12z" fill="white"/></svg></button>%>
+                    <input id='textInputBox' class="stickyInfoInput form-control" type="text" placeholder="Type content...">
+                    <div class="stickyInfoInput input-group-append">
+                        <button id="createBtn" class="stickyInfoInput btn btn-secondary" type="button" onclick="createSticky()" disabled>New Sticky</button>
+                    </div>
+                </div>
+            </div>
+            <div id="searchBar" class="ml-auto mr-4">
+                <input id="searchContent" onclick="searchInCanvas()" class="form-control" type="text" placeholder="Search within the canvas">
+                <div id="searchResult" class="list-group position-fixed"></div>
+            </div>
+        </div>
+
+        <div class="d-flex" id="collapseBtnDiv">
+            <button id="collapseBtn" class="ml-auto mr-2 btn btn-light btn-sm p-0" type="button" data-toggle="collapse"
+                data-target="#canvasHeader" aria-expanded="true" aria-controls="canvasHeader">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M7 14l5-5 5 5z" /></svg>
+            </button>
         </div>
     </div>
+</body>
+</html>
 
-    <div class="d-flex" id="collapseBtnDiv">
-        <button id="collapseBtn" class="ml-auto mr-2 btn btn-light btn-sm p-0" type="button" data-toggle="collapse"
-            data-target="#canvasHeader" aria-expanded="true" aria-controls="canvasHeader">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path d="M7 14l5-5 5 5z" /></svg>
-        </button>
-    </div>
-</div>
+<script type="text/javascript">
+    "use strict"
+    function logOut() {
+        // clear cookies
+        var cookies = document.cookie.split(";");
+
+	    for (var i = 0; i < cookies.length; i++) {
+	        var cookie = cookies[i];
+	        var eqPos = cookie.indexOf("=");
+	        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+	        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+	    }
+
+        // redirect to login page
+        window.location.href = '/login'
+    }
+
+    function goBack() {
+        $.ajax({
+            type: "GET",
+            url: "/canvas/role",
+            success: function(data) {
+                if (data == 2) {
+                    window.location.href = '/user'
+                } else if (data == 3) {
+                    window.location.href = '/manager'
+                } else if (data == 4) {
+                    window.location.href = '/admin'
+                }
+            }
+        });
+    }
+</script>

@@ -83,10 +83,6 @@ textarea {
     width: 300px
 }
 
-/* #canvasHeader {
-    margin-top: 30px;
-} */
-
 /* #canvasTitle {
     display: inline-block;
     margin-left: 20px;
@@ -95,14 +91,15 @@ textarea {
 #canvasTitle input {
     width: 500px;
     /* height: 70px; */
+    background-color: rgba(0, 0, 255, 0) !important;
     border: none;
     color: black;
-    font-size: 25px;
+    /* font-size: 20px; */
 }
 
 #canvasTitle ::placeholder {
     color: black;
-    font-size: 25px;
+    /* font-size: 20px; */
 }
 
 #canvasInfo {
