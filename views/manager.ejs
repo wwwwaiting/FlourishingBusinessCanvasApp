@@ -41,6 +41,9 @@
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" onclick="getProfile()">Profile</button>
                 </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" onclick="getLogin()">Log Out</button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -57,17 +60,44 @@
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
     <!-- <script src="js/popup.js"></script> -->
 
 <script type="text/javascript">
     "use strict"
     console.log("popup.js")
+
     let canvasUsers = []
     let canvasIds = []
     let canvasTitles = []
-
+    let currentUser = null;
     $(document).ready(main);
+
+    function listCookies() {
+	    var theCookies = document.cookie.split(';');
+	    var aString = '';
+	    for (var i = 1 ; i <= theCookies.length; i++) {
+	        aString += i + ' ' + theCookies[i-1] + "\n";
+	    }
+	    return aString;
+	}
+
+    function deleteAllCookies() {
+	    var cookies = document.cookie.split(";");
+
+	    for (var i = 0; i < cookies.length; i++) {
+	        var cookie = cookies[i];
+	        var eqPos = cookie.indexOf("=");
+	        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+	        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+	    }
+	}	
+
+    function getLogin(){
+    	window.location.href = '/login'
+    	deleteAllCookies()
+    }
 
     function getProfile() {
         window.location.href = '/profile'
@@ -77,6 +107,7 @@
     function main() {
         // send get request and set global arrays
          console.log('haha')
+         currentUser = Cookies.get('email');
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -84,12 +115,10 @@
                  canvasTitles = data.title
                  canvasIds = data.canvas
                  canvasUsers = data.users
-                 console.log(canvasTitles)
-         		  console.log(canvasIds)
-        			  console.log(canvasUsers)
         			  renderFbc()
              }
          })
+         console.log(currentUser)
     }
 
     function renderFbc() {
@@ -142,11 +171,14 @@
 
         let manageUsersContent = '<div class="modal-body"><form>'
         for(let i = 0; i < canvasTitles.length; i++){
-            manageUsersContent += `<div><h5>${canvasTitles[i]} (${canvasIds[i]})</h5>`
+            manageUsersContent += `<div class="manageUsersCanvas"><h5>${canvasTitles[i]}<span style="display: none">${canvasIds[i]}</span></h5>`
             for (let j = 0; j < canvasUsers[i].length; j++){
+                if ((canvasUsers[i][j]) == currentUser) {
+                    continue;
+                }
                 manageUsersContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox">
-            <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
+                <input class="form-check-input" type="checkbox">
+                <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
             <button type="button" class="btn btn-light addUserPrompt">Add</button>
@@ -158,6 +190,31 @@
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
     }
 
+    $('body').on('change', '.form-check-input', function() {
+        const canvases = document.getElementsByClassName('manageUsersCanvas')
+        if ($(this).is(':checked')) {
+            const canvasId = $(this).parent().parent().find('span').text()
+            console.log(canvasId)
+            // all the canvas divs in manage user form
+            
+            for (let canvas of canvases) {
+                if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
+                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                    for (let checkbox of checkBoxes) {
+                        checkbox.disabled = true;
+                    }
+                }
+            }
+        } else {
+            for (let canvas of canvases) {
+                const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                for (let checkbox of checkBoxes) {
+                    checkbox.disabled = false;
+                }
+            }
+        }
+    })
+
     $('body').on('click', 'button.addUserPrompt', function() {
         const html = `<div class="input-group">
         <input type="text" class="form-control" placeholder="New user email" >
@@ -167,10 +224,21 @@
         $(this).parent().html(html)
     })
 
+    function validateEmail(email) {
+    	var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    	var result = re.test(email.toLowerCase());
+    	if (!result) {
+    		alert("Please enter a valid email.");
+    		return false;
+    	}
+    	return true;
+	}
+
     $('body').on('click', 'button.addUserDone', function() {
         const email = [$(this).parent().prev().val()]
-        const text = $(this).parent().parent().parent().parent().children()[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
+        const text = $(this).parent().parent().parent().parent().children().find('span').text();
+        console.log(text)
+        const canvasId = text
         // const index = canvasIds.findIndex(id => id == canvasId)
         // canvasUsers[index].push(newUserId)
         console.log(canvasUsers)
@@ -178,30 +246,33 @@
         console.log(canvasId)
         const type = "add"
         const send = {type, canvasId, email}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index].push(email)
-                    Email.send({
-							Host: "smtp.elasticemail.com",
-            			Username: "wangluya2014@gmail.com",
-            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-            			To: email,
-            			From: "wangluya2014@gmail.com",
-            			Subject: "This is the subject",
-            			Body: "Testing for register!."
-          			  });
-                    renderManageUsers()
-                } else {
-                    console.log('fail add user')
-                }
-            }
-        })
+
+        if (validateEmail(JSON.stringify(email))){
+        	console.log("validateEmail: " + validateEmail(JSON.stringify(email)))
+	        $.ajax({
+	            type: "POST",
+	            url: "/manager/user",
+	            data: send,
+	            success: function (data) {
+	                if (data == 'true') {
+	                    const index = canvasIds.findIndex(id => id == canvasId)
+	                    canvasUsers[index].push(email)
+	                    Email.send({
+								Host: "smtp.elasticemail.com",
+	            			Username: "wangluya2014@gmail.com",
+	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+	            			To: email,
+	            			From: "wangluya2014@gmail.com",
+	            			Subject: "This is the subject",
+	            			Body: "Testing for register!."
+	          			  });
+	                    renderManageUsers()
+	                } else {
+	                    console.log('fail add user')
+	                }
+	            }
+	        })
+    	}
         // console.log('here')
     })
 
@@ -212,18 +283,15 @@
         for (let e of selected) {
             usersToRemove.push(e.nextElementSibling.innerHTML)
         }
-        const text = selected[0].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
+        const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
         for (let i = 1; i < selected.length; i++) {
-				const temp = selected[i].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        		const tempId = text.slice(0, text.length - 1)
+				const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
         		if (tempId != canvasId) {
 					console.log('Cannot remove users in different canvas simultaneously')
 					return        		
         		}        
         }
         
-        console.log(canvasId)
 
         // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
         console.log(canvasUsers)
