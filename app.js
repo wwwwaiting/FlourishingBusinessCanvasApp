@@ -406,6 +406,34 @@ app.post('/canvas/edit', function(req, res){
     }
   }
 });
+// helper function for creating history
+function createHistory(email, type, newDate, canvasId, res){
+  var cont;
+  if(type.includes('comment')) {
+    cont = type;
+  } else{
+    cont = 'Modified' + type;
+  }
+  var newHis = {
+    user: email,
+    content: cont,
+    modifiedTime: newDate
+  };
+  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
+    if (err) {
+      console.log(err);
+      res.send(fal);
+    } else if (updated == null){
+      res.send(fal);
+    } else{
+      if (type === 'add comment'){
+        res.send(newDate)
+      }else{
+        res.send(tru);
+      }
+    }
+  });
+}
 
 // get role of current user
 app.get('/canvas/role', function(req, res){
@@ -715,33 +743,48 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
-function createHistory(email, type, newDate, canvasId, res){
-  var cont;
-  if(type.includes('comment')) {
-    cont = type;
-  } else{
-    cont = 'Modified' + type;
-  }
-  var newHis = {
-    user: email,
-    content: cont,
-    modifiedTime: newDate
-  };
-  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
-    if (err) {
-      console.log(err);
-      res.send(fal);
-    } else if (updated == null){
-      res.send(fal);
-    } else{
-      if (type === 'add comment'){
-        res.send(newDate)
-      }else{
-        res.send(tru);
-      }
-    }
-  });
-}
+// get user information that the admin wants to decline the register request
+app.get('/admin/decline', function(req, res){
+  var adminEmail = req.cookies.email;
+	var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {$set: {status:0}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);
+		} else {
+      User.findOneAndUpdate({email:adminEmail}, {$pull: {notification: { userEmail: email } }}, function(err, updated){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else {
+          res.send(tru);
+        }
+      });
+		}
+	});
+});
+
+// get user information that the admin wants to approve the register request
+app.get('/admin/approve', function(req, res){
+  var adminEmail = req.cookies.email;
+	var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
+		if (err) {
+			console.log(err);
+			res.send(fal);
+		} else {
+      User.findOneAndUpdate({email:adminEmail}, {$pull: {notification: { userEmail: email } }}, function(err, updated){
+        if (err) {
+          console.log(err);
+          res.send(fal);
+        } else {
+          res.send(tru);
+        }
+      });
+		}
+	});
+});
+
 
 // get user information from
 // app.listen(PORT, () => {
