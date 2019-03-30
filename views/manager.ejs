@@ -336,7 +336,7 @@
 
 
     function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body manageCanvasContainer"><form>'
+        let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
         for (let i = 0; i < canvasTitles.length; i++){
             manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
@@ -354,6 +354,46 @@
         $(".modal-body").html(manageCanvasContent)
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+    }
+
+    $('body').on('change', '.form-check-input', function() {
+        var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
+        
+        if (check == 1) {
+            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+        } else {
+            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+        }
+    })
+
+    function copyCanvas() {
+        const e = $('.form-check-input:checked')[0]
+        const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+
+        const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
+        const title = old_title + "-copy"
+
+        // current canvas id, new title
+        const send = {canId, title}
+
+        $.ajax({
+            type: "POST",
+            url: "/canvas/copy",
+            data: send,
+            success: function (data) {
+                // get the same canvas with a new id back 
+                canvasIds.push(data.id)
+                canvasTitles.push(data.title)
+                canvasUsers.push(data.users)
+                removeMainSection()
+                renderManageCanvas()
+                renderFbc()
+                }
+            
+        })
     }
 
     function addNewCanvas() {
