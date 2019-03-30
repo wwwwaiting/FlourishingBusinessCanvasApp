@@ -340,7 +340,6 @@ app.post('/canvas/edit', function(req, res){
   var type = req.body.type;
   var change = req.body.change;
   var newDate = new Date();
-  console.log(req.body);
   if (changeType.indexOf(type) !== -1){
     if (type.includes('comment')){
       if (type === 'add comment'){
@@ -438,7 +437,6 @@ app.get('/library/get', function(req, res){
 // store the canvas id into cookie
 app.post('/library/id', function(req, res){
 	var canvasId = req.body.canvasId;
-	console.log(canvasId);
 	res.cookie('id', canvasId);
 	res.send(tru);
 });
