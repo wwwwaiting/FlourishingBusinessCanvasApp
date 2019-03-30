@@ -18,7 +18,7 @@ body {
 #editDiv {
     position: fixed;
     top: 30%;
-    left: 40%;
+    left: 35%;
 
 }
 
@@ -35,7 +35,7 @@ body {
     word-wrap: break-word;
 }
 #editForm {
-    width: 400px
+    width: 500px
 }
 
 .delComment {
