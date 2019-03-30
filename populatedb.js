@@ -34,6 +34,7 @@ function canvasCreate(canvasOwner, canvasTitle, userList, cb) {
     const canvasDetail = {
         owner: canvasOwner,
         title: canvasTitle,
+        company:'',
         users: userList,  //email
         stickies: [],
         createDate: new Date(),
