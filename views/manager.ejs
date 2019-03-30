@@ -41,6 +41,9 @@
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" onclick="getProfile()">Profile</button>
                 </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" onclick="getLogin()">Log Out</button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -69,6 +72,10 @@
 
     $(document).ready(main);
 
+    function getLogin(){
+    	window.location.href = '/login'
+    }
+
     function getProfile() {
         window.location.href = '/profile'
     }
@@ -76,7 +83,6 @@
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
-         console.log('haha')
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -84,9 +90,6 @@
                  canvasTitles = data.title
                  canvasIds = data.canvas
                  canvasUsers = data.users
-                 console.log(canvasTitles)
-         		  console.log(canvasIds)
-        			  console.log(canvasUsers)
         			  renderFbc()
              }
          })
@@ -167,41 +170,49 @@
         $(this).parent().html(html)
     })
 
+    function validateEmail(email) {
+    	var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    	var result = re.test(email.toLowerCase());
+    	if (!result) {
+    		alert("Please enter a valid email.");
+    		return false;
+    	}
+    	return true;
+	}
+
     $('body').on('click', 'button.addUserDone', function() {
         const email = [$(this).parent().prev().val()]
         const text = $(this).parent().parent().parent().parent().children()[0].innerHTML.split('(')[1]
         const canvasId = text.slice(0, text.length - 1)
-        // const index = canvasIds.findIndex(id => id == canvasId)
-        // canvasUsers[index].push(newUserId)
-        console.log(canvasUsers)
-        //send update request
-        console.log(canvasId)
         const type = "add"
         const send = {type, canvasId, email}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index].push(email)
-                    Email.send({
-							Host: "smtp.elasticemail.com",
-            			Username: "wangluya2014@gmail.com",
-            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-            			To: email,
-            			From: "wangluya2014@gmail.com",
-            			Subject: "This is the subject",
-            			Body: "Testing for register!."
-          			  });
-                    renderManageUsers()
-                } else {
-                    console.log('fail add user')
-                }
-            }
-        })
+
+        if (validateEmail(JSON.stringify(email))){
+        	console.log("validateEmail: " + validateEmail(JSON.stringify(email)))
+	        $.ajax({
+	            type: "POST",
+	            url: "/manager/user",
+	            data: send,
+	            success: function (data) {
+	                if (data == 'true') {
+	                    const index = canvasIds.findIndex(id => id == canvasId)
+	                    canvasUsers[index].push(email)
+	                    Email.send({
+								Host: "smtp.elasticemail.com",
+	            			Username: "wangluya2014@gmail.com",
+	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+	            			To: email,
+	            			From: "wangluya2014@gmail.com",
+	            			Subject: "This is the subject",
+	            			Body: "Testing for register!."
+	          			  });
+	                    renderManageUsers()
+	                } else {
+	                    console.log('fail add user')
+	                }
+	            }
+	        })
+    	}
         // console.log('here')
     })
 
