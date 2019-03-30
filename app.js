@@ -171,7 +171,7 @@ app.post('/register', function(req, res) {
               res.send(fal);
             } else {
               // only when an outside user trying to signup at the first time, then create new user
-              registrationRquest.push(email);
+              var newRequest = {userEmail: email, userTime:new Date(), userName: name};
               var user = new User({
                 name: name,
                 email: email,
@@ -191,24 +191,30 @@ app.post('/register', function(req, res) {
                 } else if (newlyCreated == null){
                   res.send(err);
                 } else {
-                	//console.log(newlyCreated.id);
-                  res.send(newReg.toString());
+                  User.findOneAndUpdate({role:admin},{ $push: { notification :  newRequest }},
+                    function(err, updated){
+                    if (err) {
+                      console.log(err);
+                      res.send(re);
+                    } else if (updated == null){
+                      res.send(fal);
+                    } else{
+                      res.send(newReg.toString()); 
+                    };
+                  });
                 }
               });
             }
-          }
-        );
+          });
       } else {
         res.cookie('name', name);    //cookie now store both name and email
         res.cookie('email', email);
         var resp = result.role;
         res.send(resp.toString());
       }
-    }
-  );
+    
+    });
 });
-
-
 
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
