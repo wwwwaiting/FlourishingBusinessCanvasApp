@@ -701,6 +701,33 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
+function createHistory(email, type, newDate, canvasId, res){
+  var cont;
+  if(type.includes('comment')) {
+    cont = type;
+  } else{
+    cont = 'Modified' + type;
+  }
+  var newHis = {
+    user: email,
+    content: cont,
+    modifiedTime: newDate
+  };
+  Canvas.findOneAndUpdate({_id:canvasId}, { $push: { editHistory : newHis }}, function(err, updated){
+    if (err) {
+      console.log(err);
+      res.send(fal);
+    } else if (updated == null){
+      res.send(fal);
+    } else{
+      if (type === 'add comment'){
+        res.send(newDate)
+      }else{
+        res.send(tru);
+      }
+    }
+  });
+}
 
 // get user information from
 // app.listen(PORT, () => {
