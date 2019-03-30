@@ -25,6 +25,7 @@ const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
 const stickyStrokeWidth = 0.5;
+const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
 
 
 // Define colors
@@ -59,8 +60,8 @@ function initialize_canvas(data) {
     $('#title').attr('value', data.title);
     $('#designedFor').attr('value', data.company);
     $('#designedBy').attr('value', data.owner);
-    $('#designedDate').attr('value', data.createDate);
-    // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
+    // $('#designedDate').attr('value', data.createDate);
+    $('#designedDate').attr('value', new Date(data.createDate).toLocaleDateString("en-US", dataFormat));
 
     data.stickies.forEach(sticky => {
         const options = {
@@ -73,7 +74,7 @@ function initialize_canvas(data) {
             originY: 'top',
             title: sticky.title,
             content: sticky.content,
-            comments: sticky.comment
+            comment: sticky.comment
         }
         const newSticky = new Sticky(options);
         newSticky.item(0).set('fill', sticky.color);
@@ -317,7 +318,6 @@ function showSidepanel(stickySelected) {
 
     const stickyBoxName = returnClass(stickySelected);
     $('#sidepanel-title').text(stickyBoxName);
-    // const testRect = returnTestRect(stickySelected);
     const stickyClass = returnClass(stickySelected)
     $('#sidepanel-list').html('')
     // canvas.getObjects().forEach(sticky => {
@@ -348,7 +348,6 @@ function showSidepanel(stickySelected) {
 
 function showMouseSidepanel(stickyBoxName) {
     $('#sidepanel-title').text(stickyBoxName);
-    // const testRect = returnTestRect(stickySelected);
     const stickyClass = stickyBoxName;
     $('#sidepanel-list').html('')
     // canvas.getObjects().forEach(sticky => {
@@ -859,11 +858,10 @@ function displayEditForm(sticky) {
         </div>
         <div class="modal-body">
             <div id="textboxContainer">
-                <p id="textboxP" class="textbox">${sticky.content}</p>
+                <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
             </div>
             <div id="btnContainer" class="input-group mb-3 mt-3 pr-3 pl-3">
-                <button class="btn btn-primary editFormBtns" id="colorBtn" type="button">Color</button>
-                <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
+                <div id="editColorRow" class="colorRow d-flex mb-2 position-relative btn-group btn-group-toggle" data-toggle="buttons"></div>
                 <button class="btn btn-primary editFormBtns" id="deleteBtn" type="button">Delete</button>
             </div>
             <div><ul id="commentContainer"></ul>
@@ -881,114 +879,30 @@ function displayEditForm(sticky) {
     // <button class="btn btn-primary editFormBtns" id="editBtn" type="button" id="removeBtn">Edit</button>
     const editDiv = $('#editDiv')
     editDiv.html(html)
-
-    // Reconstructing previous comments
-    for (let i = 0; i < sticky.comments.length; i++) {
-        const c = sticky.comments[i]
-        const li = document.createElement('li')
-        const buttonId = `delComment${i}`
-        li.innerHTML = `<span class="commentWrap">${c}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>`
-        $('#commentContainer').append(li)
-        $(`#${buttonId}`).click(function () {
-            // Comment delete and send to backend
-            // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "comment",
-                    change: sticky.comments,
-                    canvasId: canvas.canvasId,
-                    stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-
-            const content = $(this).prev().text()
-            const index = sticky.comments.findIndex(c => c == content)
-            if (index >= 0) {
-                sticky.comments.splice(index, 1)
-            }
-            console.log(sticky.comments)
-
-            socket.emit('stickyUpdateComment', {
-                change: sticky.get('comments'),
-                stickyId: sticky.get('stickyId')
-            })
-
-            $(this).parent().remove()
-        })
-    }
-
-    // Adding new comment
-    $('#addComment').click(function addComments() {
-        const content = $('#commentContent').val();
-        const buttonId = `delComment${sticky.comments.length}`;
-        sticky.comments.push(content)
-        const li = document.createElement('li')
-        li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>`
-        $('#commentContainer').append(li)
-
-        socket.emit('stickyUpdateComment', {
-            change: sticky.get('comments'),
-            stickyId: sticky.get('stickyId')
-        })
-
-        $(`#${buttonId}`).click(function () {
-            // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "comment",
-                    change: sticky.comments,
-                    canvasId: canvas.canvasId,
-                    stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-            const content = $(this).prev().text()
-            const index = sticky.comments.findIndex(c => c == content)
-            if (index >= 0) {
-                sticky.comments.splice(index, 1)
-            }
-            console.log(sticky.comments)
-
-            socket.emit('stickyUpdateComment', {
-                change: sticky.get('comments'),
-                stickyId: sticky.get('stickyId')
-            })
-
-            $(this).parent().remove()
-        })
-        $('#commentContent').remove()
-        $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
-
+    let i = 0;
+    stickyColors.forEach(color => {
+        $('#editColorRow').append(`<label id="colorLabel-${i}" class="btn btn-secondary m-1 stickyInfoInput btn-circle"><input id="color-${i}" class="stickyInfoInput" type="radio" name="options" autocomplete="off"><span class="stickyInfoInput"></span></label>`)
+        $(`#colorLabel-${i}`).css({ 'color': 'black', 'background-color': `${ color }`, 'border-color': `${ color }` });
+        i += 1;
     })
+    const index = stickyColors.indexOf(sticky.item(0).fill)
+    $(`#colorLabel-${index}`).button('toggle'); // default color
+    $(`#colorLabel-${index}`).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+    $('#colorRow').css({ 'background-color': `${sticky.item(0).fill}`, 'border-color': `${sticky.item(0).fill}` })
 
-    $('button.close').click(function () {
-        editDiv.html('')
-    })
-
-    $('#colorBtn').click(function () {
-        sticky.item(0).set('fill', stickyColors[(stickyColors.indexOf(sticky.item(0).fill) + 1) % (stickyColors.length)])
+    $('#editColorRow').on('click', function (e) {
+      if ($(e.target).parent().attr('id') == 'editColorRow') {
+        $(e.target).siblings('label').each(function () {
+            $(this).find('span').html('');
+        });
+        $(e.target).find('span').html(`<svg class="stickyInfoInput" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path class="stickyInfoInput" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="rgba(130, 138, 145, 0.5)"/></svg>`);
+        const index = parseInt($(e.target).attr('id').split('-')[1]);
+        sticky.item(0).set('fill', stickyColors[index])
         $('#editForm').css('background-color', sticky.item(0).fill)
         $('#commentContent').css('background-color', sticky.item(0).fill)
-        // send post request
+        $('#editForm').find('p').css('background-color', sticky.item(0).fill)
+        $('#editForm').find('textarea').css('background-color', sticky.item(0).fill)
+
         $.ajax({
             type: 'POST',
             url: "/canvas/edit",
@@ -1013,8 +927,130 @@ function displayEditForm(sticky) {
 
         canvas.renderAll()
         showSidepanel(sticky);
+
+      }
     })
 
+    // Reconstructing previous comments
+    for (let i = 0; i < sticky.comments.length; i++) {
+        const c = sticky.comments[i]
+        console.log(c);
+        const li = document.createElement('li')
+        const buttonId = `delComment${i}`
+        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>`
+        $('#commentContainer').append(li)
+        $(`#${buttonId}`).click(function () {
+            // Comment delete and send to backend
+            // send post request
+            const content = $(this).prev().text()
+            const date = $(this).prev().prev().text()
+            const user = $(this).prev().prev().prev().text()
+            const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && c.modifiedTime.toString()== date))
+            if (index >= 0) {
+              const commentData = sticky.comments[index]
+              $.ajax({
+                  type: 'POST',
+                  url: "/canvas/edit",
+                  data: {
+                      type: "delete comment",
+                      change: commentData,
+                      canvasId: canvas.canvasId,
+                      stickyId: sticky.stickyId
+                  },
+                  success: function (resultData) {
+                      console.log(resultData)
+                      sticky.comments.splice(index, 1)
+                  },
+                  error: function () {
+                      alert("Something went wrong")
+                  }
+              });
+            }
+
+            socket.emit('stickyUpdateComment', {
+                change: sticky.get('comments'),
+                stickyId: sticky.get('stickyId')
+            })
+
+            $(this).parent().remove()
+        })
+    }
+
+    // Adding new comment
+    $('#addComment').click(function addComments() {
+        const content = $('#commentContent').val();
+        const buttonId = `delComment${sticky.comments.length}`;
+        const user = Cookies.get("email");
+        $.ajax({
+            type: 'POST',
+            url: "/canvas/edit",
+            data: {
+                type: "add comment",
+                change: content,
+                canvasId: canvas.canvasId,
+                stickyId: sticky.stickyId
+            },
+            success: function (resultData) {
+              const date = resultData
+              const c = {modifiedTime:date, user:user, content:content}
+              sticky.comments.push(c)
+
+              const li = document.createElement('li')
+              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+          </button>`
+              $('#commentContainer').append(li)
+              $(`#${buttonId}`).click(function () {
+                  // Comment delete and send to backend
+                  // send post request
+                  const content = $(this).prev().text()
+                  const date = $(this).prev().prev().text()
+                  const user = $(this).prev().prev().prev().text()
+                  const index = sticky.comments.findIndex(comment => (comment.user == user && comment.content == content && comment.modifiedTime.toString() == date))
+                  if (index >= 0) {
+                    const commentData = sticky.comments[index]
+                    console.log(commentData);
+                    $.ajax({
+                        type: 'POST',
+                        url: "/canvas/edit",
+                        data: {
+                            type: "delete comment",
+                            change: commentData,
+                            canvasId: canvas.canvasId,
+                            stickyId: sticky.stickyId
+                        },
+                        success: function (resultData) {
+                            console.log(resultData);
+                            sticky.comments.splice(index, 1)
+                        },
+                        error: function () {
+                            alert("Something went wrong")
+                        }
+                    });
+                  }
+
+                  socket.emit('stickyUpdateComment', {
+                      change: sticky.get('comments'),
+                      stickyId: sticky.get('stickyId')
+                  })
+
+                  $(this).parent().remove()
+                })
+                $('#commentContent').remove()
+                $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
+
+              },
+            error: function () {
+                alert("Something went wrong")
+            }
+        });
+      })
+
+    $('button.close').click(function () {
+        editDiv.html('')
+    })
 
     $('#deleteBtn').click(function () {
         // delete request to server
@@ -1043,75 +1079,51 @@ function displayEditForm(sticky) {
         editDiv.html('')
     })
 
-    $('#editBtn').click(function () {
-        if ($(this).text() == 'Edit') {
-            console.log($(this).text())
-            $(this).text('Done')
-            const textarea = document.createElement('textarea');
-            textarea.rows = '4';
-            textarea.cols = '40';
-            textarea.className = 'textbox';
-            textarea.id = 'textarea;'
-            textarea.style.backgroundColor = 'rgb(236,232,238)';
-            const prevText = $('#textboxP').text()
-            textarea.innerHTML = prevText;
-            $("#textboxContainer").html(textarea)
+    $('body').on('click', '#textboxP', function () {
 
-            textarea.onkeydown = function (e) {
-                let key = e.keyCode;
-                if (key == '13') {
-                    stickyContentEdit(sticky)
-                    // send post request
-                    $.ajax({
-                        type: 'POST',
-                        url: "/canvas/edit",
-                        data: {
-                            type: "content",
-                            change: sticky.content,
-                            canvasId: canvas.canvasId,
-                            stickyId: sticky.stickyId
-                        },
-                        success: function (resultData) {
-                            console.log(resultData)
-                        },
-                        error: function () {
-                            alert("Something went wrong")
-                        }
-                    });
+        const textarea = document.createElement('textarea');
+        textarea.rows = '4';
+        textarea.cols = '40';
+        textarea.className = 'textbox';
+        textarea.id = 'textarea;'
+        textarea.style.backgroundColor = sticky.item(0).fill
+        textarea.innerHTML = sticky.content;
 
-                    socket.emit('stickyUpdateContent', {
+        textarea.autofocus = "autofocus";
+
+        $("#textboxContainer").html(textarea)
+
+        textarea.onkeydown = function (e) {
+            let key = e.keyCode;
+            if (key == '13') {
+                stickyContentEditCore(sticky, textarea.value)
+                // send post request
+                $.ajax({
+                    type: 'POST',
+                    url: "/canvas/edit",
+                    data: {
+                        type: "content",
                         change: sticky.content,
+                        canvasId: canvas.canvasId,
                         stickyId: sticky.stickyId
-                    });
-                    showSidepanel(sticky);
-                }
-            }
-        } else {
-            stickyContentEdit(sticky)
-            // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "content",
+                    },
+                    success: function (resultData) {
+                        console.log(resultData)
+                    },
+                    error: function () {
+                        alert("Something went wrong")
+                    }
+                });
+
+                socket.emit('stickyUpdateContent', {
                     change: sticky.content,
-                    canvasId: canvas.canvasId,
                     stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-            socket.emit('stickyUpdateContent', {
-                change: sticky.content,
-                stickyId: sticky.stickyId
-            });
-            showSidepanel(sticky);
+                });
+                showSidepanel(sticky);
+            }
         }
     })
+
 }
 
 function stickyContentEditCore(sticky, newContent) {
@@ -1311,107 +1323,54 @@ function returnClass(sticky) {
     }
 }
 
-function returnMouseClass(top, left) {
-    if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-        return "BIOPHYSICAL STOCKS"
-    }
-    if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-        return "ECOSYSTEMSERVICES"
-    }
-    if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-        return "ECOSYSTEM ACTORS"
-    }
-    if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-        return "NEEDS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-        return "COSTS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-        return "GOALS"
-    }
-    if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-        return "BENIFITS"
-    }
-    if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
-        return "RESOURCES"
-    }
-    if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-        return "ACTIVITIES"
-    }
-    if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
-        return "PARTNERSHIP"
-    }
-    if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-        return "GOVERNANCE"
-    }
-    if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
-        return "RELATIONSHIPS"
-    }
-    if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-        return "CHANNELS"
-    }
-    if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
-        return "STAKEHOLDERS"
-    }
-    if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
-        return "VALUE CO-CREATIONS"
-    }
-    if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-        return "VALUE CO-DESTRUCTIONS"
-    }
-}
-
-// function returnTestRect(sticky) {
-//     const top = sticky.top;
-//     const left = sticky.left;
+// function returnMouseClass(top, left) {
 //     if (top >= 243 && top <= 613 && left >= 147 && left <= 372) {
-//         return new fabric.Rect({top: 243, left: 147, width: 372-147, height: 613-243});
+//         return "BIOPHYSICAL STOCKS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 147 && left <= 372) {
-//         return new fabric.Rect({top: 613, left: 147, width: 372-147, height: 933-613});
+//         return "ECOSYSTEMSERVICES"
 //     }
 //     if (top >= 243 && top <= 613 && left >= 1669 && left <= 1866) {
-//         return new fabric.Rect({top: 243, left: 1669, width: 1866-1669, height: 613-243});
+//         return "ECOSYSTEM ACTORS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 1669 && left <= 1866) {
-//         return new fabric.Rect({top: 613, left: 1669, width: 1866-1669, height: 933-613});
+//         return "NEEDS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 147 && left <= 764) {
-//         return new fabric.Rect({top: 953, left: 147, width: 764-147, height: 1136-953});
+//         return "COSTS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 764 && left <= 1278) {
-//         return new fabric.Rect({top: 953, left: 764, width: 1278-764, height: 1136-953});
+//         return "GOALS"
 //     }
 //     if (top >= 953 && top <= 1136 && left >= 1278 && left <= 1866) {
-//         return new fabric.Rect({top: 953, left: 1278, width: 1866-1278, height: 1136-953});
+//         return "BENIFITS"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 423 && left <= 654) {
-//         return new fabric.Rect({top: 334, left: 423, width: 654-423, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 423 && left <= 654) {
+//         return "RESOURCES"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 423 && left <= 654) {
-//         return new fabric.Rect({top: 613, left: 423, width: 654-423, height: 933-613});
+//         return "ACTIVITIES"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 654 && left <= 838) {
-//         return new fabric.Rect({top: 334, left: 654, width: 838-654, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 654 && left <= 838) {
+//         return "PARTNERSHIP"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 654 && left <= 838) {
-//         return new fabric.Rect({top: 613, left: 654, width: 838-654, height: 933-613});
+//         return "GOVERNANCE"
 //     }
-//     if (top >= 334 && top <= 613 && left >= 1203 && left <= 1388) {
-//         return new fabric.Rect({top: 334, left: 1203, width: 1388-1203, height: 613-334});
+//     if (top >= 330 && top <= 613 && left >= 1203 && left <= 1388) {
+//         return "RELATIONSHIPS"
 //     }
 //     if (top >= 613 && top <= 933 && left >= 1203 && left <= 1388) {
-//         return new fabric.Rect({top: 613, left: 1203, width: 1388-1203, height: 933-613});
+//         return "CHANNELS"
 //     }
-//     if (top >= 334 && top <= 933 && left >= 1388 && left <= 1620) {
-//         return new fabric.Rect({top: 334, left: 1388, width: 1620-1388, height: 933-334});
+//     if (top >= 330 && top <= 933 && left >= 1388 && left <= 1620) {
+//         return "STAKEHOLDERS"
 //     }
-//     if (top >= 334 && top <= 732 && left >= 850 && left <= 1192) {
-//         return new fabric.Rect({top: 334, left: 850, width: 1192-850, height: 732-334});
+//     if (top >= 330 && top <= 732 && left >= 850 && left <= 1192) {
+//         return "VALUE CO-CREATIONS"
 //     }
 //     if (top >= 732 && top <= 933 && left >= 850 && left <= 1192) {
-//         return new fabric.Rect({top: 732, left: 850, width: 1192-850, height: 933-732});
+//         return "VALUE CO-DESTRUCTIONS"
 //     }
 // }
 
@@ -1545,6 +1504,7 @@ socket.on('stickyUpdatePos',  function stickyUpdatePos(result) {
 socket.on('stickyAdd', function stickyAdd(result) {
     // console.log('got: ', result);
     const newSticky = new Sticky(result);
+    newSticky.item(0).set('fill', result.color);
     canvas.add(newSticky);
     canvas.renderAll();
 });
