@@ -217,6 +217,7 @@ app.get('/canvas/get', function(req, res){
       var result = {
         'canvasId': canvasId,
         'owner':canvas.owner,
+        'company':canvas.company,
         'title':canvas.title,
         'createDate': canvas.createDate
       };
