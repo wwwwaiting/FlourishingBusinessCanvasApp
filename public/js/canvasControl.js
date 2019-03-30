@@ -1474,6 +1474,7 @@ socket.on('stickyUpdatePos',  function stickyUpdatePos(result) {
 socket.on('stickyAdd', function stickyAdd(result) {
     // console.log('got: ', result);
     const newSticky = new Sticky(result);
+    newSticky.item(0).set('fill', result.color);
     canvas.add(newSticky);
     canvas.renderAll();
 });
