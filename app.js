@@ -402,6 +402,19 @@ app.post('/canvas/edit', function(req, res){
   }
 });
 
+// get role of current user
+app.get('/canvas/role', function(req, res){
+  var email = req.cookies.email;
+  User.find({'email':email}, function(err, result){
+    if (err){
+      console.log(err);
+    } else {
+      var user = result[0];
+      res.send(user.role);
+    }
+  });
+});
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -677,6 +690,8 @@ app.post('/pwd/edit', function(req, res){
 		}
 	});
 });
+
+
 
 // get user information from
 // app.listen(PORT, () => {
