@@ -73,6 +73,9 @@ const changeType = ['content', 'position', 'size', 'color', 'comment'];
 
 // render login page
 app.get('/login', function(req, res) {
+  res.clearCookie('id');
+  res.clearCookie('email');
+  res.clearCookie('name');
   res.render('login');
 });
 
