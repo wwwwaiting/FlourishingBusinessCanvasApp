@@ -262,6 +262,57 @@ app.get('/canvas/get', function(req, res){
   });
 });
 
+// get canvas at the beginning
+app.post('/canvas/copy', function(req, res){
+  var canvasId = req.body.canId;
+  var newTitle = req.body.title;
+  Canvas.find({_id: canvasId},function(err, result) {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    } else if (result.length !== 0) {
+      var canvas = result[0];
+      var users = canvas.users;
+      var newDate = new Date();
+      var stickies = canvas.stickies;
+      var newHis = {
+        user: req.cookies.email,
+        content: 'Added ' + stickies.length + ' stickies to the Canvas',
+        modifiedTime: newDate
+      };
+      var newCanvas = new Canvas(
+        {
+          owner: canvas.owner,
+          title: newTitle,
+          company:canvas.company,
+          users: users,
+          stickies: canvas.stickies,
+          createDate: newDate,
+          editHistory: [newHis]
+        }
+      );
+      Canvas.create(newCanvas, function(err, created){
+      if (err) {
+        console.log(err);
+      } else {
+        User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
+          if (err) {
+            console.log(err);
+          }
+          else{
+            var result = {
+              'id': result.id,
+              'users':result.users
+            };
+            res.send(result);
+          }
+        });
+      }
+    });
+    }
+  });
+});
+
 app.post('/canvas/add', function(req, res){
   var canvas =  req.body.canvasId;
   var sticky = req.body.sticky;
