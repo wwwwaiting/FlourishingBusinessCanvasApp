@@ -24,6 +24,7 @@ const stickyMinimumHeight = 80;
 const stickyMaxWidth = 185;
 const stickyMaxHeight = 175;
 const stickyStrokeWidth = 0.5;
+const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
 
 
 // Define colors
@@ -57,8 +58,8 @@ function initialize_canvas(data) {
 
     $('#designedFor').attr('value', data.title);
     $('#designedBy').attr('value', data.owner);
-    $('#designedDate').attr('value', data.createDate);
-    // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
+    // $('#designedDate').attr('value', data.createDate);
+    $('#designedDate').attr('value', new Date(data.createDate).toLocaleDateString("en-US", dataFormat));
 
     data.stickies.forEach(sticky => {
         const options = {
