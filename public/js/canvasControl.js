@@ -1204,7 +1204,7 @@ function searchInCanvas() {
 
     // when hovering, highlight the corresponding sticky
     document.getElementById("searchResult").addEventListener("mouseover", function (e) {
-        const content = e.target.val
+        const content = e.target.value
 
         canvas.getObjects().forEach(sticky => {
             if (content == sticky.content) {
@@ -1215,7 +1215,7 @@ function searchInCanvas() {
 
     // when clicking, pop up the corresponding sticky
     document.getElementById("searchResult").addEventListener("click", function (e) {
-        const content = e.target.val
+        const content = e.target.value
 
         canvas.getObjects().forEach(sticky => {
             if (content == sticky.content) {
