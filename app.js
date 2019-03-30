@@ -525,13 +525,16 @@ app.get('/library/get', function(req, res){
 		if (err) {
 			console.log(err);
 		} else {
-			var user = result[0];
-			var c_list = user.canvas;
-			console.log(c_list)
+      var user = result[0];
+      var role = user.role;  // 2 regUser, 3 manager, 4 admin
+      var c_list = user.canvas;
+      var notification = user.notification;
 
-			var title = new Array();
-			var canvasId = new Array();
-			var users = new Array();
+			var regTitle = new Array();
+      var regId = new Array();
+      var mngTitle = new Array();
+      var mngId = new Array();
+      var mngUsers = new Array();
 			if (c_list.length != 0) {
 				let count = 1;
 				// loop through all canvas list
@@ -542,13 +545,24 @@ app.get('/library/get', function(req, res){
 						} else {
 							var c = result[0];
 							var id = c.id
-							var t = c.title;
-							var user = c.users;
-							canvasId.push(id);
-							title.push(t);
-							users.push(user);
+              var t = c.title;
+              if (c.owner == email){
+                var user = c.users;
+                mngId.push(id);
+                mngTitle.push(t);
+                mngUsers.push(user);
+              } else {
+                regTitle.push(t);
+                regId.push(id);
+              }
 							if (count == c_list.length){
-								res.send({title:title, canvas:canvasId, users:users});
+                if (role == 2){   // only send regular canvas
+                  res.send({regTitle: regTitle, regId: regId});
+                }else if (role == 3){  // send regular canvas and manager's canvas
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
+                } else {  // send notification also
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
+                }
 							}
 							count ++;
 						}
