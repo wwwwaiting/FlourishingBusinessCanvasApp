@@ -18,9 +18,10 @@ body {
 #editDiv {
     position: fixed;
     top: 30%;
-    left: 40%;
+    left: 35%;
 
 }
+
 
 #commentContainer {
     list-style-type: none;
@@ -34,7 +35,7 @@ body {
     word-wrap: break-word;
 }
 #editForm {
-    width: 400px
+    width: 500px
 }
 
 .delComment {
@@ -299,4 +300,8 @@ textarea {
     width: 400px;
     border-radius: 0.25rem;
     box-shadow: 0 0 0 0.1rem rgba(130, 138, 145, 0.2);
+}
+
+#editColorRow .active {
+    box-shadow: 0 0 0 0.1rem rgba(130, 138, 145, 0.5);
 }

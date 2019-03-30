@@ -69,7 +69,7 @@ const manager = 3;
 const admin = 4;
 
 const registrationRquest = new Array();
-const changeType = ['content', 'position', 'size', 'color', 'comment'];
+const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -338,44 +338,46 @@ app.delete('/canvas/delete', function(req, res){
 });
 
 app.post('/canvas/edit', function(req, res){
+  var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
   var type = req.body.type;
   var change = req.body.change;
-  var newHis = {
-    user: req.cookies.email,
-    content: 'Modified' + type,
-    modifiedTime: new Date()
-  };
+  var newDate = new Date();
   if (changeType.indexOf(type) !== -1){
-    if (type === 'comment'){
-      // create new comment
-      var newCom = {
-        stickyID: sticky,
-        user: req.cookies.email,
-        content: change,
-        modifiedTime: new Date()
-      };
-      // add new comment to the corresponding sticky
-      Sticky.findOneAndUpdate({_id:sticky}, { $push: { comment : newCom } }, function(err, result){
-        if (err) {
-          console.log(err);
-          res.send(fal);
-        } else if (result == null){
-          res.send(fal);
-        }else{
-          Canvas.findOneAndUpdate({_id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
-            if (err) {
-              console.log(err);
-              res.send(fal);
-            } else if (result == null){
-              res.send(fal);
-            } else{
-              res.send(tru);
-            }
-          });
+    if (type.includes('comment')){
+      if (type === 'add comment'){
+        // create new comment
+        var newCom = {
+          user: email,
+          content: change,
+          modifiedTime: newDate
         };
-      });
+        // add new comment to the corresponding sticky
+        Sticky.findOneAndUpdate({_id:sticky}, { $push: { comment : newCom } }, function(err, result){
+          if (err) {
+            console.log(err);
+            res.send(fal);
+          } else if (result == null){
+            res.send(fal);
+          }else{
+            createHistory(req.cookies.email, type, newDate, canvas, res);
+          };
+        });
+      }
+      else{
+        // delete comment from the corresponding sticky
+        Sticky.findOneAndUpdate({_id:sticky}, { $pull: { comment : change } }, function(err, result){
+          if (err) {
+            console.log(err);
+            res.send(fal);
+          } else if (result == null){
+            res.send(fal);
+          }else{
+            createHistory(email, type, newDate, canvas, res);
+          };
+        });
+      }
     }
     else{
       // update sticky information only
@@ -386,17 +388,7 @@ app.post('/canvas/edit', function(req, res){
         } else if (result == null){
           res.send(fal);
         }else{
-          Canvas.findOneAndUpdate({_id:canvas}, { $push: { editHistory : newHis }}, function(err, updated){
-            if (err) {
-              console.log(err);
-              res.send(fal);
-            } else if (result == null){
-              res.send(fal);
-            } else{
-              res.send(tru);
-            }
-          });
-
+          createHistory(email, type, newDate, canvas, res);
         }
       });
     }
@@ -462,7 +454,6 @@ app.get('/library/get', function(req, res){
 // store the canvas id into cookie
 app.post('/library/id', function(req, res){
 	var canvasId = req.body.canvasId;
-	console.log(canvasId);
 	res.cookie('id', canvasId);
 	res.send(tru);
 });
@@ -691,7 +682,6 @@ app.post('/pwd/edit', function(req, res){
 		}
 	});
 });
-
 
 
 // get user information from
