@@ -89,6 +89,11 @@ app.get('/manager', function(req, res){
 	res.render('manager', {name:req.cookies.name, email:req.cookies.email});
 });
 
+// render admin page
+app.get('/admin', function(req, res){
+	res.render('admin', {name:req.cookies.name, email:req.cookies.email});
+});
+
 // render user page
 app.get('/user', function(req, res){
 	res.render('user', {name:req.cookies.name, email:req.cookies.email});
