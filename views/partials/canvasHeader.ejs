@@ -12,14 +12,14 @@
             <div id="headerOptions" class="d-flex">
                 <button class="btn btn-light" onclick="goBack()">Canvases</button>
                 <h4 id="FBC" class="ml-auto mr-auto">Flourishing Business Canvas</h4>
-                <button class="btn btn-light" onclick="logOut()">Logout</button>
+                <button class="btn btn-light">Logout</button>
             </div>
         </div>
         </div>
         <div class="collapse show" id="canvasHeader">
             <div class="d-flex ">
                 <div class="mb-2" id="canvasTitle">
-                    <input class="form-control bg-light" type="text" placeholder="Untitled">
+                    <input class="form-control bg-light" id="title" type="text" placeholder="Untitled">
                 </div>
                 <div class="ml-auto d-flex mb-2" id="canvasInfo">
                     <div class="designInfo ml-2">
@@ -29,7 +29,7 @@
                         <input class="form-control bg-light" id="designedBy" type="text" placeholder="Designed by:">
                     </div>
                     <div class="designInfo ml-2">
-                        <input class="form-control bg-light" id="designedDate" type="text" placeholder="Date:">
+                        <input class="form-control bg-light" id="designedDate" type="text" placeholder="Date:" disabled=true>
                     </div>
                 </div>
                 <div class="ml-2 dropdown mb-2" id="exportBtn">
@@ -73,21 +73,6 @@
 
 <script type="text/javascript">
     "use strict"
-    function logOut() {
-        // clear cookies
-        var cookies = document.cookie.split(";");
-
-	    for (var i = 0; i < cookies.length; i++) {
-	        var cookie = cookies[i];
-	        var eqPos = cookie.indexOf("=");
-	        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-	        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-	    }
-
-        // redirect to login page
-        window.location.href = '/login'
-    }
-
     function goBack() {
         $.ajax({
             type: "GET",
