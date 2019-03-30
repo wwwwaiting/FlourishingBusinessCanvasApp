@@ -933,36 +933,38 @@ function displayEditForm(sticky) {
         const c = sticky.comments[i]
         const li = document.createElement('li')
         const buttonId = `delComment${i}`
-        li.innerHTML = `<span class="commentWrap">${c}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">×</span>
     </button>`
         $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function () {
             // Comment delete and send to backend
             // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "comment",
-                    change: sticky.comments,
-                    canvasId: canvas.canvasId,
-                    stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-
             const content = $(this).prev().text()
-            const index = sticky.comments.findIndex(c => c == content)
+            const date = $(this).prev().prev().text()
+            const user = $(this).prev().prev().prev().text()
+            const index = sticky.comments.findIndex(c => (c.date == date && c.user == user && c.content == content))
             if (index >= 0) {
-                sticky.comments.splice(index, 1)
+              const commentData = sticky.comments[index]
+              console.log(commentData)
+              $.ajax({
+                  type: 'POST',
+                  url: "/canvas/edit",
+                  data: {
+                      type: "delete comment",
+                      change: commentData,
+                      canvasId: canvas.canvasId,
+                      stickyId: sticky.stickyId
+                  },
+                  success: function (resultData) {
+                      console.log(resultData)
+                      sticky.comments.splice(index, 1)
+                  },
+                  error: function () {
+                      alert("Something went wrong")
+                  }
+              });
             }
-            console.log(sticky.comments)
 
             socket.emit('stickyUpdateComment', {
                 change: sticky.get('comments'),
@@ -977,54 +979,73 @@ function displayEditForm(sticky) {
     $('#addComment').click(function addComments() {
         const content = $('#commentContent').val();
         const buttonId = `delComment${sticky.comments.length}`;
-        sticky.comments.push(content)
-        const li = document.createElement('li')
-        li.innerHTML = `<span class="commentWrap">${content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>`
-        $('#commentContainer').append(li)
+        const user = Cookies.get("name");
+        console.log(user);
+        console.log(content);
+        $.ajax({
+            type: 'POST',
+            url: "/canvas/edit",
+            data: {
+                type: "add comment",
+                change: content,
+                canvasId: canvas.canvasId,
+                stickyId: sticky.stickyId
+            },
+            success: function (resultData) {
+              const date = resultData
+              const c = {date:date, user:user, content:content}
+              sticky.comments.push(c)
 
-        socket.emit('stickyUpdateComment', {
-            change: sticky.get('comments'),
-            stickyId: sticky.get('stickyId')
-        })
+              const li = document.createElement('li')
+              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' type="button" class="delComment" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+          </button>`
+              $('#commentContainer').append(li)
+              $(`#${buttonId}`).click(function () {
+                  // Comment delete and send to backend
+                  // send post request
+                  const content = $(this).prev().text()
+                  const date = $(this).prev().prev().text()
+                  const user = $(this).prev().prev().prev().text()
+                  const index = sticky.comments.findIndex(c => (c.date == date && c.user == user && c.content == content))
+                  if (index >= 0) {
+                    const commentData = sticky.comments[index]
+                    console.log(commentData)
+                    $.ajax({
+                        type: 'POST',
+                        url: "/canvas/edit",
+                        data: {
+                            type: "delete comment",
+                            change: commentData,
+                            canvasId: canvas.canvasId,
+                            stickyId: sticky.stickyId
+                        },
+                        success: function (resultData) {
+                            console.log(resultData)
+                            sticky.comments.splice(index, 1)
+                        },
+                        error: function () {
+                            alert("Something went wrong")
+                        }
+                    });
+                  }
 
-        $(`#${buttonId}`).click(function () {
-            // send post request
-            $.ajax({
-                type: 'POST',
-                url: "/canvas/edit",
-                data: {
-                    type: "comment",
-                    change: sticky.comments,
-                    canvasId: canvas.canvasId,
-                    stickyId: sticky.stickyId
-                },
-                success: function (resultData) {
-                    console.log(resultData)
-                },
-                error: function () {
-                    alert("Something went wrong")
-                }
-            });
-            const content = $(this).prev().text()
-            const index = sticky.comments.findIndex(c => c == content)
-            if (index >= 0) {
-                sticky.comments.splice(index, 1)
+                  socket.emit('stickyUpdateComment', {
+                      change: sticky.get('comments'),
+                      stickyId: sticky.get('stickyId')
+                  })
+
+                  $(this).parent().remove()
+                })
+                $('#commentContent').remove()
+                $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
+
+              },
+            error: function () {
+                alert("Something went wrong")
             }
-            console.log(sticky.comments)
-
-            socket.emit('stickyUpdateComment', {
-                change: sticky.get('comments'),
-                stickyId: sticky.get('stickyId')
-            })
-
-            $(this).parent().remove()
-        })
-        $('#commentContent').remove()
-        $('#commentInputContainer').prepend('<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" >')
-
-    })
+        });
+      })
 
     $('button.close').click(function () {
         editDiv.html('')
