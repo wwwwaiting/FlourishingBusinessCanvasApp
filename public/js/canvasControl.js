@@ -56,7 +56,8 @@ function initialize_canvas(data) {
         hoverCursor: 'pointer'
     });
 
-    $('#designedFor').attr('value', data.title);
+    $('#canvasTitle').attr('value', data.title);
+    $('#designedFor').attr('value', data.company);
     $('#designedBy').attr('value', data.owner);
     $('#designedDate').attr('value', data.createDate);
     // $('#designedDate').attr('value', data.createDate.toLocaleDateString("en-US", dataFormat));
