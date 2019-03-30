@@ -99,7 +99,7 @@ function createCanvases(cb) {
 function createUsers(cb) {
     async.parallel([
             function (callback) {
-                userCreate('userA\xa0Baril', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '4168888888', 'UofT',callback);
+                userCreate('userA\xa0Baril', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '416788888', 'UofT',callback);
             },
             function (callback) {
                 userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Manager', 2, '4167777777', 'Company1',callback);
