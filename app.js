@@ -802,9 +802,9 @@ app.get('/admin/notification', function(req, res){
       console.log(err);
       res.send(err);
     } else if (result.length === 0) {
-      res.send(fail);
+      res.send(fal);
     } else {
-      res.send(result.notification);
+      res.send(result[0].notification);
     }
   });
 });
@@ -892,7 +892,7 @@ function getAllCanvas(email, res){
               regId.push(id);
             }
             if (count == cans.length){
-              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
             }
             count ++;
           }
