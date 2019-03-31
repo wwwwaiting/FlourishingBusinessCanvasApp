@@ -526,6 +526,7 @@ app.get('/library/get', function(req, res){
 			console.log(err);
 		} else {
       var user = result[0];
+      var name = user.name;
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
       var c_list = user.canvas;
       var notification = user.notification;
@@ -546,7 +547,7 @@ app.get('/library/get', function(req, res){
 							var c = result[0];
 							var id = c.id
               var t = c.title;
-              if (c.owner == email){
+              if (c.owner == name){
                 var user = c.users;
                 mngId.push(id);
                 mngTitle.push(t);
