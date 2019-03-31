@@ -146,6 +146,16 @@
     }
 
     function renderFbc(ids, titles, control) {
+        if (ids.length == 0) {
+            let message = null;
+            if (control == "myControl") {
+                message = "Currently, there is no canvas under my control."
+            } else {
+                message = "Currently, there is no canvas I am involved in."
+            }
+            const html = `<p3 class="ml-auto mr-auto">${message}</p3>`
+            $(`#${control}`).append(html)
+        }
         const imgUrl = '/images/fbc.png'
         for (let i = 0; i < ids.length; i++) {
             const html = `
@@ -271,15 +281,15 @@
         const email = [$(this).parent().prev().val()]
         const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
         
-        const index = canvasIds.findIndex(id => id == canvasId)
-        if (canvasUsers[index].includes(email[0])) {
+        const index = mngUsers.findIndex(id => id == canvasId)
+        if (mngUsers[index].includes(email[0])) {
             alert("Duplicate user email.")
             $(this).parent().prev().val('')
             return;
         }
-        console.log(canvasUsers)
+        console.log(mngUsers)
         //send update request
-        console.log(canvasId)
+        console.log(mngId)
         const type = "add"
         const send = {type, canvasId, email}
 
@@ -291,8 +301,8 @@
 	            data: send,
 	            success: function (data) {
 	                if (data == 'true') {
-	                    const index = canvasIds.findIndex(id => id == canvasId)
-	                    canvasUsers[index].push(email[0])
+	                    const index = mngId.findIndex(id => id == canvasId)
+	                    mngUsers[index].push(email[0])
 	                    Email.send({
 							Host: "smtp.elasticemail.com",
 	            			Username: "wangluya2014@gmail.com",
@@ -334,7 +344,7 @@
         
 
         // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-        console.log(canvasUsers)
+        console.log(mngUsers)
         // renderManageUsers()
         const email = usersToRemove
         
@@ -349,8 +359,8 @@
             data: send,
             success: function (data) {
                 if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
+                    const index = mngId.findIndex(id => id == canvasId)
+                    mngUsers[index] = mngUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
                     renderManageUsers()
                 } else {
                     console.log('fail remove user')
@@ -410,12 +420,13 @@
             data: send,
             success: function (data) {
                 // get the same canvas with a new id back 
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push(data.users)
+                mngId.push(data.id)
+                mngTitle.push(title)
+                mngUsers.push(data.users)
                 removeMainSection()
                 renderManageCanvas()
-                renderFbc()
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
                 }
             
         })
@@ -432,12 +443,13 @@
             data: send,
             success: function (data) {
                 // if (data == 'true') {
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push([])
+                mngId.push(data.id)
+                mngTitle.push(title)
+                mngUsers.push([])
                 removeMainSection()
                 renderManageCanvas()
-                renderFbc()
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
                 // } else {
                 //     console.log('fail add canvas')
                 }
@@ -454,8 +466,8 @@
             console.log(canId)
             canvasId.push(canId)
         }
-        const type = "manager"
-        const send = {canvasId, type}
+
+        const send = {canvasId}
         console.log(send)
         
         $.ajax({
@@ -465,14 +477,15 @@
             success: function (data) {
                 if (data == 'true') {
                     for (let canId of canvasId) {
-                        const indexToRemove = canvasIds.findIndex(id => id == canId)
-                        canvasTitles.splice(indexToRemove, 1)
-                        canvasIds.splice(indexToRemove, 1)
-                        canvasUsers.splice(indexToRemove, 1)
+                        const indexToRemove = mngId.findIndex(id => id == canId)
+                        mngTitle.splice(indexToRemove, 1)
+                        mngId.splice(indexToRemove, 1)
+                        mngUsers.splice(indexToRemove, 1)
                     }
                     renderManageCanvas()
                     removeMainSection()
-                    renderFbc()
+                    renderFbc(mngId, mngTitle, 'myControl')
+                    renderFbc(regId, regTitle, 'notMyControl')
                 } else {
                     console.log('fail remove canvas')
                 }
@@ -481,7 +494,23 @@
     }
 
     function removeMainSection() {
-        $('section').html('')
+        const html = `
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>`
+        $('section').html(html)
     }
 
 </script>
