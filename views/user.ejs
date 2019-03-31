@@ -90,8 +90,12 @@
                  regTitle = data.regTitle
                  regId = data.regId
                  console.log(regTitle)
-         		 console.log(regId)
-        		 renderFbc()
+                  console.log(regId)
+                 if (regId != undefined){
+                    renderFbc()
+                 } else {
+                    window.location.href = "/login"
+                 }
              }
          })
         }
