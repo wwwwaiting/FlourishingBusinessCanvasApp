@@ -854,7 +854,11 @@ app.post('/admin/approve', function(req, res){
 app.get('/admin/get', function(req, res){
   res.clearCookie('id');
   var email = req.cookies.email;
-	User.find({'email':email}, function(err, result){
+  getAllCanvas(email, res);
+});
+
+function getAllCanvas(email, res){
+  User.find({'email':email}, function(err, result){
 		if (err) {
 			console.log(err);
 		} else {
@@ -896,7 +900,7 @@ app.get('/admin/get', function(req, res){
       })
 		}
 	});
-});
+};
 
 
 app.get('/admin/users', function(req, res){
@@ -933,7 +937,8 @@ app.get('/admin/users', function(req, res){
 
 app.post('/admin/edit', function(req, res){
   var type = req.body.type;
-  var user = req.body.user[0];
+  var user = req.body.user;			
+  var email = req.cookies.email;
   if (type === 'remove'){
     User.findOneAndDelete({email: user},function(err, deleted) {
       if (err) {
@@ -953,8 +958,8 @@ app.post('/admin/edit', function(req, res){
               res.send(fal);
             } else{
               if(can.email === user) {
-                console.log("it's admin");
-                Canvas.findOneAndDelete({_id: canvasList[i]}, function(err, del){
+                var count2 = 1;
+                Canvas.findOneAndDelete({_id: can.id}, function(err, del){
                   if(err){
                     console.log(err);
                     res.send(err);
@@ -962,25 +967,33 @@ app.post('/admin/edit', function(req, res){
                     console.log(canvasList[i]);
                     res.send(fal);
                   } else{
-                    console.log(del.users);
                     var userList = del.users;
                     for (j=0;j<userList.length;j++){
-                      User.findOneAndUpdate({_id: userList[j]}, {$pull: {canvas: canvasList[i]}},function(err, dele){
+                      User.findOneAndUpdate({email: userList[j]}, {$pull: {canvas: del.id}},function(err, dele){
                         if(err){
                           console.log(err);
                           res.send(err);
                         } else if (dele === null){
-                          res.send(fal);}
+                          res.send(fal);
+                        }else{
+                          if (count2 === userList.length){
+                            if (count === canvasList.length){
+                              getAllCanvas(email, res);
+                            }
+                            count++;
+                          }
+                          count2++;
+                        }
                       })
                     }
                   }
                 })
+              }else{
+                if (count === canvasList.length){
+                  res.send(tru);
+                }
+                count ++;
               }
-              console.log(count);
-              if (count === canvasList.length){
-                res.send(tru);
-              }
-              count ++;
             }
           })
         }

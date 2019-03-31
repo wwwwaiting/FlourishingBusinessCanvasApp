@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manager page</title>
+    <title>Administrative page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -143,11 +143,6 @@
                  mngUsers = data.mngUsers
                  notification = data.notification
 
-                 console.log(mngId)
-                 console.log(mngUsers)
-                 console.log(mngTitle)
-                 console.log(regTitle)
-                 console.log(notification)
                  renderFbc(mngId, mngTitle, 'myControl')
                  renderFbc(regId, regTitle, 'notMyControl')
              }
@@ -206,41 +201,42 @@
             type: "GET",
             url: "/admin/users",
             success: function (data) {
-                let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
+                let manageUsersContent = '<div class="modal-body manageUserContainer" id="manageUsersList">'
                 for (let i = 0; i < data.length; i++){
                     const user = data[i]
                     
                     manageUsersContent += `<div class="form-check">
                     <input class="form-check-input semantic" type="checkbox">
-                    <label class="form-check-label" for="defaultCheck1">${user}</label></div>`
+                    <label class="form-check-label">${user}</label></div>`
                 }
 
                 $(".modal-title").html("Manage users")
                 $(".modal-body").html(manageUsersContent)
-                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="removeUsers()">Remove</button>`)
             }
         })
     }
 
+    $('body').on('change', '#manageUsersList', function() {
+        const length = $('#manageUsersList').find('input[type=checkbox]').length
+
+        for (let i = 0; i < length; i++) {
+            if (!$('#manageUsersList').find('input[type=checkbox]')[i].checked) {
+                $('#manageUsersList').find('input[type=checkbox]')[i].disabled = true;
+            }
+        }
+    })
+
     function removeUsers() {
-        const selected = $('.form-check-input:checked')
+        const selected = $('#manageUsersList').find('input[type=checkbox]:checked')
         if (selected.length == 0) {
             alert("No User Selected.")
             return
         }
-        
-        // if (selected.length > 1) {
 
-        // }
-
-        const usersToRemove = []
-        for (let e of selected) {
-            usersToRemove.push(e.nextElementSibling.innerHTML)
-        }
-
-        //send POST request
+        const user = selected[0].nextElementSibling.innerHTML
         const type = "remove"
-        const user = usersToRemove
         const send = {type, user}
         
         $.ajax({
@@ -248,11 +244,27 @@
             url: "/admin/edit",
             data: send,
             success: function (data) {
-                if (data == 'true') {
-                    renderManageUsers()
-                } else {
-                    console.log('fail to remove user')
-                }
+                renderManageUsers()
+
+                removeMainSection()
+                regTitle = data.regTitle
+                regId = data.regId
+                mngTitle = data.mngTitle
+                mngId = data.mngId
+                mngUsers = data.mngUsers
+                notification = data.notification
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
+
+                Email.send({
+                    Host: "smtp.elasticemail.com",
+                    Username: "wangluya2014@gmail.com",
+                    Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                    To: user,
+                    From: "wangluya2014@gmail.com",
+                    Subject: "This is the subject",
+                    Body: "You are kicked out of FBC organization!!!"
+                });
             }
         })
     }
@@ -271,22 +283,34 @@
     }
 
     function addUser() {
-        const type = "add"
-        const user = document.querySelector("#newInvitation").value;
-        const send = {type, user}
+        const email = document.querySelector("#newInvitation").value;
+        if (validateEmail(email)) {
+            const type = "add"
+            const user = email
+            const send = {type, user}
 
-        $.ajax({
-            type: "POST",
-            url: "/admin/edit",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    getInvitation()
-                } else {
-                    console.log('fail to add user')
+            $.ajax({
+                type: "POST",
+                url: "/admin/edit",
+                data: send,
+                success: function (data) {
+                    if (data == 'true') {
+                        Email.send({
+                            Host: "smtp.elasticemail.com",
+                            Username: "wangluya2014@gmail.com",
+                            Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                            To: email,
+                            From: "wangluya2014@gmail.com",
+                            Subject: "This is the subject",
+                            Body: "Testing for adding new users as admin!"
+                        });
+                        getInvitation()
+                    } else {
+                        console.log('fail to add user')
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     $('body').on('change', '.form-check-input', function() {
@@ -407,7 +431,7 @@
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
     }
 
-    $('body').on('change', '.form-check-input', function() {
+    $('body').on('change', '#defaultCheck1', function() {
         var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
         
         if (check == 1) {
@@ -416,7 +440,7 @@
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
         } else {
             $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeUsers()">Remove</button>`)
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
         }
     })
 
@@ -506,7 +530,23 @@
     }
 
     function removeMainSection() {
-        $('section').html('')
+            const html = `
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>`
+            $('section').html(html)
     }
 
 </script>
