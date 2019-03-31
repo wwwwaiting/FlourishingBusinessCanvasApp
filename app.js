@@ -220,7 +220,6 @@ app.get('/canvas/get', function(req, res){
   Canvas.find({_id: canvasId},function(err, result) {
     if (err) {
       console.log(err);
-      res.send(err);
     } else if (result.length !== 0) {
       var canvas = result[0];
       var result = {
@@ -520,7 +519,7 @@ app.get('/library/get', function(req, res){
   var email = req.cookies.email;
 	User.find({'email':email}, function(err, result){
 		if (err) {
-			console.log(err);
+      console.log(err);
 		} else {
       var user = result[0];
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
@@ -860,7 +859,7 @@ app.get('/admin/get', function(req, res){
 function getAllCanvas(email, res){
   User.find({'email':email}, function(err, result){
 		if (err) {
-			console.log(err);
+      console.log(err);
 		} else {
       var user = result[0];
       var notification = user.notification;

@@ -133,6 +133,9 @@
             // send get request and set global arrays
             console.log('haha')
             currentUser = Cookies.get('email');
+            if (currentUser == null){
+                window.location.href = '/login';
+            } else {
             $.ajax({
                 type: "GET",
                 url: "/library/get",
@@ -151,6 +154,7 @@
                     renderFbc(regId, regTitle, 'notMyControl')
                 }
             })
+        }
         }
 
         function renderFbc(ids, titles, control) {
