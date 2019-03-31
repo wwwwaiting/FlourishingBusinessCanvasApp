@@ -3,6 +3,7 @@
 console.log('Usage: populatedb mongodb+srv://dbuser:password@cluster0-mbdj7.mongodb.net/mydb?retryWrites=true');
 const regUser = 2;
 const manager = 3;
+const admin = 4;
 
 // Get arguments passed on command line
 var userArgs = process.argv.slice(2);
@@ -30,9 +31,10 @@ var canvases = []
 var stickies = []
 var users = []
 
-function canvasCreate(canvasOwner, canvasTitle, userList, cb) {
+function canvasCreate(canvasOwner, canvasEmail, canvasTitle, userList, cb) {
     const canvasDetail = {
         owner: canvasOwner,
+        email: canvasEmail,
         title: canvasTitle,
         company:'',
         users: userList,  //email
@@ -85,10 +87,13 @@ function userCreate(userName, userEmail, userPassword, userRole, userCanvases, u
 function createCanvases(cb) {
     async.series([
             function (callback) {
-                canvasCreate('Patrick', 'Patrick\'s Canvas', ['userA@gmail.com', 'userB@gmail.com'], callback);
+                canvasCreate('Patrick', 'userB@gmail.com', 'Patrick\'s Canvas', ['userA@gmail.com', 'userB@gmail.com'], callback);
             },
             function (callback) {
-                canvasCreate('Ben', 'Canvas for Ben', ['userB@gmail.com', 'userC@gmail.com'], callback);
+                canvasCreate('Ben', 'userB@gmail.com', 'Canvas for Ben', ['userB@gmail.com', 'userC@gmail.com'], callback);
+            },
+            function (callback) {
+                canvasCreate('John', 'userD@gmail.com', 'Canvas for John', ['userD@gmail.com', 'userB@gmail.com'], callback);
             },
         ],
         // optional callback
@@ -102,10 +107,16 @@ function createUsers(cb) {
                 userCreate('userA\xa0Baril', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '416788888', 'UofT',callback);
             },
             function (callback) {
-                userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Manager', 2, '4167777777', 'Company1',callback);
+                userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben', 'Canvas for John'], 'Manager', 2, '4167777777', 'Company1',callback);
             },
             function (callback) {
                 userCreate('userC\xa0Milway', 'userC@gmail.com', '123', regUser, ['Canvas for Ben'], 'Assistant', 2, '4166666666', 'Company1',callback);
+            },
+            function (callback) {
+                userCreate('userD\xa0Bacchus', 'userD@gmail.com', '123', manager, ['Canvas for John'], 'Manager', 2, '', '',callback);////
+            },
+            function (callback) {
+                userCreate('Andrew\xa0Simpson', 'andrew@ecotonesoftware.com', 'admin', admin, [], 'Administrator', 2, '', '', callback);
             },
         ],
         // optional callback

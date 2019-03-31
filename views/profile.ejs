@@ -76,11 +76,9 @@
 
         $('body').ready(function() {
             var email = Cookies.get('email');
-             if (email == null) {
-                alert("Our system detects that you have not yet signed in to our website, we will transfer you to the log in page immediately.")
+            if (email == null){
                 window.location.href = '/login'
-                return
-             }
+            } else {
             var emailTextBox = document.querySelector('#email')
             emailTextBox.setAttribute('value', email)
 
@@ -111,6 +109,7 @@
                     phoneTextBox.setAttribute('value', oldPhone)
                 }
             });
+        }
         })
 
         $('#save').on('click', function() {
