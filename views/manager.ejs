@@ -68,9 +68,11 @@
     "use strict"
     console.log("popup.js")
 
-    let canvasUsers = []
-    let canvasIds = []
-    let canvasTitles = []
+    let regTitle = []
+    let regId = []
+    let mngTitle = []
+    let mngId = []
+    let mngUsers = []
     let currentUser = null;
     $(document).ready(main);
 
@@ -112,10 +114,12 @@
              type: "GET",
              url: "/library/get",
              success: function (data) {
-                 canvasTitles = data.title
-                 canvasIds = data.canvas
-                 canvasUsers = data.users
-        			  renderFbc()
+                 regTitle = data.regTitle
+                 regId = data.regId
+                 mngTitle = data.mngTitle
+                 mngId = data.mngId
+                 mngUsers = data.mngUsers
+        		 renderFbc()
              }
          })
          console.log(currentUser)
@@ -123,16 +127,36 @@
 
     function renderFbc() {
         const imgUrl = '/images/fbc.png'
-        for (let i = 0; i < canvasIds.length; i++) {
+        for (let i = 0; i < regId.length; i++) {
             const html = `
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-                <a id="${canvasIds[i]}" class="canvasClick" style="cursor:pointer">
+                <a id="${regId[i]}" class="canvasClick" style="cursor:pointer">
                     <div class="card shadow postCard">
                         <div class="image-constrain">
                             <img src="${imgUrl}" class="card-img-top post-img p-3">
                         </div>
                         <div class="card-body text-center">
-                            <h6 class="post-title font-weight-bold font-italic text-truncate">${canvasTitles[i]}</h6>
+                            <h6 class="post-title font-weight-bold font-italic text-truncate">${regTitle[i]}</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>`
+            const rowNum = Math.ceil((i + 1) /4)
+            if (i % 4 == 0) {
+                $('#post-TwoRow').append(`<div id="row${rowNum}"class="row fadeIn post-row"></div>`)
+            }
+            $(`#row${rowNum}`).append(html)
+        }
+        for (let i = 0; i < mngId.length; i++) {
+            const html = `
+            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
+                <a id="${mngId[i]}" class="canvasClick" style="cursor:pointer">
+                    <div class="card shadow postCard">
+                        <div class="image-constrain">
+                            <img src="${imgUrl}" class="card-img-top post-img p-3">
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="post-title font-weight-bold font-italic text-truncate">${mngTitle[i]}</h6>
                         </div>
                     </div>
                 </a>
@@ -170,15 +194,15 @@
     function renderManageUsers() {
 
         let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
-        for(let i = 0; i < canvasTitles.length; i++){
-            manageUsersContent += `<div class="manageUsersCanvas"><h5>${canvasTitles[i]}<span style="display: none">${canvasIds[i]}</span></h5>`
-            for (let j = 0; j < canvasUsers[i].length; j++){
-                if ((canvasUsers[i][j]) == currentUser) {
+        for(let i = 0; i < mngTitle.length; i++){
+            manageUsersContent += `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
+            for (let j = 0; j < mngUsers[i].length; j++){
+                if ((mngUsers[i][j]) == currentUser) {
                     continue;
                 }
                 manageUsersContent += `<div class="form-check">
                 <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
+                <label class="form-check-label" for="defaultCheck1">${mngUserss[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
             <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
@@ -337,10 +361,10 @@
 
     function renderManageCanvas(){
         let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
-        for (let i = 0; i < canvasTitles.length; i++){
+        for (let i = 0; i < mngTitle.length; i++){
             manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]}<span style="display:none">${canvasIds[i]}</span></label>
+            <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
         </div>`
         }
         manageCanvasContent += '</form></div>'
