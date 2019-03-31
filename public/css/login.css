@@ -13,8 +13,12 @@ html {
 body {
   background: #c1bdba;
   font-family: 'Questrial', sans-serif;
-  background-image: url("../img/login.jpg");
+  background: url("../img/login.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
   background-size: cover;
+
 }
 
 a {
