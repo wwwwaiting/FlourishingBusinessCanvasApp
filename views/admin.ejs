@@ -210,7 +210,7 @@
                     <label class="form-check-label">${user}</label></div>`
                 }
 
-                $(".modal-title").html("Manage users")
+                $(".modal-title").html("Manage Users")
                 $(".modal-body").html(manageUsersContent)
                 $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="removeUsers()">Remove</button>`)
@@ -221,9 +221,17 @@
     $('body').on('change', '#manageUsersList', function() {
         const length = $('#manageUsersList').find('input[type=checkbox]').length
 
-        for (let i = 0; i < length; i++) {
-            if (!$('#manageUsersList').find('input[type=checkbox]')[i].checked) {
-                $('#manageUsersList').find('input[type=checkbox]')[i].disabled = true;
+        if ($('#manageUsersList').find('input[type=checkbox]:checked').length == 1) {
+            for (let i = 0; i < length; i++) {
+                if (!$('#manageUsersList').find('input[type=checkbox]')[i].checked) {
+                    $('#manageUsersList').find('input[type=checkbox]')[i].disabled = true;
+                }
+            }
+        } else {
+            for (let i = 0; i < length; i++) {
+                if (!$('#manageUsersList').find('input[type=checkbox]')[i].checked) {
+                    $('#manageUsersList').find('input[type=checkbox]')[i].disabled = false;
+                }
             }
         }
     })
@@ -269,6 +277,16 @@
         })
     }
 
+    function validateEmail(email) {
+    	var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    	var result = re.test(email.toLowerCase());
+    	if (!result) {
+    		alert("Please enter a valid email.");
+    		return false;
+    	}
+    	return true;
+    }
+
     function getInvitation() {
         let manageInvitation = `<div class="modal-body manageInvitation">
                 <div id="newInvitationInputContainer" class="input-group">
@@ -277,7 +295,7 @@
                     <button class="btn btn-primary" type="button" onclick="addUser()">Add</button>
                 </div></div></div>`
 
-        $(".modal-title").html("Manage invitations")
+        $(".modal-title").html("Manage Invitations")
         $(".modal-body").html(manageInvitation)
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
     }
@@ -313,6 +331,154 @@
         }
     }
 
+    function renderManageCanvas(){
+        let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist">'
+        for (let i = 0; i < mngTitle.length; i++){
+            manageCanvasContent += `<div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+            <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
+        </div>`
+        }
+        for (let i = 0; i < regTitle.length; i++){
+            manageCanvasContent += `<div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+            <label class="form-check-label" for="defaultCheck1">${regTitle[i]}<span style="display:none">${regId[i]}</span></label>
+        </div>`
+        }
+
+        manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
+        <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title" >
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" onclick="addNewCanvas()">Add</button>
+        </div></div>`
+
+        $(".modal-title").html("Manage Canvas")
+        $(".modal-body").html(manageCanvasContent)
+        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
+                    <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+    }
+
+    $('body').on('change', '#manageCanvasChecklist', function() {
+        const length = $('#manageCanvasChecklist').find('input[type=checkbox]').length
+
+        if ($('#manageCanvasChecklist').find('input[type=checkbox]:checked').length == 1) {
+            for (let i = 0; i < length; i++) {
+                if (!$('#manageCanvasChecklist').find('input[type=checkbox]')[i].checked) {
+                    $('#manageCanvasChecklist').find('input[type=checkbox]')[i].disabled = true;
+                }
+            }
+        } else {
+            for (let i = 0; i < length; i++) {
+                if (!$('#manageCanvasChecklist').find('input[type=checkbox]')[i].checked) {
+                    $('#manageCanvasChecklist').find('input[type=checkbox]')[i].disabled = false;
+                }
+            }
+        }
+    })
+
+    function addNewCanvas() {
+        const title = $('#newCanvas').val()
+        
+        const send = {title}
+
+        $.ajax({
+            type: "POST",
+            url: "/manager/add",
+            data: send,
+            success: function(data) {
+                mngId.push(data.id)
+                mngTitle.push(title)
+                mngUsers.push([])
+                renderManageCanvas()
+                removeMainSection()
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
+            }
+        })
+    }
+
+    function copyCanvas() {
+        const e = $('.form-check-input:checked')[0]
+        const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+
+        const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
+        const title = old_title + "-copy"
+
+        // current canvas id, new title
+        const send = {canId, title}
+
+        $.ajax({
+            type: "POST",
+            url: "/canvas/copy",
+            data: send,
+            success: function (data) {
+                // get the same canvas with a new id back
+                mngId.push(data.id)
+                mngTitle.push(title)
+                mngUsers.push(data.users)
+                renderManageCanvas()
+                removeMainSection()
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
+            } 
+        })
+    }
+
+    function removeCanvas() {
+        const e = $('.form-check-input:checked')[0]
+        const canvasId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+
+        const send = {canvasId}
+        
+        $.ajax({
+            type: "DELETE",
+            url: "/manager/del",
+            data: send,
+            success: function (data) {
+                if (data == 'true') {
+                    var indexToRemove = mngId.findIndex(id => id == canvasId)
+                    if (indexToRemove != -1) {
+                        mngId.splice(indexToRemove, 1)
+                        mngTitle.splice(indexToRemove, 1)
+                        mngUsers.splice(indexToRemove, 1)
+                    } else {
+                        indexToRemove = regId.findIndex(id => id == canvasId)
+                        regId.splice(indexToRemove, 1)
+                        regTitle.splice(indexToRemove, 1)
+                    }
+
+                    renderManageCanvas()
+                    removeMainSection()
+                    renderFbc(mngId, mngTitle, 'myControl')
+                    renderFbc(regId, regTitle, 'notMyControl')
+                } else {
+                    console.log('fail remove canvas')
+                }
+            }
+        })
+    }
+
+    function removeMainSection() {
+            const html = `
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>`
+            $('section').html(html)
+    }
+
     $('body').on('change', '.form-check-input', function() {
         const canvases = document.getElementsByClassName('manageUsersCanvas')
         if ($(this).is(':checked')) {
@@ -346,16 +512,6 @@
         </div></div>`
         $(this).parent().html(html)
     })
-
-    function validateEmail(email) {
-    	var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-    	var result = re.test(email.toLowerCase());
-    	if (!result) {
-    		alert("Please enter a valid email.");
-    		return false;
-    	}
-    	return true;
-    }
     
     $('body').on('click', '.manageUserContainer', function(e) {
         const name = e.target.classList
@@ -408,146 +564,6 @@
 	        })
     	}
     })
-
-
-    function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
-        for (let i = 0; i < mngTitle.length; i++){
-            manageCanvasContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
-        </div>`
-        }
-        manageCanvasContent += '</form></div>'
-        manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
-        <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title" >
-        <div class="input-group-append">
-            <button class="btn btn-primary" type="button" onclick="addNewCanvas()">Add</button>
-        </div></div>`
-
-        $(".modal-title").html("Manage Canvas")
-        $(".modal-body").html(manageCanvasContent)
-        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-    }
-
-    $('body').on('change', '#defaultCheck1', function() {
-        var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
-        
-        if (check == 1) {
-            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-        } else {
-            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-        }
-    })
-
-    function copyCanvas() {
-        const e = $('.form-check-input:checked')[0]
-        const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
-
-        const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
-        const title = old_title + "-copy"
-
-        // current canvas id, new title
-        const send = {canId, title}
-
-        $.ajax({
-            type: "POST",
-            url: "/canvas/copy",
-            data: send,
-            success: function (data) {
-                // get the same canvas with a new id back 
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push(data.users)
-                removeMainSection()
-                renderManageCanvas()
-                renderFbc()
-                }
-            
-        })
-    }
-
-    function addNewCanvas() {
-        const title = $('#newCanvas').val()
-        // send post request
-        const send = {title}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/add",
-            data: send,
-            success: function (data) {
-                // if (data == 'true') {
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push([])
-                removeMainSection()
-                renderManageCanvas()
-                renderFbc()
-                // } else {
-                //     console.log('fail add canvas')
-                }
-            
-        })
-    }
-
-    function removeCanvas() {
-        const selected = $('.form-check-input:checked')
-        const canvasId = []
-        for (let e of selected) {
-
-            const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
-            console.log(canId)
-            canvasId.push(canId)
-        }
-        const send = {canvasId}
-        console.log(send)
-        
-        $.ajax({
-            type: "DELETE",
-            url: "/manager/del",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    for (let canId of canvasId) {
-                        const indexToRemove = canvasIds.findIndex(id => id == canId)
-                        canvasTitles.splice(indexToRemove, 1)
-                        canvasIds.splice(indexToRemove, 1)
-                        canvasUsers.splice(indexToRemove, 1)
-                    }
-                    renderManageCanvas()
-                    removeMainSection()
-                    renderFbc()
-                } else {
-                    console.log('fail remove canvas')
-                }
-            }
-        })
-    }
-
-    function removeMainSection() {
-            const html = `
-        <div class="mt-4 mb-5">
-            <div class="d-flex mb-3">
-                <h3 class="ml-auto mr-auto">My Canvas</h3>
-            </div>
-            <div id="myControl" class="">
-            </div>
-        </div>
-        <hr>
-        <div class="mt-4 mb-5">
-            <div class="d-flex mb-3">
-                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
-            </div>
-            <div id="notMyControl" class="">
-            </div>
-        </div>`
-            $('section').html(html)
-    }
 
 </script>
 </body>
