@@ -550,7 +550,7 @@ app.get('/library/get', function(req, res){
 							var c = result[0];
 							var id = c.id
               var t = c.title;
-              if (c.owner == email){
+              if (c.email == email){
                 var user = c.users;
                 mngId.push(id);
                 mngTitle.push(t);
@@ -565,7 +565,7 @@ app.get('/library/get', function(req, res){
                 }else if (role == 3){  // send regular canvas and manager's canvas
                   res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
                 } else {  // send notification also
-                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
                 }
 							}
 							count ++;
@@ -679,7 +679,8 @@ app.post('/manager/add', function(req, res){
 
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
-		owner: owner,
+    owner: owner,
+    email: email,
     title: title,
     company:'',
 		users: empty,
