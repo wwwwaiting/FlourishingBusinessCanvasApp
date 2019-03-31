@@ -854,7 +854,11 @@ app.post('/admin/approve', function(req, res){
 app.get('/admin/get', function(req, res){
   res.clearCookie('id');
   var email = req.cookies.email;
-	User.find({'email':email}, function(err, result){
+  getAllCanvas(email, res);
+});
+
+function getAllCanvas(email, res){
+  User.find({'email':email}, function(err, result){
 		if (err) {
 			console.log(err);
 		} else {
@@ -896,7 +900,7 @@ app.get('/admin/get', function(req, res){
       })
 		}
 	});
-});
+};
 
 
 app.get('/admin/users', function(req, res){
@@ -933,7 +937,8 @@ app.get('/admin/users', function(req, res){
 
 app.post('/admin/edit', function(req, res){
   var type = req.body.type;
-  var user = req.body.user[0];
+  var user = req.body.user;			
+  var email = req.cookie.email;
   if (type === 'remove'){
     User.findOneAndDelete({email: user},function(err, deleted) {
       if (err) {
@@ -973,7 +978,7 @@ app.post('/admin/edit', function(req, res){
                         }else{
                           if (count2 === userList.length){
                             if (count === canvasList.length){
-                              res.send(tru);
+                              getAllCanvas(email, res);
                             }
                             count++;
                           }
