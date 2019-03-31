@@ -953,8 +953,8 @@ app.post('/admin/edit', function(req, res){
               res.send(fal);
             } else{
               if(can.email === user) {
-                console.log("it's admin");
-                Canvas.findOneAndDelete({_id: canvasList[i]}, function(err, del){
+                var count2 = 1;
+                Canvas.findOneAndDelete({_id: can.id}, function(err, del){
                   if(err){
                     console.log(err);
                     res.send(err);
@@ -962,25 +962,33 @@ app.post('/admin/edit', function(req, res){
                     console.log(canvasList[i]);
                     res.send(fal);
                   } else{
-                    console.log(del.users);
                     var userList = del.users;
                     for (j=0;j<userList.length;j++){
-                      User.findOneAndUpdate({_id: userList[j]}, {$pull: {canvas: canvasList[i]}},function(err, dele){
+                      User.findOneAndUpdate({email: userList[j]}, {$pull: {canvas: del.id}},function(err, dele){
                         if(err){
                           console.log(err);
                           res.send(err);
                         } else if (dele === null){
-                          res.send(fal);}
+                          res.send(fal);
+                        }else{
+                          if (count2 === userList.length){
+                            if (count === canvasList.length){
+                              res.send(tru);
+                            }
+                            count++;
+                          }
+                          count2++;
+                        }
                       })
                     }
                   }
                 })
+              }else{
+                if (count === canvasList.length){
+                  res.send(tru);
+                }
+                count ++;
               }
-              console.log(count);
-              if (count === canvasList.length){
-                res.send(tru);
-              }
-              count ++;
             }
           })
         }
