@@ -700,13 +700,11 @@ app.post('/manager/add', function(req, res){
 });
 
 // delete canvas from manager page
-app.delete('/manager/del', function(req, res){
+app.delete('/manager/del', function(req, res){            console.log(c);
 	var ids = req.body.canvasId;  //now is a list of canvasId
   var owner = req.cookies.email;
-	ids.forEach(function(id){
-    console.log("delete" + id)
-    
-		Canvas.findOneAndDelete({_id:id}, function(err, result){
+	for (var i = 0; i < ids.length; i++){
+		Canvas.findOneAndDelete({_id:ids[i]}, function(err, result){
 			if (err) {
         console.log("cant find canvas")
 				console.log(err);
@@ -721,32 +719,32 @@ app.delete('/manager/del', function(req, res){
         User.findOneAndUpdate({email:result.email}, {$pull:{canvas:id}}, function(err, result){});
 
 				// loop through to delete canvasId from users
-				u.forEach(function(email){
-					User.findOneAndUpdate({email:email}, {$pull: {canvas:id}}, function(err, result){
+				for (var i = 0; i < u.length; i++ ){
+					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
               console.log("cant find user")
 							console.log(err);
 							res.send(fal);
 						}
 					});
-				});
+				}
 
 				// loop through to delete stickies
-				s.forEach(function(sid){
-					Sticky.findOneAndDelete({_id:sid}, function(err, result){
+				for (var i = 0; i < s.length; i++){
+					Sticky.findOneAndDelete({_id:s[i]}, function(err, result){
 						if (err) {
               console.log("cant find sticky")
 							console.log(err);
 							res.send(fal);
 						}
 					});
-				});
+				}
         console.log("deleted everything")
 				// delete everything
 				res.send(tru);
 			}
 		});
-	});
+  }
 });
 
 // get user information for profile page
@@ -904,6 +902,39 @@ app.get('/admin/get', function(req, res){
             }
             if (count == cans.length){
               res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+            }
+            count ++;
+          }
+        }
+      })
+		}
+	});
+});
+
+
+app.get('/admin/users', function(req, res){
+  var email = req.cookies.email;
+	User.find({'email':email}, function(err, result){
+		if (err) {
+			console.log(err);
+		} else {
+      var Users = new Array();
+      let count = 1;
+      User.find(function(err, u){
+        if (err){
+          console.log(err);
+        }else{
+          if(u.length == 1 && u[0].email === email){
+            res.send([]);
+          }
+          // loop through all user list
+          for (let i = 0; i < u.length; i++){
+            var c = u[i];
+            if (c.email !== email){
+              Users.push(c.email)
+            } 
+            if (count == u.length){
+              res.send(Users);
             }
             count ++;
           }
