@@ -273,6 +273,7 @@ app.post('/canvas/copy', function(req, res){
     } else if (result.length !== 0) {
       var canvas = result[0];
       var users = canvas.users;
+      console.log(users);
       var newDate = new Date();
       var stickies = canvas.stickies;
       var newHis = {
@@ -295,16 +296,19 @@ app.post('/canvas/copy', function(req, res){
       if (err) {
         console.log(err);
       } else {
-        User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
+        var newCanvasId = created.id;
+        console.log(created.users);
+        User.findOneAndUpdate({email:req.cookies.email}, {$push:{canvas:newCanvasId}}, function(err, updated){
           if (err) {
             console.log(err);
           }
           else{
-            var result = {
-              'id': result.id,
-              'users':result.users
+            var re = {
+              'id': newCanvasId,
+              'users': created.users
             };
-            res.send(result);
+            console.log(re);
+            res.send(re);
           }
         });
       }
