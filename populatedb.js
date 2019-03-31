@@ -107,13 +107,13 @@ function createUsers(cb) {
                 userCreate('userA\xa0Baril', 'userA@gmail.com', '123', regUser, ['Patrick\'s Canvas'], 'Student', 2, '416788888', 'UofT',callback);
             },
             function (callback) {
-                userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Manager', 2, '4167777777', 'Company1',callback);
-            },
-            function (callback) {
-                userCreate('userD\xa0Bacchus', 'userD@gmail.com', '123', manager, ['Canvas for John'], 'Manager', 2, '', '',callback);////
+                userCreate('userB\xa0Meraji', 'userB@gmail.com', '123', manager, ['Patrick\'s Canvas', 'Canvas for Ben', 'Canvas for John'], 'Manager', 2, '4167777777', 'Company1',callback);
             },
             function (callback) {
                 userCreate('userC\xa0Milway', 'userC@gmail.com', '123', regUser, ['Canvas for Ben'], 'Assistant', 2, '4166666666', 'Company1',callback);
+            },
+            function (callback) {
+                userCreate('userD\xa0Bacchus', 'userD@gmail.com', '123', manager, ['Canvas for John'], 'Manager', 2, '', '',callback);////
             },
             function (callback) {
                 userCreate('Andrew\xa0Simpson', 'andrew@ecotonesoftware.com', 'admin', admin, ['Patrick\'s Canvas', 'Canvas for Ben'], 'Administrator', 2, '', '', callback);
