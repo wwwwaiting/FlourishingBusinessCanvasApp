@@ -11,6 +11,7 @@ require('./connect.js');
 require('./models/canvas.js');
 require('./models/sticky.js');
 require('./models/user.js');
+var async = require('async');
 
 //model name
 const User = mongoose.model('User');
@@ -864,10 +865,9 @@ app.get('/admin/get', function(req, res){
 });
 
 function getAllCanvas(email, res){
-  User.find({'email':email}, function(err, result){
-		if (err) {
-      console.log(err);
-		} else {
+  User.find({email:email}).exec()
+  .then(async function(result){
+    try {
       var user = result[0];
       var notification = user.notification;
 			var regTitle = new Array();
@@ -875,136 +875,92 @@ function getAllCanvas(email, res){
       var mngTitle = new Array();
       var mngId = new Array();
       var mngUsers = new Array();
-      let count = 1;
-      Canvas.find(function(err, cans){
-        if (err){
-          console.log(err);
-        }else{
-          if(cans.length == 0){
-            res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
-          }
-          // loop through all canvas list
-          for (let i = 0; i < cans.length; i++){
-            var c = cans[i];
-            var id = c.id
-            var t = c.title;
-            if (c.email == email){
-              var user = c.users;
-              mngId.push(id);
-              mngTitle.push(t);
-              mngUsers.push(user);
-            } else {
-              regTitle.push(t);
-              regId.push(id);
-            }
-            if (count == cans.length){
-              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
-            }
-            count ++;
-          }
+      const canvas = await Canvas.find().exec();
+      if(canvas.length == 0){
+        res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+      }
+      for (var i = 0; i < canvas.length; i++){
+        var c = canvas[i];
+        var id = c.id
+        var t = c.title;
+        if (c.email == email){
+          var user = c.users;
+          mngId.push(id);
+          mngTitle.push(t);
+          mngUsers.push(user);
+        } else {
+          regTitle.push(t);
+          regId.push(id);
         }
-      })
-		}
-	});
+        if ( i == canvas.length -1){
+          console.log({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
+          res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
+        }
+      }
+    }
+    catch (err) {
+      console.log(err);
+      res.send(err);
+    }
+  });
 };
 
 
 app.get('/admin/users', function(req, res){
   var email = req.cookies.email;
-	User.find({'email':email}, function(err, result){
-		if (err) {
-			console.log(err);
-		} else {
+  User.find({email:email}).exec()
+  .then(async function(){
+    try {
+      const users = await User.find({ status: 2 }).exec();
       var Users = new Array();
-      let count = 1;
-      User.find({status:2}, function(err, u){
-        if (err){
-          console.log(err);
-        }else{
-          if(u.length == 1 && u[0].email === email){
-            res.send([]);
-          }
-          // loop through all user list
-          for (let i = 0; i < u.length; i++){
-            var c = u[i];
-            if (c.email !== email){
-              Users.push(c.email)
-            } 
-            if (count == u.length){
-              res.send(Users);
-            }
-            count ++;
-          }
+      for (let i = 0; i < users.length; i++) {
+        var c = users[i];
+        if (c.email !== email) {
+          Users.push(c.email);
         }
-      })
-		}
-	});
-});
+        if (i == users.length - 1){
+          res.send(Users);
+        }
+      }
+    }
+    catch (err) {
+      console.log(err);
+      res.send(err);
+    }
+  });
+});    
 
 app.post('/admin/edit', function(req, res){
   var type = req.body.type;
   var user = req.body.user;			
   var email = req.cookies.email;
   if (type === 'remove'){
-    User.findOneAndDelete({email: user},function(err, deleted) {
-      if (err) {
-        console.log(err);
-        res.send(err);
-      } else if (deleted === null) {
-        res.send(fal);
-      }else{
-        let count = 1;
-        var canvasList = deleted.canvas;
-        for (i=0;i<canvasList.length;i++){
-          Canvas.findOneAndUpdate({_id: canvasList[i]}, {$pull: {users: user}}, function(err, can){
-            if(err){
-              console.log(err);
-              res.send(err);
-            } else if (can === null){
-              res.send(fal);
-            } else{
-              if(can.email === user) {
-                var count2 = 1;
-                Canvas.findOneAndDelete({_id: can.id}, function(err, del){
-                  if(err){
-                    console.log(err);
-                    res.send(err);
-                  } else if (del === null){
-                    console.log(canvasList[i]);
-                    res.send(fal);
-                  } else{
-                    var userList = del.users;
-                    for (j=0;j<userList.length;j++){
-                      User.findOneAndUpdate({email: userList[j]}, {$pull: {canvas: del.id}},function(err, dele){
-                        if(err){
-                          console.log(err);
-                          res.send(err);
-                        } else if (dele === null){
-                          res.send(fal);
-                        }else{
-                          if (count2 === userList.length){
-                            if (count === canvasList.length){
-                              getAllCanvas(email, res);
-                            }
-                            count++;
-                          }
-                          count2++;
-                        }
-                      })
-                    }
-                  }
-                })
-              }else{
-                if (count === canvasList.length){
-                  res.send(tru);
-                }
-                count ++;
-              }
-            }
-          })
-        }
-      }
-    });
+    User.findOneAndDelete({email: user}).exec()
+    .then(async function(result){
+      var canvasList = result.canvas;
+      console.log("here");
+      console.log(canvasList);
+      await async.forEach(canvasList, function(canvasId, callback){
+        Canvas.findOneAndUpdate({_id: canvasId}, {$pull: {users: user}}).exec()
+        .then(function(result){
+          if(result.email === user){
+            Canvas.findOneAndDelete({_id: result.id}).exec()
+            .then(async function(result){
+              var userList = result.users;
+              await async.forEach(userList,function(userEmail, callback){
+                User.findOneAndUpdate({email: userEmail}, {$pull: {canvas: canvasId}})
+              })
+            })
+          }
+        })
+      }); 
+      getAllCanvas(email, res);
+    })
+    .then(undefined, function(err){
+      //Handle error
+      console.log(err);
+      res.send(err);
+    })
   }else{
     var user = new User({
       name: '',
