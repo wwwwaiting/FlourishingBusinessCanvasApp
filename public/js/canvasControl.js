@@ -703,7 +703,7 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {
+        optionalFields: {
           wp: "",
           ws: "",
           me: "",
@@ -732,7 +732,7 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {
+        optionalFields: {
           wp: "",
           ws: "",
           me: "",
@@ -894,87 +894,120 @@ function loadJsonToCanvas(jsonOutput) {
 }
 
 function toggleStickyDetailBody(sticky) {
-    if ($('#editFormDetailBody').length > 0) { // detail body exists
-        $('#editFormDetailBody').remove();
-    } else {
-        $('#editFormHeader').append(`
+  if ($('#editFormDetailBody').length > 0) { // detail body exists
+    $('#editFormDetailBody').remove();
+  } else {
+    $('#editFormHeader').append(`
         <div class="modal-body" id="editFormDetailBody">
             <div id="editFormDetail">
                 <div class="input-group mb-3" id="wp">
                     <div class="input-group-prepend">
                         <span class="input-group-text">What Partnerships are required</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.wp}">
                 </div>
 
                 <div class="input-group mb-3" id="ws">
                     <div class="input-group-prepend">
                         <span class="input-group-text">What Skills are Required</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.ws}">
                 </div>
 
                 <div class="input-group mb-3" id="me">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Metrics</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.me}">
                 </div>
 
                 <div class="input-group mb-3" id="pl">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Plan to achieve</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.pl}">
                 </div>
 
                 <div class="input-group mb-3" id="go">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Goals with Dates</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.go}">
                 </div>
 
                 <div class="input-group mb-3" id="pe">
                     <div class="input-group-prepend">
                         <span class="input-group-text">People Responsible</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.pe}">
                 </div>
 
                 <div class="input-group mb-3" id="ro">
                     <div class="input-group-prepend">
                         <span class="input-group-text">ROI</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.ro}">
                 </div>
 
                 <div class="input-group mb-3" id="in">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Investment</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.in}">
                 </div>
 
                 <div class="input-group mb-3" id="re">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Revenue Potential</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.re}">
                 </div>
 
                 <div class="input-group mb-3" id="co">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Cost</span>
                     </div>
-                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.co}">
                 </div>
 
             </div>
-            <button type="button" class="btn btn-outline-secondary position-absolute" style="bottom:0.5rem; right:0.5rem">Save</button>
+            <button id="saveOptional" type="button" class="btn btn-outline-secondary position-absolute" style="bottom:0.5rem; right:0.5rem">Save</button>
         </div>
         `);
-    }
+
+    $("#saveOptional").on('click', function(e) {
+      const optionalFields = {
+        wp: $("#wp input").val(),
+        ws: $("#ws input").val(),
+        me: $("#me input").val(),
+        pl: $("#pl input").val(),
+        go: $("#go input").val(),
+        pe: $("#pe input").val(),
+        ro: $("#ro input").val(),
+        in: $("#in input").val(),
+        re: $("#re input").val(),
+        co: $("#co input").val()
+      }
+      $.ajax({
+        type: 'POST',
+        url: "/canvas/edit",
+        data: {
+          type: "optionalFields",
+          change: optionalFields,
+          canvasId: canvas.canvasId,
+          stickyId: sticky.stickyId
+        },
+        success: function(resultData) {
+          sticky.optionalFields = optionalFields;
+        },
+        error: function() {
+          alert("Something went wrong")
+        }
+      });
+
+      $('#editFormDetailBody').remove();
+    });
+  }
 }
 
 
@@ -1269,8 +1302,8 @@ function displayEditForm(sticky) {
     }
   })
 
-  $("#editFormDetailBodyToggle").click((sticky) => {
-        toggleStickyDetailBody(sticky);
+  $("#editFormDetailBodyToggle").click(() => {
+    toggleStickyDetailBody(sticky);
   });
 }
 

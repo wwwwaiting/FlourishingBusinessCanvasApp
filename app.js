@@ -69,7 +69,7 @@ const manager = 3;
 const admin = 4;
 
 const registrationRquest = new Array();
-const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
+const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment', 'optionalFields'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -338,6 +338,7 @@ app.delete('/canvas/delete', function(req, res){
 });
 
 app.post('/canvas/edit', function(req, res){
+  console.log(req.body);
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -381,13 +382,14 @@ app.post('/canvas/edit', function(req, res){
     }
     else{
       // update sticky information only
-      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},function(err, result){
+      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},{new:true},function(err, result){
         if (err) {
           console.log(err);
           res.send(fal);
         } else if (result == null){
           res.send(fal);
         }else{
+          console.log(result)
           createHistory(email, type, newDate, canvas, res);
         }
       });
