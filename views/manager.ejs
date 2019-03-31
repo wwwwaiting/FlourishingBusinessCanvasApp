@@ -48,7 +48,22 @@
         </div>
     </nav>
 
-    <section class="text-center mb-4 " id="post-TwoRow">
+    <section class="mb-4 container-fluid" id="post-TwoRow">
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>
     </section>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -119,53 +134,39 @@
                  mngTitle = data.mngTitle
                  mngId = data.mngId
                  mngUsers = data.mngUsers
-        		 renderFbc()
+
+                 console.log(mngId)
+                 console.log(mngUsers)
+                 console.log(mngTitle)
+                 console.log(regTitle)
+                 renderFbc(mngId, mngTitle, 'myControl')
+                 renderFbc(regId, regTitle, 'notMyControl')
              }
          })
-         console.log(currentUser)
     }
 
-    function renderFbc() {
+    function renderFbc(ids, titles, control) {
         const imgUrl = '/images/fbc.png'
-        for (let i = 0; i < regId.length; i++) {
+        for (let i = 0; i < ids.length; i++) {
             const html = `
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-                <a id="${regId[i]}" class="canvasClick" style="cursor:pointer">
+                <a id="${ids[i]}" class="canvasClick" style="cursor:pointer">
                     <div class="card shadow postCard">
                         <div class="image-constrain">
                             <img src="${imgUrl}" class="card-img-top post-img p-3">
                         </div>
                         <div class="card-body text-center">
-                            <h6 class="post-title font-weight-bold font-italic text-truncate">${regTitle[i]}</h6>
+                            <h6 class="post-title font-weight-bold font-italic text-truncate">${titles[i]}</h6>
                         </div>
                     </div>
                 </a>
             </div>`
             const rowNum = Math.ceil((i + 1) /4)
+            const rowId = `${control}${rowNum}`
             if (i % 4 == 0) {
-                $('#post-TwoRow').append(`<div id="row${rowNum}"class="row fadeIn post-row"></div>`)
+                $(`#${control}`).append(`<div id="${rowId}" class="row fadeIn post-row"></div>`)
             }
-            $(`#row${rowNum}`).append(html)
-        }
-        for (let i = 0; i < mngId.length; i++) {
-            const html = `
-            <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-                <a id="${mngId[i]}" class="canvasClick" style="cursor:pointer">
-                    <div class="card shadow postCard">
-                        <div class="image-constrain">
-                            <img src="${imgUrl}" class="card-img-top post-img p-3">
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="post-title font-weight-bold font-italic text-truncate">${mngTitle[i]}</h6>
-                        </div>
-                    </div>
-                </a>
-            </div>`
-            const rowNum = Math.ceil((i + 1) /4)
-            if (i % 4 == 0) {
-                $('#post-TwoRow').append(`<div id="row${rowNum}"class="row fadeIn post-row"></div>`)
-            }
-            $(`#row${rowNum}`).append(html)
+            $(`#${rowId}`).append(html)
         }
     }
 
@@ -202,7 +203,7 @@
                 }
                 manageUsersContent += `<div class="form-check">
                 <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${mngUserss[i][j]}</label></div>`
+                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
             <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>

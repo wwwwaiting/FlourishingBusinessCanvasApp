@@ -559,13 +559,14 @@ app.get('/library/get', function(req, res){
                 if (role == 2){   // only send regular canvas
                   res.send({regTitle: regTitle, regId: regId});
                 }else if (role == 3){  // send regular canvas and manager's canvas
-                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
+                console.log(mngId)
+                  res.send({regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers});
                 } else {  // send notification also
                   res.send({regTitle: regTitle, regId: regId, notification: notification});
                 }
 							}
 							count ++;
-						}
+            }
 					});
 				}
 			}
