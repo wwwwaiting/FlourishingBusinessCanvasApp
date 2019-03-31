@@ -226,7 +226,7 @@
                     }
                     manageUsersContent += `<div class="form-check">
                 <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
+                <label class="form-check-label">${mngUsers[i][j]}</label></div>`
                 }
                 manageUsersContent += `<div class="btnContainer" style="text-align:right">
             <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
@@ -242,18 +242,27 @@
         $('body').on('change', '.form-check-input', function () {
             const canvases = document.getElementsByClassName('manageUsersCanvas')
             if ($(this).is(':checked')) {
-                const canvasId = $(this).parent().parent().find('span').text()
-                console.log(canvasId)
-                // all the canvas divs in manage user form
+                // const canvasId = $(this).parent().parent().find('span').text()
+                // console.log(canvasId)
+                // // all the canvas divs in manage user form
 
-                for (let canvas of canvases) {
-                    if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
-                        const checkBoxes = canvas.getElementsByClassName('form-check-input')
-                        for (let checkbox of checkBoxes) {
-                            checkbox.disabled = true;
-                        }
+                // for (let canvas of canvases) {
+                //     if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
+                //         const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                //         for (let checkbox of checkBoxes) {
+                //             checkbox.disabled = true;
+                //         }
+                //     }
+                // }
+                const checkBoxes = $('.manageUserContainer').find('.form-check-input')
+                const curUser = $(this).next().text()
+                for (let c of checkBoxes) {
+                    let user = c.nextElementSibling.innerHTML
+                    if (user != curUser) {
+                        c.disabled = true;
                     }
                 }
+
             } else {
                 for (let canvas of canvases) {
                     const checkBoxes = canvas.getElementsByClassName('form-check-input')
@@ -349,23 +358,24 @@
                 return
             }
 
-            const usersToRemove = []
-            for (let e of selected) {
-                usersToRemove.push(e.nextElementSibling.innerHTML)
-            }
+            // const usersToRemove = []
+            // for (let e of selected) {
+            //     usersToRemove.push(e.nextElementSibling.innerHTML)
+            // }
             const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0]
                 .innerHTML
-            for (let i = 1; i < selected.length; i++) {
-                const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0]
-                    .innerHTML
-                if (tempId != canvasId) {
-                    console.log('Cannot remove users in different canvas simultaneously')
-                    return
-                }
-            }
+            // for (let i = 1; i < selected.length; i++) {
+            //     const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0]
+            //         .innerHTML
+            //     if (tempId != canvasId) {
+            //         console.log('Cannot remove users in different canvas simultaneously')
+            //         return
+            //     }
+            // }
+            const userToRemove = selected[0].nextElementSibling.innerHTML
 
 
-            const email = usersToRemove
+            const email = [userToRemove]
 
             //send POST request
             const type = "remove"
@@ -383,7 +393,7 @@
                 success: function (data) {
                     if (data == 'true') {
                         const index = mngId.findIndex(id => id == canvasId)
-                        mngUsers[index] = mngUsers[index].filter(u => !(usersToRemove.includes(u
+                        mngUsers[index] = mngUsers[index].filter(u => !(userToRemove.includes(u
                         .toString())))
                         renderManageUsers()
                     } else {
@@ -480,8 +490,6 @@
                     renderManageCanvas()
                     renderFbc(mngId, mngTitle, 'myControl')
                     renderFbc(regId, regTitle, 'notMyControl')
-                    // } else {
-                    //     console.log('fail add canvas')
                 }
 
             })

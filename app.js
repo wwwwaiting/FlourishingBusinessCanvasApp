@@ -699,7 +699,8 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var id = req.body.canvasId;  //now is a list of canvasId
+  console.log(req);
+	var id = req.query.canvasId;  //now is a list of canvasId
   Canvas.findOneAndDelete({ _id: id }, function (err, result) {
     if (err) {
       console.log("cant find canvas")
