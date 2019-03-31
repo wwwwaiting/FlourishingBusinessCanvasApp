@@ -454,8 +454,8 @@
             console.log(canId)
             canvasId.push(canId)
         }
-
-        const send = {canvasId}
+        const type = "manager"
+        const send = {canvasId, type}
         console.log(send)
         
         $.ajax({
