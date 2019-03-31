@@ -54,6 +54,9 @@ io.on("connection", (socket) => {
   socket.on('stickyUpdateContent', function(data) {
     socket.broadcast.emit('stickyUpdateContent', data);
   });
+  socket.on('stickyUpdateOptional', function(data) {
+    socket.broadcast.emit('stickyUpdateOptional', data);
+  });
   socket.on('disconnect', function() {
     console.log("Socket has disconnected");
   });
@@ -65,7 +68,8 @@ const tru = 'true';
 const regUser = 2;
 const manager = 3;
 const admin = 4;
-const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
+const registrationRquest = new Array();
+const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment', 'optionalFields'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -398,6 +402,7 @@ app.delete('/canvas/delete', function(req, res){
 });
 
 app.post('/canvas/edit', function(req, res){
+  console.log(req.body);
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -441,13 +446,14 @@ app.post('/canvas/edit', function(req, res){
     }
     else{
       // update sticky information only
-      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},function(err, result){
+      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},{new:true},function(err, result){
         if (err) {
           console.log(err);
           res.send(fal);
         } else if (result == null){
           res.send(fal);
         }else{
+          console.log(result)
           createHistory(email, type, newDate, canvas, res);
         }
       });
@@ -676,7 +682,6 @@ app.post('/manager/add', function(req, res){
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
-      console.log("hi")
 			console.log(err);
 		} else {
 			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){

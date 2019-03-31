@@ -35,6 +35,9 @@
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getProfile()">Profile</button>
                 </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" onclick="getLogin()">Log Out</button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -66,6 +69,11 @@
 
     function getProfile() {
         window.location.href = '/profile'
+    }
+
+    function getLogin(){
+    	window.location.href = '/login'
+    	deleteAllCookies()
     }
 
     // Used to call functions after page is fully loaded.
