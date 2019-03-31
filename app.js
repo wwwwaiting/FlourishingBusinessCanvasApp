@@ -280,6 +280,7 @@ app.post('/canvas/copy', function(req, res){
       var newCanvas = new Canvas(
         {
           owner: canvas.owner,
+          email: req.cookies.email,
           title: newTitle,
           company:canvas.company,
           users: users,
