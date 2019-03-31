@@ -62,7 +62,6 @@ io.on("connection", (socket) => {
 const fal = 'false';
 const denied = 'denied';
 const tru = 'true';
-const newReg = 1;
 const regUser = 2;
 const manager = 3;
 const admin = 4;
@@ -173,7 +172,7 @@ app.post('/register', function(req, res) {
                 name: name,
                 email: email,
                 pwd: pwd,
-                role: newReg,
+                role: regUser,
                 canvas: canvasList,
                 occupation: '',
                 status: 1,
@@ -196,7 +195,7 @@ app.post('/register', function(req, res) {
                     } else if (updated == null){
                       res.send(fal);
                     } else{
-                      res.send(newReg.toString()); 
+                      res.send(regUser.toString()); 
                     };
                   });
                 }
@@ -830,10 +829,10 @@ app.post('/admin/decline', function(req, res){
 });
 
 // get user information that the admin wants to approve the register request
-app.post('/admin/approve', function(req, res){
+app.post('/admin/accept', function(req, res){
   var adminEmail = req.cookies.email;
-	var email = req.body.email;
-	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
+  var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {status:2}, function(err, result){
 		if (err) {
 			console.log(err);
 			res.send(fal);

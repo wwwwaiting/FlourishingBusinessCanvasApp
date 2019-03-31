@@ -88,6 +88,7 @@
 <script type="text/javascript">
     "use strict"
     console.log("popup.js")
+    const dataFormat = { year: 'numeric', month: 'short', day: 'numeric' };
 
     let regTitle = []
     let regId = []
@@ -195,6 +196,121 @@
         })
 
     })
+
+    function getNotification() {
+        $.ajax({
+            type: "GET",
+            url: "/admin/notification",
+            success: function (data) {
+                notification = data
+
+                let notificationContent = '<div class="modal-body notificationContainer" id="notificationList">'
+
+                for (let i = 0; i < notification.length; i++){
+                    const noti = notification[i]
+                    const notiToString = noti.userName + '<br>' + noti.userEmail + '<br>' + new Date(noti.userTime).toLocaleDateString("en-US", dataFormat)
+                    
+                    notificationContent += `<div class="form-check">
+                    <input class="form-check-input semantic" type="checkbox">
+                    <label class="form-check-label">${notiToString}</label></div>`
+                }
+
+                $(".modal-title").html("Manage Notifications")
+                $(".modal-body").html(notificationContent)
+                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="acceptUser()">Accept</button>
+                        <button type="button" class="btn btn-primary" onclick="declineUser()">Decline</button>`)
+            }
+        })
+    }
+
+    $('body').on('change', '#notificationList', function() {
+        const length = $('#notificationList').find('input[type=checkbox]').length
+
+        if ($('#notificationList').find('input[type=checkbox]:checked').length == 1) {
+            for (let i = 0; i < length; i++) {
+                if (!$('#notificationList').find('input[type=checkbox]')[i].checked) {
+                    $('#notificationList').find('input[type=checkbox]')[i].disabled = true;
+                }
+            }
+        } else {
+            for (let i = 0; i < length; i++) {
+                if (!$('#notificationList').find('input[type=checkbox]')[i].checked) {
+                    $('#notificationList').find('input[type=checkbox]')[i].disabled = false;
+                }
+            }
+        }
+    })
+
+    function acceptUser() {        
+        const selected = $('#notificationList').find('input[type=checkbox]:checked')
+        if (selected.length == 0) {
+            alert("No User Selected.")
+            return
+        }
+
+        const user = selected[0].nextElementSibling.innerHTML
+        const email = user.split("<br>")[1]
+
+        const send = {email}
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/accept",
+            data: send,
+            success: function (data) {
+                if (data == 'true') {
+                    Email.send({
+                        Host: "smtp.elasticemail.com",
+                        Username: "wangluya2014@gmail.com",
+                        Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                        To: email,
+                        From: "wangluya2014@gmail.com",
+                        Subject: "This is the subject",
+                        Body: "You are accepted!"
+                    });
+                    getNotification()
+                } else {
+                    console.log('fail to accept user')
+                }
+            }
+        })
+    }
+
+    function declineUser() {        
+        const selected = $('#notificationList').find('input[type=checkbox]:checked')
+        if (selected.length == 0) {
+            alert("No User Selected.")
+            return
+        }
+
+        const user = selected[0].nextElementSibling.innerHTML
+        const email = user.split("<br>")[1]
+
+        const send = {email}
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/decline",
+            data: send,
+            success: function (data) {
+                if (data == 'true') {
+                    Email.send({
+                        Host: "smtp.elasticemail.com",
+                        Username: "wangluya2014@gmail.com",
+                        Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                        To: email,
+                        From: "wangluya2014@gmail.com",
+                        Subject: "This is the subject",
+                        Body: "You are declined..."
+                    });
+                    getNotification()
+                } else {
+                    console.log('fail to decline user')
+                }
+            }
+        })
+    }
 
     function renderManageUsers() {
         $.ajax({
@@ -379,7 +495,7 @@
 
     function addNewCanvas() {
         const title = $('#newCanvas').val()
-        
+
         const send = {title}
 
         $.ajax({
@@ -479,30 +595,30 @@
             $('section').html(html)
     }
 
-    $('body').on('change', '.form-check-input', function() {
-        const canvases = document.getElementsByClassName('manageUsersCanvas')
-        if ($(this).is(':checked')) {
-            const canvasId = $(this).parent().parent().find('span').text()
-            console.log(canvasId)
-            // all the canvas divs in manage user form
+    // $('body').on('change', '.form-check-input', function() {
+    //     const canvases = document.getElementsByClassName('manageUsersCanvas')
+    //     if ($(this).is(':checked')) {
+    //         const canvasId = $(this).parent().parent().find('span').text()
+    //         console.log(canvasId)
+    //         // all the canvas divs in manage user form
             
-            for (let canvas of canvases) {
-                if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
-                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
-                    for (let checkbox of checkBoxes) {
-                        checkbox.disabled = true;
-                    }
-                }
-            }
-        } else {
-            for (let canvas of canvases) {
-                const checkBoxes = canvas.getElementsByClassName('form-check-input')
-                for (let checkbox of checkBoxes) {
-                    checkbox.disabled = false;
-                }
-            }
-        }
-    })
+    //         for (let canvas of canvases) {
+    //             if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
+    //                 const checkBoxes = canvas.getElementsByClassName('form-check-input')
+    //                 for (let checkbox of checkBoxes) {
+    //                     checkbox.disabled = true;
+    //                 }
+    //             }
+    //         }
+    //     } else {
+    //         for (let canvas of canvases) {
+    //             const checkBoxes = canvas.getElementsByClassName('form-check-input')
+    //             for (let checkbox of checkBoxes) {
+    //                 checkbox.disabled = false;
+    //             }
+    //         }
+    //     }
+    // })
 
     $('body').on('click', 'button.addUserPrompt', function() {
         const html = `<div class="input-group">
