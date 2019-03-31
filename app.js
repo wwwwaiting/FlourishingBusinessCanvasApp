@@ -931,7 +931,7 @@ app.get('/admin/users', function(req, res){
 	});
 });
 
-app.get('/admin/edit', function(req, res){
+app.post('/admin/edit', function(req, res){
   var type = req.body.type;
   var user = req.body.user[0];
   if (type === 'remove'){
@@ -953,13 +953,16 @@ app.get('/admin/edit', function(req, res){
               res.send(fal);
             } else{
               if(can.email === user) {
+                console.log("it's admin");
                 Canvas.findOneAndDelete({_id: canvasList[i]}, function(err, del){
                   if(err){
                     console.log(err);
                     res.send(err);
                   } else if (del === null){
+                    console.log(canvasList[i]);
                     res.send(fal);
                   } else{
+                    console.log(del.users);
                     var userList = del.users;
                     for (j=0;j<userList.length;j++){
                       User.findOneAndUpdate({_id: userList[j]}, {$pull: {canvas: canvasList[i]}},function(err, dele){
@@ -973,6 +976,7 @@ app.get('/admin/edit', function(req, res){
                   }
                 })
               }
+              console.log(count);
               if (count === canvasList.length){
                 res.send(tru);
               }

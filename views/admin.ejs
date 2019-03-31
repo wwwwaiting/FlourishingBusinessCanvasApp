@@ -33,10 +33,16 @@
         <div class="container"><h1>Flourishing Business Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Manage users</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Users</button>
                 </li>
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Canvases</button>
+                </li>
+                <li class="nav-item ml-2">
+                        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getNotification()">Notification</button>
+                </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getInvitation()">Invitation</button>
                 </li>
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" onclick="getProfile()">Profile</button>
@@ -196,26 +202,91 @@
     })
 
     function renderManageUsers() {
-
-        let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
-        for(let i = 0; i < mngTitle.length; i++){
-            manageUsersContent += `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
-            for (let j = 0; j < mngUsers[i].length; j++){
-                if ((mngUsers[i][j]) == currentUser) {
-                    continue;
+        $.ajax({
+            type: "GET",
+            url: "/admin/users",
+            success: function (data) {
+                let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
+                for (let i = 0; i < data.length; i++){
+                    const user = data[i]
+                    
+                    manageUsersContent += `<div class="form-check">
+                    <input class="form-check-input semantic" type="checkbox">
+                    <label class="form-check-label" for="defaultCheck1">${user}</label></div>`
                 }
-                manageUsersContent += `<div class="form-check">
-                <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
+
+                $(".modal-title").html("Manage users")
+                $(".modal-body").html(manageUsersContent)
+                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
             }
-            manageUsersContent += `<div class="btnContainer" style="text-align:right">
-            <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
-            <button type="button" class="btn btn-light semantic" onclick="removeUsers()">Remove</button></div></div>`
+        })
+    }
+
+    function removeUsers() {
+        const selected = $('.form-check-input:checked')
+        if (selected.length == 0) {
+            alert("No User Selected.")
+            return
         }
-        manageUsersContent += '</form></div>'
-        $(".modal-title").html("Manage users")
-        $(".modal-body").html(manageUsersContent)
+        
+        // if (selected.length > 1) {
+
+        // }
+
+        const usersToRemove = []
+        for (let e of selected) {
+            usersToRemove.push(e.nextElementSibling.innerHTML)
+        }
+
+        //send POST request
+        const type = "remove"
+        const user = usersToRemove
+        const send = {type, user}
+        
+        $.ajax({
+            type: "POST",
+            url: "/admin/edit",
+            data: send,
+            success: function (data) {
+                if (data == 'true') {
+                    renderManageUsers()
+                } else {
+                    console.log('fail to remove user')
+                }
+            }
+        })
+    }
+
+    function getInvitation() {
+        let manageInvitation = `<div class="modal-body manageInvitation">
+                <div id="newInvitationInputContainer" class="input-group">
+                <input id="newInvitation" type="text" class="form-control" placeholder="Enter email...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" onclick="addUser()">Add</button>
+                </div></div></div>`
+
+        $(".modal-title").html("Manage invitations")
+        $(".modal-body").html(manageInvitation)
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+    }
+
+    function addUser() {
+        const type = "add"
+        const user = document.querySelector("#newInvitation").value;
+        const send = {type, user}
+
+        $.ajax({
+            type: "POST",
+            url: "/admin/edit",
+            data: send,
+            success: function (data) {
+                if (data == 'true') {
+                    getInvitation()
+                } else {
+                    console.log('fail to add user')
+                }
+            }
+        })
     }
 
     $('body').on('change', '.form-check-input', function() {
@@ -315,54 +386,6 @@
     })
 
 
-    function removeUsers() {
-        const selected = $('.form-check-input:checked')
-        if (selected.length == 0) {
-            alert("No User Selected.")
-            return
-        }
-
-        const usersToRemove = []
-        for (let e of selected) {
-            usersToRemove.push(e.nextElementSibling.innerHTML)
-        }
-        const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
-        for (let i = 1; i < selected.length; i++) {
-				const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
-        		if (tempId != canvasId) {
-					console.log('Cannot remove users in different canvas simultaneously')
-					return        		
-        		}        
-        }
-        
-
-        // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-        console.log(canvasUsers)
-        // renderManageUsers()
-        const email = usersToRemove
-        
-        //send POST request
-        const type = "remove"
-        const send = {type, canvasId, email}
-        console.log(send)
-        
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-                    renderManageUsers()
-                } else {
-                    console.log('fail remove user')
-                }
-            }
-        })
-    }
-
-
     function renderManageCanvas(){
         let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
         for (let i = 0; i < mngTitle.length; i++){
@@ -393,7 +416,7 @@
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
         } else {
             $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+                        <button type="button" class="btn btn-primary" onclick="removeUsers()">Remove</button>`)
         }
     })
 
