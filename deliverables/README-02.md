@@ -36,7 +36,7 @@ Additionally, when user **single click** a sticky, under the header they will be
 
 **Export**
 
-On the canvas page, users can export their canvas to pdf format
+On the canvas page, users can export their canvas to json, svg, png, or pdf format.
 
 **Manage canvas**
 
@@ -61,9 +61,25 @@ All users can change their profile information in the library page.
 
 This is the first page users will reach in our website. 
 
-Our website is designed to be a private page, therefore, a user should receive our partner(admin)'s invitation email in order to sign up for an account. 
+Users who receive invitation emails from our partner (admin) will register as manager by entering the email which they receive the invitation. For other regular users, they'll need to wait for approval once they finish signing up. 
 
-**Library page(Manager)**
+After successfully signing in, users will first move to the library page.
+
+**Library page (Admin)**
+
+Click any FBC shown under the header will direct user to the main canvas page of a specific FBC.
+
+On the right side of the header there are six buttons, **Users**, **Canvases**, **Notification**, **Invitation**, **Profile**, and **Log Out**.
+
+By clicking **Users**, all users that have successfully signed up will be shown, admin can then select the user(s) that he/she wants to **remove**.
+
+By clicking **Canvases**, all the canvases, including both admin's and the other users' will be shown, admin can then choose to **copy**, **add**, or **remove** canvases.
+
+By clicking **Notification**, all the users who registered but have not been approved will be shown, admin can choose to approve or decline the users.
+
+By clicking **Profile**, admin will be moved to the profile page.
+
+**Library page (Manager)**
 
 Click any FBC shown under the header will direct user to the main canvas page of a specific FBC.
 
@@ -75,7 +91,7 @@ By clicking **Manage canvas**, manager can **add** a new canvas by entering the 
 
 By clicking **Profile**, manager will be moved to the profile page.
 
-**Library page(User)**
+**Library page (User)**
 
 All functionalities are the same as **Library page(Manager)** except that a regular user cannot manage other users or canvases. 
 
@@ -89,21 +105,21 @@ When clicking **Want to change password?**, users can change password by enterin
 
 When users are successfully logged in to our website, through the library page they will be able to move to the canvas page.
 
-Besides the arrow button, we have an input box where users can enter the content they want and create a new sticky by pressing the "**New Sticky**" button.
+On the very left of the page, the **My Canvases** button will move users back to their library page.
+
+Under My Canvases, we have an input box where users can enter the content, title and color they want and create a new sticky by pressing the "**New Sticky**" button.
 
 Once a sticky is created, users can drag it to their desired boxes. The sticky will automatically positioned meaning if it is dragged to the middle of two boxes, it will be moved in to the box that is the closest to it.
 
 User can also **double click** a sticky to modify its **color**, **content**, add **comment** or **delete** it entirely.
 
-Additionally, when user **single click** a sticky, under the header they will be an extra box displaying all the stickies under the box where the current selected sticky is in. This is useful when there are too many stickies in a box.
+Additionally, when user **single click** a sticky, under the header they will be an extra box on the left side of the page displaying all the stickies under the box where the current selected sticky is in. This is useful when there are too many stickies in a box.
 
-Furthermore, on the right side of the header, users can input the **first name** and **last name** of the creator of this page, **export** the FBC and **search** within the canvas. For now, search function can only display the stickies that has the keyword under the search bar but not able to transition to them.
-
-
+Furthermore, on the right side of the header, users can input the **title** of the FBC and **name** of the creator, **export** the FBC as json, svg, png or pdf. Or **search** within the canvas. 
 
  * How do you access it? Are accounts pre-created or does a user register? Where do you start? etc. 
 
-Note: which page should a user go when manager added him/her to a canvas?
+Users who receive invitation emails from our partner (admin) will register as manager by entering the email which they receive the invitation. For other regular users, they'll need to wait for approval once they finish signing up. 
 
  * Provide clear steps for using each feature described above
 
