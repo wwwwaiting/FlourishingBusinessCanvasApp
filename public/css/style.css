@@ -77,9 +77,9 @@ body {
     margin-bottom: 10px;
 }
 
-.modal-title {
+/* .modal-title {
     margin: 0 auto;
-}
+} */
 
 textarea {
     /* background-color: yellow; */
@@ -182,8 +182,8 @@ textarea {
 #sidepanel {
     z-index: 1020; /* Stay on top */
     width: 12rem;
-    height: calc(100% - 120px);
-    top: 102px;
+    height: calc(100% - 170px);
+    top: 148px;
     left: 0;
     overflow: hidden;
 }
@@ -310,16 +310,39 @@ textarea {
 }
 
 .userWrap {
-    font-size:17px;
+    font-size:12px;
 }
 
 .dateWrap {
-    font-size:10px;
+    font-size:12px;
     font-style: italic;
-    padding-left:10px;
+    color: #6c757d;
+    padding-left: 0.5rem;
 }
 
 .commentWrap {
     font-size:15px;
-    padding-left:15px;
+    padding-left: 0.5rem;
+}
+
+#editFormDetailBody {
+    position: absolute!important;
+    z-index: 1030;
+    top: 4rem;
+    left: 0.5rem;
+    background-color: whitesmoke;
+    width: 530px;
+    height: 270px;
+    box-shadow: 0 4px 7px 0px #88888863;
+}
+
+#editFormDetail {
+    padding-top: 0.5rem;
+    padding-right: 0.5rem;
+    height: 200px;
+    overflow: scroll;
+}
+
+.input-group-text{
+    font-size: 12px!important;
 }

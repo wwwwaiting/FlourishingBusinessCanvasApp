@@ -78,7 +78,8 @@ function initialize_canvas(data) {
       originY: 'top',
       title: sticky.title,
       content: sticky.content,
-      comment: sticky.comment
+      comment: sticky.comment,
+      optionalFields: sticky.optionalFields
     }
     const newSticky = new Sticky(options);
     newSticky.item(0).set('fill', sticky.color);
@@ -424,6 +425,18 @@ const Sticky = fabric.util.createClass(fabric.Group, {
       mb: true,
       mtr: false
     });
+    this.set("optionalFields", options.optionalFields || {
+      wp: "",
+      ws: "",
+      me: "",
+      pl: "",
+      go: "",
+      pe: "",
+      ro: "",
+      in: "",
+      re: "",
+      co: ""
+    });
     this.set("isMoving", false);
     this.set("isResizing", false);
 
@@ -690,7 +703,18 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {}
+        optionalFields: {
+          wp: "",
+          ws: "",
+          me: "",
+          pl: "",
+          go: "",
+          pe: "",
+          ro: "",
+          in: "",
+          re: "",
+          co: ""
+        }
       }
     },
     success: function(resultData) {
@@ -708,7 +732,18 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {}
+        optionalFields: {
+          wp: "",
+          ws: "",
+          me: "",
+          pl: "",
+          go: "",
+          pe: "",
+          ro: "",
+          in: "",
+          re: "",
+          co: ""
+        }
       })
     },
     error: function() {
@@ -858,17 +893,142 @@ function loadJsonToCanvas(jsonOutput) {
   canvas.loadFromJSON(jsonOutput);
 }
 
+function toggleStickyDetailBody(sticky) {
+  if ($('#editFormDetailBody').length > 0) { // detail body exists
+    $('#editFormDetailBody').remove();
+  } else {
+    $('#editFormHeader').append(`
+        <div class="modal-body" id="editFormDetailBody">
+            <div id="editFormDetail">
+                <div class="input-group mb-3" id="wp">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">What Partnerships are required</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.wp}">
+                </div>
+
+                <div class="input-group mb-3" id="ws">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">What Skills are Required</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.ws}">
+                </div>
+
+                <div class="input-group mb-3" id="me">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Metrics</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.me}">
+                </div>
+
+                <div class="input-group mb-3" id="pl">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Plan to achieve</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.pl}">
+                </div>
+
+                <div class="input-group mb-3" id="go">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Goals with Dates</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.go}">
+                </div>
+
+                <div class="input-group mb-3" id="pe">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">People Responsible</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.pe}">
+                </div>
+
+                <div class="input-group mb-3" id="ro">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">ROI</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.ro}">
+                </div>
+
+                <div class="input-group mb-3" id="in">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Investment</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.in}">
+                </div>
+
+                <div class="input-group mb-3" id="re">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Revenue Potential</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.re}">
+                </div>
+
+                <div class="input-group mb-3" id="co">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Cost</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1" value="${sticky.optionalFields.co}">
+                </div>
+
+            </div>
+            <button id="saveOptional" type="button" class="btn btn-outline-secondary position-absolute" style="bottom:0.5rem; right:0.5rem">Save</button>
+        </div>
+        `);
+
+    $("#saveOptional").on('click', function(e) {
+      const optionalFields = {
+        wp: $("#wp input").val(),
+        ws: $("#ws input").val(),
+        me: $("#me input").val(),
+        pl: $("#pl input").val(),
+        go: $("#go input").val(),
+        pe: $("#pe input").val(),
+        ro: $("#ro input").val(),
+        in: $("#in input").val(),
+        re: $("#re input").val(),
+        co: $("#co input").val()
+      }
+      $.ajax({
+        type: 'POST',
+        url: "/canvas/edit",
+        data: {
+          type: "optionalFields",
+          change: optionalFields,
+          canvasId: canvas.canvasId,
+          stickyId: sticky.stickyId
+        },
+        success: function(resultData) {
+          sticky.optionalFields = optionalFields;
+          socket.emit('stickyUpdateOptional', {
+            change: sticky.optionalFields,
+            stickyId: sticky.stickyId
+          })
+        },
+        error: function() {
+          alert("Something went wrong")
+        }
+      });
+
+      $('#editFormDetailBody').remove();
+    });
+  }
+}
+
+
 // handling all the editing/deleting/comments of sticky
 function displayEditForm(sticky) {
   console.log(sticky)
   const html = `
     <div id="editForm" class="modal-content" style="background-color:${sticky.item(0).fill}">
-        <div class="modal-header border-0">
-            <h5 class="modal-title">Sticky Information</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <div class="modal-header border-0" id="editFormHeader">
+            <h5 class="modal-title">${sticky.title}</h5>
+            <button type="button" class="btn pt-3 pb-3" style="margin: -1rem 0rem -1rem auto; box-shadow:none" id="editFormDetailBodyToggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#6c757d" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></button>
+            <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
             </button>
         </div>
+
         <div class="modal-body">
             <div id="textboxContainer">
                 <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
@@ -877,7 +1037,8 @@ function displayEditForm(sticky) {
                 <div id="editColorRow" class="colorRow d-flex position-relative btn-group btn-group-toggle ml-auto" data-toggle="buttons"></div>
                 <button class="btn btn-outline-secondary editFormBtns mr-auto btn-sm" id="deleteBtn" type="button">Delete</button>
             </div>
-            <p>Comments: </p>
+            <p>Comments</p>
+            <hr>
             <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer" class="input-group">
@@ -981,17 +1142,16 @@ function displayEditForm(sticky) {
           success: function(resultData) {
             console.log(resultData)
             sticky.comments.splice(index, 1)
+            socket.emit('stickyUpdateComment', {
+              change: sticky.get('comments'),
+              stickyId: sticky.get('stickyId')
+            })
           },
           error: function() {
             alert("Something went wrong")
           }
         });
       }
-
-      socket.emit('stickyUpdateComment', {
-        change: sticky.get('comments'),
-        stickyId: sticky.get('stickyId')
-      })
 
       $(this).parent().remove()
     })
@@ -1045,6 +1205,10 @@ function displayEditForm(sticky) {
               success: function(resultData) {
                 console.log(resultData);
                 sticky.comments.splice(index, 1)
+                socket.emit('stickyUpdateComment', {
+                  change: sticky.get('comments'),
+                  stickyId: sticky.get('stickyId')
+                })
               },
               error: function() {
                 alert("Something went wrong")
@@ -1052,17 +1216,15 @@ function displayEditForm(sticky) {
             });
           }
 
-          socket.emit('stickyUpdateComment', {
-            change: sticky.get('comments'),
-            stickyId: sticky.get('stickyId')
-          })
-
           $(this).parent().remove()
         })
         $('#commentContent').remove()
         $('#commentInputContainer').prepend(`<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}; border: 1px solid #6c757d">`)
         scrollToBottom("#commentContainer");
-
+        socket.emit('stickyUpdateComment', {
+          change: sticky.get('comments'),
+          stickyId: sticky.get('stickyId')
+          })
       },
       error: function() {
         alert("Something went wrong")
@@ -1146,6 +1308,9 @@ function displayEditForm(sticky) {
     }
   })
 
+  $("#editFormDetailBodyToggle").click(() => {
+    toggleStickyDetailBody(sticky);
+  });
 }
 
 function scrollToBottom(containerId) {
@@ -1568,6 +1733,11 @@ socket.on('stickyUpdateContent', function stickyUpdateContent(result) {
   // console.log('got: ', result);
   const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
   stickyContentEditCore(changingSticky, result.change)
+});
+socket.on('stickyUpdateOptional', function stickyUpdateOptional(result) {
+  // console.log('got: ', result);
+  const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+  changingSticky.set('optionalFields', result.change);
 });
 
 $('#canvasHeader').on('show.bs.collapse', function() {
