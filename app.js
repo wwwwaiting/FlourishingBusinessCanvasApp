@@ -933,7 +933,7 @@ app.get('/admin/users', function(req, res){
 
 app.get('/admin/edit', function(req, res){
   var type = req.body.type;
-  var user = req.body.user;
+  var user = req.body.user[0];
   if (type === 'remove'){
     User.findOneAndDelete({email: user},function(err, deleted) {
       if (err) {
