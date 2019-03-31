@@ -865,70 +865,70 @@ function toggleStickyDetailBody(sticky) {
         $('#editFormHeader').append(`
         <div class="modal-body" id="editFormDetailBody">
             <div id="editFormDetail">
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="wp">
                     <div class="input-group-prepend">
                         <span class="input-group-text">What Partnerships are required</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="ws">
                     <div class="input-group-prepend">
                         <span class="input-group-text">What Skills are Required</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="me">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Metrics</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="pl">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Plan to achieve</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="go">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Goals with Dates</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="pe">
                     <div class="input-group-prepend">
                         <span class="input-group-text">People Responsible</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="ro">
                     <div class="input-group-prepend">
                         <span class="input-group-text">ROI</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="in">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Investment</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="re">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Revenue Potential</span>
                     </div>
                     <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
                 </div>
 
-                <div class="input-group mb-3">
+                <div class="input-group mb-3" id="co">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Cost</span>
                     </div>
