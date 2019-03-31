@@ -813,8 +813,23 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
+// get notifications of the register request
+app.get('/admin/notification', function(req, res){
+	var email = req.cookies.email;
+  User.find({email: email},function(err, result) {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    } else if (result.length === 0) {
+      res.send(fail);
+    } else {
+      res.send(result.notification);
+    }
+  });
+});
+
 // get user information that the admin wants to decline the register request
-app.get('/admin/decline', function(req, res){
+app.post('/admin/decline', function(req, res){
   var adminEmail = req.cookies.email;
 	var email = req.body.email;
 	User.findOneAndUpdate({email:email}, {$set: {status:0}}, function(err, result){
@@ -835,7 +850,7 @@ app.get('/admin/decline', function(req, res){
 });
 
 // get user information that the admin wants to approve the register request
-app.get('/admin/approve', function(req, res){
+app.post('/admin/approve', function(req, res){
   var adminEmail = req.cookies.email;
 	var email = req.body.email;
 	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
