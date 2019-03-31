@@ -683,6 +683,7 @@ app.post('/manager/add', function(req, res){
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
+      console.log("hi")
 			console.log(err);
 		} else {
 			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
@@ -698,11 +699,14 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var ids = req.body.canvasId;  //now is a list of canvasId
+  var ids = req.body.canvasId;  //now is a list of canvasId
+  console.log(ids)
 	var owner = req.cookies.email;
 	ids.forEach(function(id){
+    console.log("delete" + id)
 		Canvas.findOneAndDelete({_id:id}, function(err, result){
 			if (err) {
+        console.log("cant find canvas")
 				console.log(err);
 				res.send(fal);
 			} else {
@@ -715,6 +719,7 @@ app.delete('/manager/del', function(req, res){
 				u.forEach(function(email){
 					User.findOneAndUpdate({email:email}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
+              console.log("cant find user")
 							console.log(err);
 							res.send(fal);
 						}
@@ -725,6 +730,7 @@ app.delete('/manager/del', function(req, res){
 				s.forEach(function(sid){
 					Sticky.findOneAndDelete({_id:sid}, function(err, result){
 						if (err) {
+              console.log("cant find sticky")
 							console.log(err);
 							res.send(fal);
 						}
