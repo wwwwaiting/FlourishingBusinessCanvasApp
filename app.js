@@ -698,11 +698,11 @@ app.post('/manager/add', function(req, res){
 });
 
 // delete canvas from manager page
-app.delete('/manager/del', function(req, res){
+app.delete('/manager/del', function(req, res){            console.log(c);
 	var ids = req.body.canvasId;  //now is a list of canvasId
   var owner = req.cookies.email;
-	ids.forEach(function(id){
-		Canvas.findOneAndDelete({_id:id}, function(err, result){
+	for (var i = 0; i < ids.length; i++){
+		Canvas.findOneAndDelete({_id:ids[i]}, function(err, result){
 			if (err) {
 				console.log(err);
 				res.send(fal);
@@ -713,30 +713,30 @@ app.delete('/manager/del', function(req, res){
         User.findOneAndUpdate({email:result.email}, {$pull:{canvas:id}}, function(err, result){});
 
 				// loop through to delete canvasId from users
-				u.forEach(function(email){
-					User.findOneAndUpdate({email:email}, {$pull: {canvas:id}}, function(err, result){
+				for (var i = 0; i < u.length; i++ ){
+					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
 							console.log(err);
 							res.send(fal);
 						}
 					});
-				});
+				}
 
 				// loop through to delete stickies
-				s.forEach(function(sid){
-					Sticky.findOneAndDelete({_id:sid}, function(err, result){
+				for (var i = 0; i < s.length; i++){
+					Sticky.findOneAndDelete({_id:s[i]}, function(err, result){
 						if (err) {
 							console.log(err);
 							res.send(fal);
 						}
 					});
-				});
+				}
 
 				// delete everything
 				res.send(tru);
 			}
 		});
-	});
+  }
 });
 
 // get user information for profile page
