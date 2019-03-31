@@ -310,18 +310,19 @@ textarea {
 }
 
 .userWrap {
-    font-size:17px;
+    font-size:12px;
 }
 
 .dateWrap {
-    font-size:10px;
+    font-size:12px;
     font-style: italic;
-    padding-left:10px;
+    color: #6c757d;
+    padding-left: 0.5rem;
 }
 
 .commentWrap {
     font-size:15px;
-    padding-left:15px;
+    padding-left: 0.5rem;
 }
 
 #editFormDetailBody {

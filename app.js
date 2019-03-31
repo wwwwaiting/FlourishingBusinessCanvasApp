@@ -54,6 +54,9 @@ io.on("connection", (socket) => {
   socket.on('stickyUpdateContent', function(data) {
     socket.broadcast.emit('stickyUpdateContent', data);
   });
+  socket.on('stickyUpdateOptional', function(data) {
+    socket.broadcast.emit('stickyUpdateOptional', data);
+  });
   socket.on('disconnect', function() {
     console.log("Socket has disconnected");
   });

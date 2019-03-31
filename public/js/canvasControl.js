@@ -999,6 +999,10 @@ function toggleStickyDetailBody(sticky) {
         },
         success: function(resultData) {
           sticky.optionalFields = optionalFields;
+          socket.emit('stickyUpdateOptional', {
+            change: sticky.optionalFields,
+            stickyId: sticky.stickyId
+          })
         },
         error: function() {
           alert("Something went wrong")
@@ -1033,7 +1037,8 @@ function displayEditForm(sticky) {
                 <div id="editColorRow" class="colorRow d-flex position-relative btn-group btn-group-toggle ml-auto" data-toggle="buttons"></div>
                 <button class="btn btn-outline-secondary editFormBtns mr-auto btn-sm" id="deleteBtn" type="button">Delete</button>
             </div>
-            <p>Comments: </p>
+            <p>Comments</p>
+            <hr>
             <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer" class="input-group">
@@ -1137,17 +1142,16 @@ function displayEditForm(sticky) {
           success: function(resultData) {
             console.log(resultData)
             sticky.comments.splice(index, 1)
+            socket.emit('stickyUpdateComment', {
+              change: sticky.get('comments'),
+              stickyId: sticky.get('stickyId')
+            })
           },
           error: function() {
             alert("Something went wrong")
           }
         });
       }
-
-      socket.emit('stickyUpdateComment', {
-        change: sticky.get('comments'),
-        stickyId: sticky.get('stickyId')
-      })
 
       $(this).parent().remove()
     })
@@ -1201,6 +1205,10 @@ function displayEditForm(sticky) {
               success: function(resultData) {
                 console.log(resultData);
                 sticky.comments.splice(index, 1)
+                socket.emit('stickyUpdateComment', {
+                  change: sticky.get('comments'),
+                  stickyId: sticky.get('stickyId')
+                })
               },
               error: function() {
                 alert("Something went wrong")
@@ -1208,17 +1216,15 @@ function displayEditForm(sticky) {
             });
           }
 
-          socket.emit('stickyUpdateComment', {
-            change: sticky.get('comments'),
-            stickyId: sticky.get('stickyId')
-          })
-
           $(this).parent().remove()
         })
         $('#commentContent').remove()
         $('#commentInputContainer').prepend(`<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}; border: 1px solid #6c757d">`)
         scrollToBottom("#commentContainer");
-
+        socket.emit('stickyUpdateComment', {
+          change: sticky.get('comments'),
+          stickyId: sticky.get('stickyId')
+          })
       },
       error: function() {
         alert("Something went wrong")
@@ -1727,6 +1733,11 @@ socket.on('stickyUpdateContent', function stickyUpdateContent(result) {
   // console.log('got: ', result);
   const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
   stickyContentEditCore(changingSticky, result.change)
+});
+socket.on('stickyUpdateOptional', function stickyUpdateOptional(result) {
+  // console.log('got: ', result);
+  const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
+  changingSticky.set('optionalFields', result.change);
 });
 
 $('#canvasHeader').on('show.bs.collapse', function() {
