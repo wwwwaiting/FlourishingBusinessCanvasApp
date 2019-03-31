@@ -73,6 +73,9 @@ const changeType = ['content', 'position', 'size', 'color', 'add comment', 'dele
 
 // render login page
 app.get('/login', function(req, res) {
+  res.clearCookie('id');
+  res.clearCookie('email');
+  res.clearCookie('name');
   res.render('login');
 });
 
@@ -214,6 +217,7 @@ app.get('/canvas/get', function(req, res){
       var result = {
         'canvasId': canvasId,
         'owner':canvas.owner,
+        'company':canvas.company,
         'title':canvas.title,
         'createDate': canvas.createDate
       };
@@ -391,6 +395,37 @@ app.post('/canvas/edit', function(req, res){
   }
 });
 
+// get role of current user
+app.get('/canvas/role', function(req, res){
+  var email = req.cookies.email;
+  User.find({'email':email}, function(err, result){
+    if (err){
+      console.log(err);
+    } else {
+      var user = result[0];
+      res.send({role:user.role});
+    }
+  });
+});
+
+// change owner, title and company in one post request
+app.post('/canvas/change', function(req, res){
+  var change = req.body.change;
+  var type = req.body.type;
+  var canvasId = req.cookies.id;
+
+  Canvas.findOneAndUpdate({_id:canvasId}, {[type]:change}, function(err, result){
+    if (err){
+      console.log(err);
+      res.send(fal);
+    } else {
+      res.send(tru);
+    }
+  });
+});
+
+
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -534,7 +569,8 @@ app.post('/manager/add', function(req, res){
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
 		owner: owner,
-		title: title,
+    title: title,
+    company:'',
 		users: empty,
 		stickies: empty,
 		createDate: time,

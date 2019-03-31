@@ -10,6 +10,7 @@ var HistorySchema = new mongoose.Schema({
 var CanvasSchema = new mongoose.Schema({
   owner: String,
   title: String,
+  company:String,
   users: [String],  //email
   stickies: [String],
   createDate: Date,

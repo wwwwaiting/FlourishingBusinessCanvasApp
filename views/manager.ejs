@@ -60,6 +60,7 @@
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
     <!-- <script src="js/popup.js"></script> -->
 
@@ -70,7 +71,7 @@
     let canvasUsers = []
     let canvasIds = []
     let canvasTitles = []
-
+    let currentUser = null;
     $(document).ready(main);
 
     function listCookies() {
@@ -105,6 +106,12 @@
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
+         currentUser = Cookies.get('email');
+         if (currentUser == null) {
+            alert("Our system detects that you have not yet signed in to our website, we will transfer you to the log in page immediately.")
+            window.location.href = '/login'
+            return
+         }
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -165,17 +172,20 @@
 
     function renderManageUsers() {
 
-        let manageUsersContent = '<div class="modal-body"><form>'
+        let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
         for(let i = 0; i < canvasTitles.length; i++){
-            manageUsersContent += `<div><h5>${canvasTitles[i]} (${canvasIds[i]})</h5>`
+            manageUsersContent += `<div class="manageUsersCanvas"><h5>${canvasTitles[i]}<span style="display: none">${canvasIds[i]}</span></h5>`
             for (let j = 0; j < canvasUsers[i].length; j++){
+                if ((canvasUsers[i][j]) == currentUser) {
+                    continue;
+                }
                 manageUsersContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox">
-            <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
+                <input class="form-check-input semantic" type="checkbox">
+                <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
-            <button type="button" class="btn btn-light addUserPrompt">Add</button>
-            <button type="button" class="btn btn-light" onclick="removeUsers()">Remove</button></div></div>`
+            <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
+            <button type="button" class="btn btn-light semantic" onclick="removeUsers()">Remove</button></div></div>`
         }
         manageUsersContent += '</form></div>'
         $(".modal-title").html("Manage users")
@@ -183,11 +193,36 @@
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
     }
 
+    $('body').on('change', '.form-check-input', function() {
+        const canvases = document.getElementsByClassName('manageUsersCanvas')
+        if ($(this).is(':checked')) {
+            const canvasId = $(this).parent().parent().find('span').text()
+            console.log(canvasId)
+            // all the canvas divs in manage user form
+            
+            for (let canvas of canvases) {
+                if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
+                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                    for (let checkbox of checkBoxes) {
+                        checkbox.disabled = true;
+                    }
+                }
+            }
+        } else {
+            for (let canvas of canvases) {
+                const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                for (let checkbox of checkBoxes) {
+                    checkbox.disabled = false;
+                }
+            }
+        }
+    })
+
     $('body').on('click', 'button.addUserPrompt', function() {
         const html = `<div class="input-group">
-        <input type="text" class="form-control" placeholder="New user email" >
+        <input type="text" class="form-control semantic" placeholder="New user email" >
         <div class="input-group-append">
-            <button class="btn btn-primary addUserDone" type="button">Add</button>
+            <button class="btn btn-primary addUserDone semantic" type="button">Add</button>
         </div></div>`
         $(this).parent().html(html)
     })
@@ -200,12 +235,29 @@
     		return false;
     	}
     	return true;
-	}
+    }
+    
+    $('body').on('click', '.manageUserContainer', function(e) {
+        const name = e.target.classList
+        if (!name.contains('semantic')) {
+            renderManageUsers()
+
+        }
+    })
 
     $('body').on('click', 'button.addUserDone', function() {
         const email = [$(this).parent().prev().val()]
-        const text = $(this).parent().parent().parent().parent().children()[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
+        const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
+        
+        const index = canvasIds.findIndex(id => id == canvasId)
+        if (canvasUsers[index].includes(email[0])) {
+            alert("Duplicate user email.")
+            $(this).parent().prev().val('')
+            return;
+        }
+        console.log(canvasUsers)
+        //send update request
+        console.log(canvasId)
         const type = "add"
         const send = {type, canvasId, email}
 
@@ -218,9 +270,9 @@
 	            success: function (data) {
 	                if (data == 'true') {
 	                    const index = canvasIds.findIndex(id => id == canvasId)
-	                    canvasUsers[index].push(email)
+	                    canvasUsers[index].push(email[0])
 	                    Email.send({
-								Host: "smtp.elasticemail.com",
+							Host: "smtp.elasticemail.com",
 	            			Username: "wangluya2014@gmail.com",
 	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
 	            			To: email,
@@ -235,28 +287,29 @@
 	            }
 	        })
     	}
-        // console.log('here')
     })
 
 
     function removeUsers() {
         const selected = $('.form-check-input:checked')
+        if (selected.length == 0) {
+            alert("No User Selected.")
+            return
+        }
+
         const usersToRemove = []
         for (let e of selected) {
             usersToRemove.push(e.nextElementSibling.innerHTML)
         }
-        const text = selected[0].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        const canvasId = text.slice(0, text.length - 1)
+        const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
         for (let i = 1; i < selected.length; i++) {
-				const temp = selected[i].parentElement.parentElement.children[0].innerHTML.split('(')[1]
-        		const tempId = text.slice(0, text.length - 1)
+				const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
         		if (tempId != canvasId) {
 					console.log('Cannot remove users in different canvas simultaneously')
 					return        		
         		}        
         }
         
-        console.log(canvasId)
 
         // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
         console.log(canvasUsers)
@@ -286,11 +339,11 @@
 
 
     function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body"><form>'
+        let manageCanvasContent = '<div class="modal-body manageCanvasContainer"><form>'
         for (let i = 0; i < canvasTitles.length; i++){
             manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]} (${canvasIds[i]})</label>
+            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]}<span style="display:none">${canvasIds[i]}</span></label>
         </div>`
         }
         manageCanvasContent += '</form></div>'
@@ -334,14 +387,10 @@
         const selected = $('.form-check-input:checked')
         const canvasId = []
         for (let e of selected) {
-            const text = e.nextElementSibling.innerHTML.split('(')[1]
-            const canId = text.slice(0, text.length - 1)
+
+            const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+            console.log(canId)
             canvasId.push(canId)
-            // console.log(canId)
-            // const indexToRemove = canvasIds.findIndex(id => id == canId)
-            // canvasTitles.splice(indexToRemove, 1)
-            // canvasIds.splice(indexToRemove, 1)
-            // canvasUsers.splice(indexToRemove, 1)
         }
 
         const send = {canvasId}
@@ -367,14 +416,6 @@
                 }
             }
         })
-
-            // console.log(canvasId)
-            // console.log(canvasTitles)
-            // console.log(canvasIds)
-            // console.log(canvasUsers)
-            // renderManageCanvas()
-            // removeMainSection()
-            // renderFbc()
     }
 
     function removeMainSection() {
