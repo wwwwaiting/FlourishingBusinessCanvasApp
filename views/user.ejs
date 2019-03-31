@@ -35,6 +35,9 @@
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="getProfile()">Profile</button>
                 </li>
+                <li class="nav-item ml-2">
+                    <button type="button" class="btn btn-light" onclick="getLogin()">Log Out</button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -51,6 +54,7 @@
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
     <!-- <script src="js/popup.js"></script> -->
 </body>
@@ -67,9 +71,18 @@
         window.location.href = '/profile'
     }
 
+    function getLogin(){
+    	window.location.href = '/login'
+    	deleteAllCookies()
+    }
+
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
+        const user = Cookies.get('email');
+        if (user == null){
+            window.location.href = "/login"
+        } else {
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -81,6 +94,7 @@
         		 renderFbc()
              }
          })
+        }
     }
 
     function renderFbc() {

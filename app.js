@@ -55,6 +55,9 @@ io.on("connection", (socket) => {
   socket.on('stickyUpdateContent', function(data) {
     socket.broadcast.emit('stickyUpdateContent', data);
   });
+  socket.on('stickyUpdateOptional', function(data) {
+    socket.broadcast.emit('stickyUpdateOptional', data);
+  });
   socket.on('disconnect', function() {
     console.log("Socket has disconnected");
   });
@@ -63,11 +66,11 @@ io.on("connection", (socket) => {
 const fal = 'false';
 const denied = 'denied';
 const tru = 'true';
-const newReg = 1;
 const regUser = 2;
 const manager = 3;
 const admin = 4;
-const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
+const registrationRquest = new Array();
+const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment', 'optionalFields'];
 
 // render login page
 app.get('/login', function(req, res) {
@@ -174,7 +177,7 @@ app.post('/register', function(req, res) {
                 name: name,
                 email: email,
                 pwd: pwd,
-                role: newReg,
+                role: regUser,
                 canvas: canvasList,
                 occupation: '',
                 status: 1,
@@ -197,7 +200,7 @@ app.post('/register', function(req, res) {
                     } else if (updated == null){
                       res.send(fal);
                     } else{
-                      res.send(newReg.toString()); 
+                      res.send(regUser.toString()); 
                     };
                   });
                 }
@@ -221,7 +224,6 @@ app.get('/canvas/get', function(req, res){
   Canvas.find({_id: canvasId},function(err, result) {
     if (err) {
       console.log(err);
-      res.send(err);
     } else if (result.length !== 0) {
       var canvas = result[0];
       var result = {
@@ -239,22 +241,22 @@ app.get('/canvas/get', function(req, res){
         res.send(result);
       }else{
         for (i = 0; i < stickies.length; i++){
-        let ID = stickies[i];
-        Sticky.find({_id: ID},function(err, sti) {
-          if (err) {
-            console.log(err);
-            res.send(err);
-          } else if (sti.length !== 0) {
-            var sticky = sti[0];
-            stickyList.push(sticky);
-            if (count === stickies.length){
-              result.stickies = stickyList;
-              res.send(result);
+          let ID = stickies[i];
+          Sticky.find({_id: ID},function(err, sti) {
+            if (err) {
+              console.log(err);
+              res.send(err);
+            } else if (sti.length !== 0) {
+              var sticky = sti[0];
+              stickyList.push(sticky);
+              if (count === stickies.length){
+                result.stickies = stickyList;
+                res.send(result);
+              }
+              count ++;
             }
-            count ++;
-          }
-        });
-      }
+          });
+        }
       }
     }
   });
@@ -401,6 +403,7 @@ app.delete('/canvas/delete', function(req, res){
 });
 
 app.post('/canvas/edit', function(req, res){
+  console.log(req.body);
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -444,13 +447,14 @@ app.post('/canvas/edit', function(req, res){
     }
     else{
       // update sticky information only
-      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},function(err, result){
+      Sticky.findOneAndUpdate({_id:sticky}, {[type]:change, modifiedTime:new Date()},{new:true},function(err, result){
         if (err) {
           console.log(err);
           res.send(fal);
         } else if (result == null){
           res.send(fal);
         }else{
+          console.log(result)
           createHistory(email, type, newDate, canvas, res);
         }
       });
@@ -521,7 +525,7 @@ app.get('/library/get', function(req, res){
   var email = req.cookies.email;
 	User.find({'email':email}, function(err, result){
 		if (err) {
-			console.log(err);
+      console.log(err);
 		} else {
       var user = result[0];
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
@@ -679,7 +683,6 @@ app.post('/manager/add', function(req, res){
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
-      console.log("hi")
 			console.log(err);
 		} else {
 			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
@@ -803,9 +806,9 @@ app.get('/admin/notification', function(req, res){
       console.log(err);
       res.send(err);
     } else if (result.length === 0) {
-      res.send(fail);
+      res.send(fal);
     } else {
-      res.send(result.notification);
+      res.send(result[0].notification);
     }
   });
 });
@@ -832,10 +835,10 @@ app.post('/admin/decline', function(req, res){
 });
 
 // get user information that the admin wants to approve the register request
-app.post('/admin/approve', function(req, res){
+app.post('/admin/accept', function(req, res){
   var adminEmail = req.cookies.email;
-	var email = req.body.email;
-	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
+  var email = req.body.email;
+	User.findOneAndUpdate({email:email}, {status:2}, function(err, result){
 		if (err) {
 			console.log(err);
 			res.send(fal);
@@ -855,9 +858,13 @@ app.post('/admin/approve', function(req, res){
 app.get('/admin/get', function(req, res){
   res.clearCookie('id');
   var email = req.cookies.email;
-	User.find({'email':email}, function(err, result){
+  getAllCanvas(email, res);
+});
+
+function getAllCanvas(email, res){
+  User.find({'email':email}, function(err, result){
 		if (err) {
-			console.log(err);
+      console.log(err);
 		} else {
       var user = result[0];
       var notification = user.notification;
@@ -889,7 +896,7 @@ app.get('/admin/get', function(req, res){
               regId.push(id);
             }
             if (count == cans.length){
-              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
             }
             count ++;
           }
@@ -897,7 +904,7 @@ app.get('/admin/get', function(req, res){
       })
 		}
 	});
-});
+};
 
 
 app.get('/admin/users', function(req, res){
@@ -908,7 +915,7 @@ app.get('/admin/users', function(req, res){
 		} else {
       var Users = new Array();
       let count = 1;
-      User.find(function(err, u){
+      User.find({status:2}, function(err, u){
         if (err){
           console.log(err);
         }else{
@@ -930,6 +937,96 @@ app.get('/admin/users', function(req, res){
       })
 		}
 	});
+});
+
+app.post('/admin/edit', function(req, res){
+  var type = req.body.type;
+  var user = req.body.user;			
+  var email = req.cookies.email;
+  if (type === 'remove'){
+    User.findOneAndDelete({email: user},function(err, deleted) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else if (deleted === null) {
+        res.send(fal);
+      }else{
+        let count = 1;
+        var canvasList = deleted.canvas;
+        for (i=0;i<canvasList.length;i++){
+          Canvas.findOneAndUpdate({_id: canvasList[i]}, {$pull: {users: user}}, function(err, can){
+            if(err){
+              console.log(err);
+              res.send(err);
+            } else if (can === null){
+              res.send(fal);
+            } else{
+              if(can.email === user) {
+                var count2 = 1;
+                Canvas.findOneAndDelete({_id: can.id}, function(err, del){
+                  if(err){
+                    console.log(err);
+                    res.send(err);
+                  } else if (del === null){
+                    console.log(canvasList[i]);
+                    res.send(fal);
+                  } else{
+                    var userList = del.users;
+                    for (j=0;j<userList.length;j++){
+                      User.findOneAndUpdate({email: userList[j]}, {$pull: {canvas: del.id}},function(err, dele){
+                        if(err){
+                          console.log(err);
+                          res.send(err);
+                        } else if (dele === null){
+                          res.send(fal);
+                        }else{
+                          if (count2 === userList.length){
+                            if (count === canvasList.length){
+                              getAllCanvas(email, res);
+                            }
+                            count++;
+                          }
+                          count2++;
+                        }
+                      })
+                    }
+                  }
+                })
+              }else{
+                if (count === canvasList.length){
+                  res.send(tru);
+                }
+                count ++;
+              }
+            }
+          })
+        }
+      }
+    });
+  }else{
+    var user = new User({
+      name: '',
+      email: user,
+      pwd: '',
+      role: manager,
+      canvas: new Array(),
+      occupation: '',
+      status: 2,
+      phone: '',
+      company: '',
+      notification: new Array()
+    });
+    User.create(user, function(err, newlyCreated) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else if (newlyCreated == null){
+        res.send(err);
+      } else {
+        res.send(tru);
+      }
+    });
+  }
 });
 
 // get user information from

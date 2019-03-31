@@ -92,7 +92,6 @@ var inputSub = ["pwd", "email"]
 var inputSign = ["pwd_sign", "email_sign", "last_name", "first_name"]
 
 for (i=0;i<inputSub.length;i++){
-  console.log(i);
   var input = document.getElementById(inputSub[i]);
 // Execute a function when the user releases a key on the keyboard
   input.addEventListener("keyup", function(event) {
@@ -107,7 +106,6 @@ for (i=0;i<inputSub.length;i++){
 };
 
 for (i=0;i<inputSign.length;i++){
-  console.log(i);
   var input = document.getElementById(inputSign[i]);
   // Execute a function when the user releases a key on the keyboard
   input.addEventListener("keyup", function(event) {
@@ -176,8 +174,7 @@ $('#register_submit').on('click', function () {
 
   // check if the contents are empty and display corresponding error
   if (name == '' || email == '' || pwd == '' || fname == '' || lname == '') {
-    modalContent.innerHTML = "Please complete all the fields!";
-    modal.style.display = "block";
+    alert("Please complete all the fields!");
     document.getElementsByClassName('req-email')[0].value = '';
     document.getElementsByClassName('req-pwd')[0].value = '';
     document.getElementsByClassName('req-lname')[0].value = '';
@@ -185,8 +182,7 @@ $('#register_submit').on('click', function () {
   }
   // check email format 
   else if (email.includes('@') == false || email.indexOf('@') == (email.length - 1)) {
-    modalContent.innerHTML = "Please  enter a valid email address!";
-    modal.style.display = "block";
+    alert("Please  enter a valid email address!");
     document.getElementsByClassName('req-email')[0].value = '';
   }
   // interact with backend
@@ -199,8 +195,7 @@ $('#register_submit').on('click', function () {
       data: sent,
       success: function (data) {
         if (data == 'false') {
-          modalContent.innerHTML = "Oops, the specified email address has been registered in the system";
-          modal.style.display = "block";
+          alert("Oops, the specified email address has been registered in the system");
           ent.getElementsByClassName('req-email')[0].value = '';
         } else if (data == '2') {
           window.location.href = "/user";
@@ -209,13 +204,12 @@ $('#register_submit').on('click', function () {
         } else if (data == '4') {
           window.location.href = "/admin";
         } else if (data == '1') {
-          modalContent.innerHTML = "The notification has been sent to the administrator, please wait for response";
-          modal.style.display = "block";
+          alert("The notification has been sent to the administrator, please wait for response");
           Email.send({
             Host: "smtp.elasticemail.com",
             Username: "wangluya2014@gmail.com",
             Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-            To: 'testingcsc301@mailinator.com',
+            To: email,
             From: "wangluya2014@gmail.com",
             Subject: "This is the subject",
             Body: "Testing for register!."
