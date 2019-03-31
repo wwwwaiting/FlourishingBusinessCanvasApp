@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Administrator page</title>
+    <title>Manager page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -48,7 +48,22 @@
         </div>
     </nav>
 
-    <section class="text-center mb-4 " id="post-TwoRow">
+    <section class="mb-4 container-fluid" id="post-TwoRow">
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>
     </section>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -68,9 +83,12 @@
     "use strict"
     console.log("popup.js")
 
-    let canvasUsers = []
-    let canvasIds = []
-    let canvasTitles = []
+    let regTitle = []
+    let regId = []
+    let mngTitle = []
+    let mngId = []
+    let mngUsers = []
+    let notification = null;
     let currentUser = null;
     $(document).ready(main);
 
@@ -110,38 +128,48 @@
          currentUser = Cookies.get('email');
          $.ajax({
              type: "GET",
-             url: "/library/get",
+             url: "/admin/get",
              success: function (data) {
-                 canvasTitles = data.title
-                 canvasIds = data.canvas
-                 canvasUsers = data.users
-        			  renderFbc()
+                 regTitle = data.regTitle
+                 regId = data.regId
+                 mngTitle = data.mngTitle
+                 mngId = data.mngId
+                 mngUsers = data.mngUsers
+                 notification = data.notification
+
+                 console.log(mngId)
+                 console.log(mngUsers)
+                 console.log(mngTitle)
+                 console.log(regTitle)
+                 console.log(notification)
+                 renderFbc(mngId, mngTitle, 'myControl')
+                 renderFbc(regId, regTitle, 'notMyControl')
              }
          })
-         console.log(currentUser)
     }
 
-    function renderFbc() {
+    function renderFbc(ids, titles, control) {
         const imgUrl = '/images/fbc.png'
-        for (let i = 0; i < canvasIds.length; i++) {
+        for (let i = 0; i < ids.length; i++) {
             const html = `
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
-                <a id="${canvasIds[i]}" class="canvasClick" style="cursor:pointer">
+                <a id="${ids[i]}" class="canvasClick" style="cursor:pointer">
                     <div class="card shadow postCard">
                         <div class="image-constrain">
                             <img src="${imgUrl}" class="card-img-top post-img p-3">
                         </div>
                         <div class="card-body text-center">
-                            <h6 class="post-title font-weight-bold font-italic text-truncate">${canvasTitles[i]}</h6>
+                            <h6 class="post-title font-weight-bold font-italic text-truncate">${titles[i]}</h6>
                         </div>
                     </div>
                 </a>
             </div>`
             const rowNum = Math.ceil((i + 1) /4)
+            const rowId = `${control}${rowNum}`
             if (i % 4 == 0) {
-                $('#post-TwoRow').append(`<div id="row${rowNum}"class="row fadeIn post-row"></div>`)
+                $(`#${control}`).append(`<div id="${rowId}" class="row fadeIn post-row"></div>`)
             }
-            $(`#row${rowNum}`).append(html)
+            $(`#${rowId}`).append(html)
         }
     }
 
@@ -170,15 +198,15 @@
     function renderManageUsers() {
 
         let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
-        for(let i = 0; i < canvasTitles.length; i++){
-            manageUsersContent += `<div class="manageUsersCanvas"><h5>${canvasTitles[i]}<span style="display: none">${canvasIds[i]}</span></h5>`
-            for (let j = 0; j < canvasUsers[i].length; j++){
-                if ((canvasUsers[i][j]) == currentUser) {
+        for(let i = 0; i < mngTitle.length; i++){
+            manageUsersContent += `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
+            for (let j = 0; j < mngUsers[i].length; j++){
+                if ((mngUsers[i][j]) == currentUser) {
                     continue;
                 }
                 manageUsersContent += `<div class="form-check">
                 <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${canvasUsers[i][j]}</label></div>`
+                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
             }
             manageUsersContent += `<div class="btnContainer" style="text-align:right">
             <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
@@ -336,11 +364,11 @@
 
 
     function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body manageCanvasContainer"><form>'
-        for (let i = 0; i < canvasTitles.length; i++){
+        let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
+        for (let i = 0; i < mngTitle.length; i++){
             manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${canvasTitles[i]}<span style="display:none">${canvasIds[i]}</span></label>
+            <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
         </div>`
         }
         manageCanvasContent += '</form></div>'
@@ -354,6 +382,46 @@
         $(".modal-body").html(manageCanvasContent)
         $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+    }
+
+    $('body').on('change', '.form-check-input', function() {
+        var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
+        
+        if (check == 1) {
+            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+        } else {
+            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+        }
+    })
+
+    function copyCanvas() {
+        const e = $('.form-check-input:checked')[0]
+        const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+
+        const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
+        const title = old_title + "-copy"
+
+        // current canvas id, new title
+        const send = {canId, title}
+
+        $.ajax({
+            type: "POST",
+            url: "/canvas/copy",
+            data: send,
+            success: function (data) {
+                // get the same canvas with a new id back 
+                canvasIds.push(data.id)
+                canvasTitles.push(title)
+                canvasUsers.push(data.users)
+                removeMainSection()
+                renderManageCanvas()
+                renderFbc()
+                }
+            
+        })
     }
 
     function addNewCanvas() {
@@ -389,7 +457,6 @@
             console.log(canId)
             canvasId.push(canId)
         }
-
         const send = {canvasId}
         console.log(send)
         
