@@ -561,7 +561,7 @@ app.get('/library/get', function(req, res){
                 }else if (role == 3){  // send regular canvas and manager's canvas
                   res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
                 } else {  // send notification also
-                  res.send({regTitle: regTitle, regId: regId, notification: notification});
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
                 }
 							}
 							count ++;
