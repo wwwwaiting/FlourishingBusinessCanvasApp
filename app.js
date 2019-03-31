@@ -238,22 +238,22 @@ app.get('/canvas/get', function(req, res){
         res.send(result);
       }else{
         for (i = 0; i < stickies.length; i++){
-        let ID = stickies[i];
-        Sticky.find({_id: ID},function(err, sti) {
-          if (err) {
-            console.log(err);
-            res.send(err);
-          } else if (sti.length !== 0) {
-            var sticky = sti[0];
-            stickyList.push(sticky);
-            if (count === stickies.length){
-              result.stickies = stickyList;
-              res.send(result);
+          let ID = stickies[i];
+          Sticky.find({_id: ID},function(err, sti) {
+            if (err) {
+              console.log(err);
+              res.send(err);
+            } else if (sti.length !== 0) {
+              var sticky = sti[0];
+              stickyList.push(sticky);
+              if (count === stickies.length){
+                result.stickies = stickyList;
+                res.send(result);
+              }
+              count ++;
             }
-            count ++;
-          }
-        });
-      }
+          });
+        }
       }
     }
   });
@@ -907,7 +907,7 @@ app.get('/admin/users', function(req, res){
 		} else {
       var Users = new Array();
       let count = 1;
-      User.find(function(err, u){
+      User.find({status:2}, function(err, u){
         if (err){
           console.log(err);
         }else{
@@ -929,6 +929,83 @@ app.get('/admin/users', function(req, res){
       })
 		}
 	});
+});
+
+app.get('/admin/edit', function(req, res){
+  var type = req.body.type;
+  var user = req.body.user[0];
+  if (type === 'remove'){
+    User.findOneAndDelete({email: user},function(err, deleted) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else if (deleted === null) {
+        res.send(fal);
+      }else{
+        let count = 1;
+        var canvasList = deleted.canvas;
+        for (i=0;i<canvasList.length;i++){
+          Canvas.findOneAndUpdate({_id: canvasList[i]}, {$pull: {users: user}}, function(err, can){
+            if(err){
+              console.log(err);
+              res.send(err);
+            } else if (can === null){
+              res.send(fal);
+            } else{
+              if(can.email === user) {
+                Canvas.findOneAndDelete({_id: canvasList[i]}, function(err, del){
+                  if(err){
+                    console.log(err);
+                    res.send(err);
+                  } else if (del === null){
+                    res.send(fal);
+                  } else{
+                    var userList = del.users;
+                    for (j=0;j<userList.length;j++){
+                      User.findOneAndUpdate({_id: userList[j]}, {$pull: {canvas: canvasList[i]}},function(err, dele){
+                        if(err){
+                          console.log(err);
+                          res.send(err);
+                        } else if (dele === null){
+                          res.send(fal);}
+                      })
+                    }
+                  }
+                })
+              }
+              if (count === canvasList.length){
+                res.send(tru);
+              }
+              count ++;
+            }
+          })
+        }
+      }
+    });
+  }else{
+    var user = new User({
+      name: '',
+      email: user,
+      pwd: '',
+      role: manager,
+      canvas: new Array(),
+      occupation: '',
+      status: 2,
+      phone: '',
+      company: '',
+      notification: new Array()
+    });
+    User.create(user, function(err, newlyCreated) {
+      if (err) {
+        console.log(err);
+        res.send(err);
+      } else if (newlyCreated == null){
+        res.send(err);
+      } else {
+        res.send(tru);
+      }
+    });
+  }
 });
 
 // get user information from
