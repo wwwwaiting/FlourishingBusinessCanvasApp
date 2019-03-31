@@ -294,9 +294,10 @@
 
         $('body').on('click', 'button.addUserDone', function () {
             const email = [$(this).parent().prev().val()]
+            console.log(email)
             const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
-
-            const index = mngUsers.findIndex(id => id == canvasId)
+            const index = mngId.findIndex(id => id == canvasId)
+            
             if (mngUsers[index].includes(email[0])) {
                 alert("Duplicate user email.")
                 $(this).parent().prev().val('')

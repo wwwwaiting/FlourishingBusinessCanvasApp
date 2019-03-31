@@ -16,6 +16,7 @@ require('./models/user.js');
 const User = mongoose.model('User');
 const Sticky = mongoose.model('Sticky');
 const Canvas = mongoose.model('Canvas');
+mongoose.set('useFindAndModify', false);
 mongoose.Promise = global.Promise;
 const PORT = process.env.PORT || 3000;
 
@@ -704,12 +705,16 @@ app.delete('/manager/del', function(req, res){
   var owner = req.cookies.email;
 	ids.forEach(function(id){
     console.log("delete" + id)
+    
 		Canvas.findOneAndDelete({_id:id}, function(err, result){
 			if (err) {
         console.log("cant find canvas")
 				console.log(err);
 				res.send(fal);
-			} else {
+			} else if (result.length == 0) {
+        console.log("deleted")
+        res.send(tru);
+      } else {
 				var u = result.users;
         var s = result.stickies;
         
@@ -736,7 +741,7 @@ app.delete('/manager/del', function(req, res){
 						}
 					});
 				});
-
+        console.log("deleted everything")
 				// delete everything
 				res.send(tru);
 			}
