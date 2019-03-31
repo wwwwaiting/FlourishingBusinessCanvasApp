@@ -517,14 +517,14 @@ app.post('/canvas/change', function(req, res){
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
-	var email = req.cookies.email;
+  var email = req.cookies.email;
 	User.find({'email':email}, function(err, result){
 		if (err) {
 			console.log(err);
 		} else {
       var user = result[0];
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
-      var c_list = user.canvas;
+      let c_list = user.canvas;
       var notification = user.notification;
 
 			var regTitle = new Array();
@@ -532,6 +532,7 @@ app.get('/library/get', function(req, res){
       var mngTitle = new Array();
       var mngId = new Array();
       var mngUsers = new Array();
+
 			if (c_list.length != 0) {
 				let count = 1;
 				// loop through all canvas list
@@ -699,7 +700,7 @@ app.post('/manager/add', function(req, res){
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
 	var ids = req.body.canvasId;  //now is a list of canvasId
-	var owner = req.cookies.email;
+  var owner = req.cookies.email;
 	ids.forEach(function(id){
 		Canvas.findOneAndDelete({_id:id}, function(err, result){
 			if (err) {
@@ -709,7 +710,7 @@ app.delete('/manager/del', function(req, res){
 				var u = result.users;
         var s = result.stickies;
         
-				User.findOneAndUpdate({email:owner}, {$pull:{canvas:id}}, function(err, result){});
+        User.findOneAndUpdate({email:result.email}, {$pull:{canvas:id}}, function(err, result){});
 
 				// loop through to delete canvasId from users
 				u.forEach(function(email){
@@ -851,6 +852,53 @@ app.post('/admin/approve', function(req, res){
           res.send(tru);
         }
       });
+		}
+	});
+});
+
+app.get('/admin/get', function(req, res){
+  res.clearCookie('id');
+  var email = req.cookies.email;
+	User.find({'email':email}, function(err, result){
+		if (err) {
+			console.log(err);
+		} else {
+      var user = result[0];
+      var notification = user.notification;
+			var regTitle = new Array();
+      var regId = new Array();
+      var mngTitle = new Array();
+      var mngId = new Array();
+      var mngUsers = new Array();
+      let count = 1;
+      Canvas.find(function(err, cans){
+        if (err){
+          console.log(err);
+        }else{
+          if(cans.length == 0){
+            res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+          }
+          // loop through all canvas list
+          for (let i = 0; i < cans.length; i++){
+            var c = cans[i];
+            var id = c.id
+            var t = c.title;
+            if (c.email == email){
+              var user = c.users;
+              mngId.push(id);
+              mngTitle.push(t);
+              mngUsers.push(user);
+            } else {
+              regTitle.push(t);
+              regId.push(id);
+            }
+            if (count == cans.length){
+              res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+            }
+            count ++;
+          }
+        }
+      })
 		}
 	});
 });
