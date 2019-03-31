@@ -375,7 +375,7 @@
             const userToRemove = selected[0].nextElementSibling.innerHTML
 
 
-            const email = [userToRemove]
+            const email = userToRemove
 
             //send POST request
             const type = "remove"
@@ -393,8 +393,7 @@
                 success: function (data) {
                     if (data == 'true') {
                         const index = mngId.findIndex(id => id == canvasId)
-                        mngUsers[index] = mngUsers[index].filter(u => !(userToRemove.includes(u
-                        .toString())))
+                        mngUsers[index] = mngUsers[index].filter(u => u != userToRemove)
                         renderManageUsers()
                     } else {
                         console.log('fail remove user')
