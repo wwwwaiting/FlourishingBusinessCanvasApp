@@ -938,7 +938,7 @@ app.get('/admin/users', function(req, res){
 app.post('/admin/edit', function(req, res){
   var type = req.body.type;
   var user = req.body.user;			
-  var email = req.cookie.email;
+  var email = req.cookies.email;
   if (type === 'remove'){
     User.findOneAndDelete({email: user},function(err, deleted) {
       if (err) {

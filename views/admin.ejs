@@ -143,11 +143,6 @@
                  mngUsers = data.mngUsers
                  notification = data.notification
 
-                 console.log(mngId)
-                 console.log(mngUsers)
-                 console.log(mngTitle)
-                 console.log(regTitle)
-                 console.log(notification)
                  renderFbc(mngId, mngTitle, 'myControl')
                  renderFbc(regId, regTitle, 'notMyControl')
              }
@@ -249,12 +244,27 @@
             url: "/admin/edit",
             data: send,
             success: function (data) {
-                if (data == 'true') {
-                    renderManageUsers()
-                    renderFbc(regId, regTitle, 'notMyControl')
-                } else {
-                    console.log('fail to remove user')
-                }
+                renderManageUsers()
+
+                removeMainSection()
+                regTitle = data.regTitle
+                regId = data.regId
+                mngTitle = data.mngTitle
+                mngId = data.mngId
+                mngUsers = data.mngUsers
+                notification = data.notification
+                renderFbc(mngId, mngTitle, 'myControl')
+                renderFbc(regId, regTitle, 'notMyControl')
+
+                Email.send({
+                    Host: "smtp.elasticemail.com",
+                    Username: "wangluya2014@gmail.com",
+                    Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                    To: user,
+                    From: "wangluya2014@gmail.com",
+                    Subject: "This is the subject",
+                    Body: "You are kicked out of FBC organization!!!"
+                });
             }
         })
     }
@@ -292,7 +302,7 @@
                             To: email,
                             From: "wangluya2014@gmail.com",
                             Subject: "This is the subject",
-                            Body: "Testing for register!."
+                            Body: "Testing for adding new users as admin!"
                         });
                         getInvitation()
                     } else {
@@ -520,7 +530,23 @@
     }
 
     function removeMainSection() {
-        $('section').html('')
+            const html = `
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>`
+            $('section').html(html)
     }
 
 </script>
