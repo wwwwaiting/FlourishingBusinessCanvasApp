@@ -700,7 +700,7 @@ app.post('/manager/add', function(req, res){
 });
 
 // delete canvas from manager page
-app.delete('/manager/del', function(req, res){            console.log(c);
+app.delete('/manager/del', function(req, res){            
 	var ids = req.body.canvasId;  //now is a list of canvasId
   var owner = req.cookies.email;
 	for (var i = 0; i < ids.length; i++){
