@@ -151,6 +151,17 @@
     }
 
     function renderFbc(ids, titles, control) {
+        if (ids.length == 0) {
+                let message = null;
+                if (control == "myControl") {
+                    message = "Currently, there is no canvas under my control."
+                } else {
+                    message = "Currently, there is no canvas I am involved in."
+                }
+                const html = `<h5 class="ml-auto mr-auto">${message}</h5>`
+                $(`#${control}`).append(html)
+                return
+        }
         const imgUrl = '/images/fbc.png'
         for (let i = 0; i < ids.length; i++) {
             const html = `
