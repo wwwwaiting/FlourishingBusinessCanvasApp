@@ -59,7 +59,6 @@ io.on("connection", (socket) => {
   });
 })
 
-
 const fal = 'false';
 const denied = 'denied';
 const tru = 'true';
@@ -67,8 +66,6 @@ const newReg = 1;
 const regUser = 2;
 const manager = 3;
 const admin = 4;
-
-const registrationRquest = new Array();
 const changeType = ['content', 'position', 'size', 'color', 'add comment', 'delete comment'];
 
 // render login page
@@ -262,7 +259,7 @@ app.get('/canvas/get', function(req, res){
   });
 });
 
-// get canvas at the beginning
+// copy the covas
 app.post('/canvas/copy', function(req, res){
   var canvasId = req.body.canId;
   var newTitle = req.body.title;
@@ -295,16 +292,17 @@ app.post('/canvas/copy', function(req, res){
       if (err) {
         console.log(err);
       } else {
-        User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
+        var newCanvasId = created.id;
+        User.findOneAndUpdate({email:req.cookies.email}, {$push:{canvas:newCanvasId}}, function(err, updated){
           if (err) {
             console.log(err);
           }
           else{
-            var result = {
-              'id': result.id,
-              'users':result.users
+            var re = {
+              'id': newCanvasId,
+              'users': created.users
             };
-            res.send(result);
+            res.send(re);
           }
         });
       }
@@ -515,8 +513,6 @@ app.post('/canvas/change', function(req, res){
   });
 });
 
-
-
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -556,13 +552,12 @@ app.get('/library/get', function(req, res){
                 regId.push(id);
               }
 							if (count == c_list.length){
-                if (role == 2){   // only send regular canvas
+                if (role == regUser){   // only send regular canvas
                   res.send({regTitle: regTitle, regId: regId});
-                }else if (role == 3){  // send regular canvas and manager's canvas
-                console.log(mngId)
-                  res.send({regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers});
+                }else if (role == manager){  // send regular canvas and manager's canvas
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
                 } else {  // send notification also
-                  res.send({regTitle: regTitle, regId: regId, notification: notification});
+                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
                 }
 							}
 							count ++;
@@ -574,14 +569,12 @@ app.get('/library/get', function(req, res){
 	});
 });
 
-
 // store the canvas id into cookie
 app.post('/library/id', function(req, res){
 	var canvasId = req.body.canvasId;
 	res.cookie('id', canvasId);
 	res.send(tru);
 });
-
 
 // edit user in manage page
 app.post('/manager/user', function(req, res){
@@ -702,7 +695,6 @@ app.post('/manager/add', function(req, res){
 
 });
 
-
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
 	var ids = req.body.canvasId;  //now is a list of canvasId
@@ -714,9 +706,8 @@ app.delete('/manager/del', function(req, res){
 				res.send(fal);
 			} else {
 				var u = result.users;
-				var s = result.stickies;
-
-
+        var s = result.stickies;
+        
 				User.findOneAndUpdate({email:owner}, {$pull:{canvas:id}}, function(err, result){});
 
 				// loop through to delete canvasId from users
@@ -746,7 +737,6 @@ app.delete('/manager/del', function(req, res){
 	});
 });
 
-
 // get user information for profile page
 app.get('/profile/get', function(req, res){
 	var email = req.cookies.email;
@@ -760,7 +750,6 @@ app.get('/profile/get', function(req, res){
 		}
 	});
 });
-
 
 // edit user information for profile page
 app.post('/profile/edit', function(req, res){
@@ -780,7 +769,6 @@ app.post('/profile/edit', function(req, res){
 	});
 });
 
-
 // get password for password page
 app.get('/pwd/get', function(req, res){
 	var email = req.cookies.email;
@@ -794,7 +782,6 @@ app.get('/pwd/get', function(req, res){
 		}
 	});
 });
-
 
 // change password for password page
 app.post('/pwd/edit', function(req, res){
@@ -810,8 +797,23 @@ app.post('/pwd/edit', function(req, res){
 	});
 });
 
+// get notifications of the register request
+app.get('/admin/notification', function(req, res){
+	var email = req.cookies.email;
+  User.find({email: email},function(err, result) {
+    if (err) {
+      console.log(err);
+      res.send(err);
+    } else if (result.length === 0) {
+      res.send(fail);
+    } else {
+      res.send(result.notification);
+    }
+  });
+});
+
 // get user information that the admin wants to decline the register request
-app.get('/admin/decline', function(req, res){
+app.post('/admin/decline', function(req, res){
   var adminEmail = req.cookies.email;
 	var email = req.body.email;
 	User.findOneAndUpdate({email:email}, {$set: {status:0}}, function(err, result){
@@ -832,7 +834,7 @@ app.get('/admin/decline', function(req, res){
 });
 
 // get user information that the admin wants to approve the register request
-app.get('/admin/approve', function(req, res){
+app.post('/admin/approve', function(req, res){
   var adminEmail = req.cookies.email;
 	var email = req.body.email;
 	User.findOneAndUpdate({email:email}, {$set: {status:2}}, function(err, result){
@@ -851,7 +853,6 @@ app.get('/admin/approve', function(req, res){
 		}
 	});
 });
-
 
 // get user information from
 // app.listen(PORT, () => {
