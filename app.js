@@ -525,7 +525,10 @@ app.get('/library/get', function(req, res){
 	User.find({'email':email}, function(err, result){
 		if (err) {
       console.log(err);
-		} else {
+		} else if (result.length == 0){
+      console.log("cant find")
+      res.send(null)
+    } else {
       var user = result[0];
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
       let c_list = user.canvas;
