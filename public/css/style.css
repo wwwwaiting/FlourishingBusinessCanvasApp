@@ -336,10 +336,12 @@ textarea {
 }
 
 #editFormDetail {
+    padding-top: 0.5rem;
+    padding-right: 0.5rem;
     height: 200px;
     overflow: scroll;
 }
 
 .input-group-text{
-    font-size: 10px!important;
+    font-size: 12px!important;
 }

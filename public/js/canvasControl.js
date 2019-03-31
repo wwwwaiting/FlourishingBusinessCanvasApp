@@ -78,7 +78,8 @@ function initialize_canvas(data) {
       originY: 'top',
       title: sticky.title,
       content: sticky.content,
-      comment: sticky.comment
+      comment: sticky.comment,
+      optionalFields: sticky.optionalFields
     }
     const newSticky = new Sticky(options);
     newSticky.item(0).set('fill', sticky.color);
@@ -424,6 +425,18 @@ const Sticky = fabric.util.createClass(fabric.Group, {
       mb: true,
       mtr: false
     });
+    this.set("optionalFields", options.optionalFields || {
+      wp: "",
+      ws: "",
+      me: "",
+      pl: "",
+      go: "",
+      pe: "",
+      ro: "",
+      in: "",
+      re: "",
+      co: ""
+    });
     this.set("isMoving", false);
     this.set("isResizing", false);
 
@@ -690,7 +703,18 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {}
+        optimalFields: {
+          wp: "",
+          ws: "",
+          me: "",
+          pl: "",
+          go: "",
+          pe: "",
+          ro: "",
+          in: "",
+          re: "",
+          co: ""
+        }
       }
     },
     success: function(resultData) {
@@ -708,7 +732,18 @@ function createSticky() {
         color: newSticky.item(0).get('fill'),
         title: newSticky.get('title'),
         comment: [],
-        optimalFields: {}
+        optimalFields: {
+          wp: "",
+          ws: "",
+          me: "",
+          pl: "",
+          go: "",
+          pe: "",
+          ro: "",
+          in: "",
+          re: "",
+          co: ""
+        }
       })
     },
     error: function() {
