@@ -559,9 +559,7 @@ app.get('/library/get', function(req, res){
                   res.send({regTitle: regTitle, regId: regId});
                 }else if (role == manager){  // send regular canvas and manager's canvas
                   res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers});
-                } else {  // send notification also
-                  res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
-                }
+                } 
 							}
 							count ++;
             }
@@ -701,49 +699,44 @@ app.post('/manager/add', function(req, res){
 
 // delete canvas from manager page
 app.delete('/manager/del', function(req, res){
-	var ids = req.body.canvasId;  //now is a list of canvasId
-	for (var i = 0; i < ids.length; i++){
-		Canvas.findOneAndDelete({_id:ids[i]}, function(err, result){
-			if (err) {
-        console.log("cant find canvas")
-				console.log(err);
-				res.send(fal);
-			} else if (result.length == 0) {
-        console.log("deleted")
-        res.send(tru);
-      } else {
-				var u = result.users;
-        var s = result.stickies;
-        
-        User.findOneAndUpdate({email:result.email}, {$pull:{canvas:ids[i]}}, function(err, result){});
+	var id = req.body.canvasId;  //now is a list of canvasId
+  Canvas.findOneAndDelete({ _id: id }, function (err, result) {
+    if (err) {
+      console.log("cant find canvas")
+      console.log(err);
+      res.send(fal);
+    } else {
+      var u = result.users;
+      var s = result.stickies;
 
-				// loop through to delete canvasId from users
-				for (var i = 0; i < u.length; i++ ){
-					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:ids[i]}}, function(err, result){
-						if (err) {
-              console.log("cant find user")
-							console.log(err);
-							res.send(fal);
-						}
-					});
-				}
+      User.findOneAndUpdate({ email: result.email }, { $pull: { canvas: id } }, function (err, result) { });
 
-				// loop through to delete stickies
-				for (var i = 0; i < s.length; i++){
-					Sticky.findOneAndDelete({_id:s[i]}, function(err, result){
-						if (err) {
-              console.log("cant find sticky")
-							console.log(err);
-							res.send(fal);
-						}
-					});
-				}
-        console.log("deleted everything")
-				// delete everything
-				res.send(tru);
-			}
-		});
-  }
+      // loop through to delete canvasId from users
+      for (var i = 0; i < u.length; i++) {
+        User.findOneAndUpdate({ email: u[i] }, { $pull: { canvas: id } }, function (err, result) {
+          if (err) {
+            console.log("cant find user")
+            console.log(err);
+            res.send(fal);
+          }
+        });
+      }
+
+      // loop through to delete stickies
+      for (var i = 0; i < s.length; i++) {
+        Sticky.findOneAndDelete({ _id: s[i] }, function (err, result) {
+          if (err) {
+            console.log("cant find sticky")
+            console.log(err);
+            res.send(fal);
+          }
+        });
+      }
+
+      // delete everything
+      res.send(tru);
+    }
+  });
 });
 
 // get user information for profile page
