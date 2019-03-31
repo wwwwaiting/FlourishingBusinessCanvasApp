@@ -49,6 +49,11 @@ const stickyFocusShadow = 'rgba(130, 138, 145, 0.5) 0px 3px 10px';
 const stickyStroke = 'rgba(130, 138, 145, 0.3)';
 const imageUrl = "https://i.imgur.com/MoXPVzV.png";
 
+function getLogin() {
+    window.location.href = '/login'
+    deleteAllCookies()
+}
+
 // Initialize the canvas
 function initialize_canvas(data) {
   // Check if there's an existing canvas
@@ -211,6 +216,26 @@ function initialize_canvas(data) {
     // $('.collapse').collapse('dispose');
   })
 }
+
+const clickZoomDelta = 30;
+
+$("#zoomInBtn").click(() => {
+    let zoom = canvas.getZoom();
+    zoom = zoom + clickZoomDelta / 400;
+    if (zoom > canvasMaxZoom) zoom = canvasMaxZoom;
+    if (zoom < canvasMinZoom) zoom = canvasMinZoom;
+    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), zoom);
+    canvas.renderAll()
+});
+
+$("#zoomOutBtn").click(() => {
+    let zoom = canvas.getZoom();
+    zoom = zoom - clickZoomDelta / 400;
+    if (zoom > canvasMaxZoom) zoom = canvasMaxZoom;
+    if (zoom < canvasMinZoom) zoom = canvasMinZoom;
+    canvas.zoomToPoint(new fabric.Point(canvas.width / 2, canvas.height / 2), zoom);
+    canvas.renderAll()
+});
 
 // Used to set / reset background image of the canvas
 function setCanvasBgImg() {
