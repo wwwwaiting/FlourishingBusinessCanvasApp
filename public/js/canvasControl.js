@@ -862,6 +862,7 @@ function displayEditForm(sticky) {
                 <div id="editColorRow" class="colorRow d-flex position-relative btn-group btn-group-toggle ml-auto" data-toggle="buttons"></div>
                 <button class="btn btn-outline-secondary editFormBtns mr-auto btn-sm" id="deleteBtn" type="button">Delete</button>
             </div>
+            <p>Comments: </p>
             <div><ul id="commentContainer"></ul>
             </div>
             <div id="commentInputContainer" class="input-group">
@@ -933,11 +934,9 @@ function displayEditForm(sticky) {
     for (let i = 0; i < sticky.comments.length; i++) {
         const c = sticky.comments[i]
         console.log(c);
-        const li = document.createElement('li')
+        const li = document.createElement('dl')
         const buttonId = `delComment${i}`
-        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment btn btn-outline-secondary btn-sm" type="button" class="delComment" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">×</span>
-    </button>`
+        li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat)}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment border-0" style="background-color: transparent" type="button" data-dismiss="modal" aria-label="Close">×</button>`
         $('#commentContainer').append(li)
         $(`#${buttonId}`).click(function () {
             // Comment delete and send to backend
@@ -945,7 +944,7 @@ function displayEditForm(sticky) {
             const content = $(this).prev().text()
             const date = $(this).prev().prev().text()
             const user = $(this).prev().prev().prev().text()
-            const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && c.modifiedTime.toString()== date))
+            const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat)== date))
             if (index >= 0) {
               const commentData = sticky.comments[index]
               $.ajax({
@@ -995,10 +994,8 @@ function displayEditForm(sticky) {
               const c = {modifiedTime:date, user:user, content:content}
               sticky.comments.push(c)
 
-              const li = document.createElement('li')
-              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${c.modifiedTime.toString()}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment btn btn-outline-secondary btn-sm" type="button" class="delComment" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">×</span>
-          </button>`
+              const li = document.createElement('dl')
+              li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat)}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment border-0" style="background-color: transparent" type="button" data-dismiss="modal" aria-label="Close">×</button>`
               $('#commentContainer').append(li)
               $(`#${buttonId}`).click(function () {
                   // Comment delete and send to backend
@@ -1006,7 +1003,7 @@ function displayEditForm(sticky) {
                   const content = $(this).prev().text()
                   const date = $(this).prev().prev().text()
                   const user = $(this).prev().prev().prev().text()
-                  const index = sticky.comments.findIndex(comment => (comment.user == user && comment.content == content && comment.modifiedTime.toString() == date))
+                  const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat) == date))
                   if (index >= 0) {
                     const commentData = sticky.comments[index]
                     console.log(commentData);
@@ -1038,6 +1035,7 @@ function displayEditForm(sticky) {
                 })
                 $('#commentContent').remove()
                 $('#commentInputContainer').prepend(`<input id="commentContent" type="text" class="form-control" placeholder="Add new comment" style="background-color:${sticky.item(0).fill}; border: 1px solid #6c757d">`)
+                scrollToBottom("#commentContainer");
 
               },
             error: function () {
@@ -1122,6 +1120,13 @@ function displayEditForm(sticky) {
         }
     })
 
+}
+
+function scrollToBottom(containerId){
+  const div = document.querySelector(containerId);
+  $(`${containerId}`).animate({
+    scrollTop: div.scrollHeight - div.clientHeight
+  }, 500);
 }
 
 function stickyContentEditCore(sticky, newContent) {
