@@ -1373,6 +1373,12 @@ function returnClass(sticky) {
 // }
 
 function getCanvasInfo() {
+    let currentUser = Cookies.get('email');
+         if (currentUser == null) {
+            alert("Our system detects that you have not yet signed in to our website, we will transfer you to the log in page immediately.")
+            window.location.href = '/login'
+            return
+         }
     $.ajax({
         type: "GET",
         url: "/canvas/get",

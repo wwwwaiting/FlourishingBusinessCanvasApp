@@ -106,8 +106,12 @@
     // Used to call functions after page is fully loaded.
     function main() {
         // send get request and set global arrays
-         console.log('haha')
          currentUser = Cookies.get('email');
+         if (currentUser == null) {
+            alert("Our system detects that you have not yet signed in to our website, we will transfer you to the log in page immediately.")
+            window.location.href = '/login'
+            return
+         }
          $.ajax({
              type: "GET",
              url: "/library/get",
@@ -118,7 +122,6 @@
         			  renderFbc()
              }
          })
-         console.log(currentUser)
     }
 
     function renderFbc() {
