@@ -580,14 +580,13 @@ app.post('/library/id', function(req, res){
 app.post('/manager/user', function(req, res){
 	 var type = req.body.type;
 	 var id = req.body.canvasId;
-   var emails = req.body.email;   // now is a list of email
+   var email = req.body.email;   
    var notification = new Array();
 	 Canvas.find({'id':id}, function(err, result){
 	 	if (err) {
 			console.log(err);
 	 	} else {
 			if (type == "add"){
-				emails.forEach(function(email){
 					//check if user is in the db
 					User.find({'email':email}, function(err, result){
 						if (err){
@@ -635,10 +634,8 @@ app.post('/manager/user', function(req, res){
 							});
 						}
 					});
-				});
 			} else if (type == "remove"){
 				// assume user is already in the db
-				emails.forEach(function(email){
 					Canvas.findOneAndUpdate({_id:id}, {$pull: {users:email}}, function(err, result){
 						if (err) {
 							console.log(err);
@@ -652,9 +649,8 @@ app.post('/manager/user', function(req, res){
 							console.log(err)
 						}
 					});
-				});
+				}
 			}
-	 	}
 	 });
 });
 
