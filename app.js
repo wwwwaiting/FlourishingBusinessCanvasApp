@@ -699,9 +699,8 @@ app.post('/manager/add', function(req, res){
 });
 
 // delete canvas from manager page
-app.delete('/manager/del', function(req, res){            console.log(c);
+app.delete('/manager/del', function(req, res){
 	var ids = req.body.canvasId;  //now is a list of canvasId
-  var owner = req.cookies.email;
 	for (var i = 0; i < ids.length; i++){
 		Canvas.findOneAndDelete({_id:ids[i]}, function(err, result){
 			if (err) {
@@ -712,11 +711,11 @@ app.delete('/manager/del', function(req, res){            console.log(c);
 				var u = result.users;
         var s = result.stickies;
         
-        User.findOneAndUpdate({email:result.email}, {$pull:{canvas:id}}, function(err, result){});
+        User.findOneAndUpdate({email:result.email}, {$pull:{canvas:ids[i]}}, function(err, result){});
 
 				// loop through to delete canvasId from users
 				for (var i = 0; i < u.length; i++ ){
-					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:id}}, function(err, result){
+					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:ids[i]}}, function(err, result){
 						if (err) {
               console.log("cant find user")
 							console.log(err);
