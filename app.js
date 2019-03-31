@@ -908,6 +908,39 @@ app.get('/admin/get', function(req, res){
 	});
 });
 
+
+app.get('/admin/users', function(req, res){
+  var email = req.cookies.email;
+	User.find({'email':email}, function(err, result){
+		if (err) {
+			console.log(err);
+		} else {
+      var Users = new Array();
+      let count = 1;
+      User.find(function(err, u){
+        if (err){
+          console.log(err);
+        }else{
+          if(u.length == 1 && u[0].email === email){
+            res.send([]);
+          }
+          // loop through all user list
+          for (let i = 0; i < u.length; i++){
+            var c = u[i];
+            if (c.email !== email){
+              Users.push(c.email)
+            } 
+            if (count == u.length){
+              res.send(Users);
+            }
+            count ++;
+          }
+        }
+      })
+		}
+	});
+});
+
 // get user information from
 // app.listen(PORT, () => {
 //   console.log(`Server listening on port ${PORT}`);
