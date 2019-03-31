@@ -323,3 +323,23 @@ textarea {
     font-size:15px;
     padding-left:15px;
 }
+
+#editFormDetailBody {
+    position: absolute!important;
+    z-index: 1030;
+    top: 4rem;
+    left: 0.5rem;
+    background-color: whitesmoke;
+    width: 530px;
+    height: 270px;
+    box-shadow: 0 4px 7px 0px #88888863;
+}
+
+#editFormDetail {
+    height: 200px;
+    overflow: scroll;
+}
+
+.input-group-text{
+    font-size: 10px!important;
+}

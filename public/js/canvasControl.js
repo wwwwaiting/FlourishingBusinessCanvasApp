@@ -858,17 +858,105 @@ function loadJsonToCanvas(jsonOutput) {
   canvas.loadFromJSON(jsonOutput);
 }
 
+function toggleStickyDetailBody(sticky) {
+    if ($('#editFormDetailBody').length > 0) { // detail body exists
+        $('#editFormDetailBody').remove();
+    } else {
+        $('#editFormHeader').append(`
+        <div class="modal-body" id="editFormDetailBody">
+            <div id="editFormDetail">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">What Partnerships are required</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">What Skills are Required</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Metrics</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Plan to achieve</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Goals with Dates</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">People Responsible</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">ROI</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Investment</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Revenue Potential</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Cost</span>
+                    </div>
+                    <input type="text" class="form-control" placeholder="" aria-label="" aria-describedby="basic-addon1">
+                </div>
+
+            </div>
+            <button type="button" class="btn btn-outline-secondary position-absolute" style="bottom:0.5rem; right:0.5rem">Save</button>
+        </div>
+        `);
+    }
+}
+
+
 // handling all the editing/deleting/comments of sticky
 function displayEditForm(sticky) {
   console.log(sticky)
   const html = `
     <div id="editForm" class="modal-content" style="background-color:${sticky.item(0).fill}">
-        <div class="modal-header border-0">
+        <div class="modal-header border-0" id="editFormHeader">
             <h5 class="modal-title">${sticky.title}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="btn pt-3 pb-3" style="margin: -1rem 0rem -1rem auto; box-shadow:none" id="editFormDetailBodyToggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#6c757d" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></button>
+            <button type="button" class="close ml-0" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
             </button>
         </div>
+
         <div class="modal-body">
             <div id="textboxContainer">
                 <p id="textboxP" class="textbox" style="background-color:${sticky.item(0).fill}">${sticky.content}</p>
@@ -1146,6 +1234,9 @@ function displayEditForm(sticky) {
     }
   })
 
+  $("#editFormDetailBodyToggle").click((sticky) => {
+        toggleStickyDetailBody(sticky);
+  });
 }
 
 function scrollToBottom(containerId) {
