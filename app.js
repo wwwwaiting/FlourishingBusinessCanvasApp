@@ -684,6 +684,7 @@ app.post('/manager/add', function(req, res){
 	// add canvas to database
 	Canvas.create(canvas, function(err, result){  //give back new canvas id.{id}
 		if (err) {
+      console.log("hi")
 			console.log(err);
 		} else {
 			User.findOneAndUpdate({email:email}, {$push:{canvas:result.id}}, function(err, result){
@@ -704,6 +705,7 @@ app.delete('/manager/del', function(req, res){            console.log(c);
 	for (var i = 0; i < ids.length; i++){
 		Canvas.findOneAndDelete({_id:ids[i]}, function(err, result){
 			if (err) {
+        console.log("cant find canvas")
 				console.log(err);
 				res.send(fal);
 			} else {
@@ -716,6 +718,7 @@ app.delete('/manager/del', function(req, res){            console.log(c);
 				for (var i = 0; i < u.length; i++ ){
 					User.findOneAndUpdate({email:u[i]}, {$pull: {canvas:id}}, function(err, result){
 						if (err) {
+              console.log("cant find user")
 							console.log(err);
 							res.send(fal);
 						}
@@ -726,6 +729,7 @@ app.delete('/manager/del', function(req, res){            console.log(c);
 				for (var i = 0; i < s.length; i++){
 					Sticky.findOneAndDelete({_id:s[i]}, function(err, result){
 						if (err) {
+              console.log("cant find sticky")
 							console.log(err);
 							res.send(fal);
 						}
@@ -894,6 +898,39 @@ app.get('/admin/get', function(req, res){
             }
             if (count == cans.length){
               res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers,  notification: notification});
+            }
+            count ++;
+          }
+        }
+      })
+		}
+	});
+});
+
+
+app.get('/admin/users', function(req, res){
+  var email = req.cookies.email;
+	User.find({'email':email}, function(err, result){
+		if (err) {
+			console.log(err);
+		} else {
+      var Users = new Array();
+      let count = 1;
+      User.find(function(err, u){
+        if (err){
+          console.log(err);
+        }else{
+          if(u.length == 1 && u[0].email === email){
+            res.send([]);
+          }
+          // loop through all user list
+          for (let i = 0; i < u.length; i++){
+            var c = u[i];
+            if (c.email !== email){
+              Users.push(c.email)
+            } 
+            if (count == u.length){
+              res.send(Users);
             }
             count ++;
           }

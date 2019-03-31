@@ -7,11 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
 </head>
 
 <body>
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -23,20 +25,23 @@
                 <div class="modal-body">
                 </div>
                 <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
     <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" id="mainNav">
-        <div class="container"><h1>Flourishing Business Canvas</h1>
+        <div class="container">
+            <h1>Flourishing Business Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Manage users</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal"
+                        onclick="renderManageUsers()">Manage users</button>
                 </li>
                 <li class="nav-item ml-2">
-                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageCanvas()">Manage canvas</button>
+                    <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal"
+                        onclick="renderManageCanvas()">Manage canvas</button>
                 </li>
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" onclick="getProfile()">Profile</button>
@@ -66,12 +71,15 @@
         </div>
     </section>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-            crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://smtpjs.com/v3/smtp.js"></script>
@@ -79,76 +87,87 @@
 
     <!-- <script src="js/popup.js"></script> -->
 
-<script type="text/javascript">
-    "use strict"
-    console.log("popup.js")
+    <script type="text/javascript">
+        "use strict"
+        console.log("popup.js")
 
-    let regTitle = []
-    let regId = []
-    let mngTitle = []
-    let mngId = []
-    let mngUsers = []
-    let currentUser = null;
-    $(document).ready(main);
+        let regTitle = []
+        let regId = []
+        let mngTitle = []
+        let mngId = []
+        let mngUsers = []
+        let currentUser = null;
+        $(document).ready(main);
 
-    function listCookies() {
-	    var theCookies = document.cookie.split(';');
-	    var aString = '';
-	    for (var i = 1 ; i <= theCookies.length; i++) {
-	        aString += i + ' ' + theCookies[i-1] + "\n";
-	    }
-	    return aString;
-	}
+        function listCookies() {
+            var theCookies = document.cookie.split(';');
+            var aString = '';
+            for (var i = 1; i <= theCookies.length; i++) {
+                aString += i + ' ' + theCookies[i - 1] + "\n";
+            }
+            return aString;
+        }
 
-    function deleteAllCookies() {
-	    var cookies = document.cookie.split(";");
+        function deleteAllCookies() {
+            var cookies = document.cookie.split(";");
 
-	    for (var i = 0; i < cookies.length; i++) {
-	        var cookie = cookies[i];
-	        var eqPos = cookie.indexOf("=");
-	        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-	        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
-	    }
-	}	
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i];
+                var eqPos = cookie.indexOf("=");
+                var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
 
-    function getLogin(){
-    	window.location.href = '/login'
-    	deleteAllCookies()
-    }
+        function getLogin() {
+            window.location.href = '/login'
+            deleteAllCookies()
+        }
 
-    function getProfile() {
-        window.location.href = '/profile'
-    }
+        function getProfile() {
+            window.location.href = '/profile'
+        }
 
-    // Used to call functions after page is fully loaded.
-    function main() {
-        // send get request and set global arrays
-         console.log('haha')
-         currentUser = Cookies.get('email');
-         $.ajax({
-             type: "GET",
-             url: "/library/get",
-             success: function (data) {
-                 regTitle = data.regTitle
-                 regId = data.regId
-                 mngTitle = data.mngTitle
-                 mngId = data.mngId
-                 mngUsers = data.mngUsers
+        // Used to call functions after page is fully loaded.
+        function main() {
+            // send get request and set global arrays
+            console.log('haha')
+            currentUser = Cookies.get('email');
+            $.ajax({
+                type: "GET",
+                url: "/library/get",
+                success: function (data) {
+                    regTitle = data.regTitle
+                    regId = data.regId
+                    mngTitle = data.mngTitle
+                    mngId = data.mngId
+                    mngUsers = data.mngUsers
 
-                 console.log(mngId)
-                 console.log(mngUsers)
-                 console.log(mngTitle)
-                 console.log(regTitle)
-                 renderFbc(mngId, mngTitle, 'myControl')
-                 renderFbc(regId, regTitle, 'notMyControl')
-             }
-         })
-    }
+                    console.log(mngId)
+                    console.log(mngUsers)
+                    console.log(mngTitle)
+                    console.log(regTitle)
+                    renderFbc(mngId, mngTitle, 'myControl')
+                    renderFbc(regId, regTitle, 'notMyControl')
+                }
+            })
+        }
 
-    function renderFbc(ids, titles, control) {
-        const imgUrl = '/images/fbc.png'
-        for (let i = 0; i < ids.length; i++) {
-            const html = `
+        function renderFbc(ids, titles, control) {
+            if (ids.length == 0) {
+                let message = null;
+                if (control == "myControl") {
+                    message = "Currently, there is no canvas under my control."
+                } else {
+                    message = "Currently, there is no canvas I am involved in."
+                }
+                const html = `<h5 class="ml-auto mr-auto">${message}</h5>`
+                $(`#${control}`).append(html)
+                return
+            }
+            const imgUrl = '/images/fbc.png'
+            for (let i = 0; i < ids.length; i++) {
+                const html = `
             <div class="col-lg-3 col-md-6 col-sm-6 mb-4 post-column">
                 <a id="${ids[i]}" class="canvasClick" style="cursor:pointer">
                     <div class="card shadow postCard">
@@ -161,328 +180,371 @@
                     </div>
                 </a>
             </div>`
-            const rowNum = Math.ceil((i + 1) /4)
-            const rowId = `${control}${rowNum}`
-            if (i % 4 == 0) {
-                $(`#${control}`).append(`<div id="${rowId}" class="row fadeIn post-row"></div>`)
+                const rowNum = Math.ceil((i + 1) / 4)
+                const rowId = `${control}${rowNum}`
+                if (i % 4 == 0) {
+                    $(`#${control}`).append(`<div id="${rowId}" class="row fadeIn post-row"></div>`)
+                }
+                $(`#${rowId}`).append(html)
             }
-            $(`#${rowId}`).append(html)
         }
-    }
 
-    $('body').on('click', 'a.canvasClick', function() {
-        console.log(11)
-        console.log($(this)[0].id)
-        const canvasId = $(this)[0].id
-        const empty = "random"
-        const send = {canvasId, empty}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/library/id",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    window.location.href = '/canvas'
-                } else {
-                    console.log('fail')
+        $('body').on('click', 'a.canvasClick', function () {
+            console.log(11)
+            console.log($(this)[0].id)
+            const canvasId = $(this)[0].id
+            const empty = "random"
+            const send = {
+                canvasId,
+                empty
+            }
+            console.log(send)
+            $.ajax({
+                type: "POST",
+                url: "/library/id",
+                data: send,
+                success: function (data) {
+                    if (data == 'true') {
+                        window.location.href = '/canvas'
+                    } else {
+                        console.log('fail')
+                    }
+                }
+            })
+
+        })
+
+        function renderManageUsers() {
+
+            let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
+            for (let i = 0; i < mngTitle.length; i++) {
+                manageUsersContent +=
+                    `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
+                for (let j = 0; j < mngUsers[i].length; j++) {
+                    if ((mngUsers[i][j]) == currentUser) {
+                        continue;
+                    }
+                    manageUsersContent += `<div class="form-check">
+                <input class="form-check-input semantic" type="checkbox">
+                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
+                }
+                manageUsersContent += `<div class="btnContainer" style="text-align:right">
+            <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
+            <button type="button" class="btn btn-light semantic" onclick="removeUsers()">Remove</button></div></div>`
+            }
+            manageUsersContent += '</form></div>'
+            $(".modal-title").html("Manage users")
+            $(".modal-body").html(manageUsersContent)
+            $(".modal-footer").html(
+                `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
+        }
+
+        $('body').on('change', '.form-check-input', function () {
+            const canvases = document.getElementsByClassName('manageUsersCanvas')
+            if ($(this).is(':checked')) {
+                const canvasId = $(this).parent().parent().find('span').text()
+                console.log(canvasId)
+                // all the canvas divs in manage user form
+
+                for (let canvas of canvases) {
+                    if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
+                        const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                        for (let checkbox of checkBoxes) {
+                            checkbox.disabled = true;
+                        }
+                    }
+                }
+            } else {
+                for (let canvas of canvases) {
+                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
+                    for (let checkbox of checkBoxes) {
+                        checkbox.disabled = false;
+                    }
                 }
             }
         })
 
-    })
-
-    function renderManageUsers() {
-
-        let manageUsersContent = '<div class="modal-body manageUserContainer"><form>'
-        for(let i = 0; i < mngTitle.length; i++){
-            manageUsersContent += `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
-            for (let j = 0; j < mngUsers[i].length; j++){
-                if ((mngUsers[i][j]) == currentUser) {
-                    continue;
-                }
-                manageUsersContent += `<div class="form-check">
-                <input class="form-check-input semantic" type="checkbox">
-                <label class="form-check-label" for="defaultCheck1">${mngUsers[i][j]}</label></div>`
-            }
-            manageUsersContent += `<div class="btnContainer" style="text-align:right">
-            <button type="button" class="btn btn-light semantic addUserPrompt">Add</button>
-            <button type="button" class="btn btn-light semantic" onclick="removeUsers()">Remove</button></div></div>`
-        }
-        manageUsersContent += '</form></div>'
-        $(".modal-title").html("Manage users")
-        $(".modal-body").html(manageUsersContent)
-        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`)
-    }
-
-    $('body').on('change', '.form-check-input', function() {
-        const canvases = document.getElementsByClassName('manageUsersCanvas')
-        if ($(this).is(':checked')) {
-            const canvasId = $(this).parent().parent().find('span').text()
-            console.log(canvasId)
-            // all the canvas divs in manage user form
-            
-            for (let canvas of canvases) {
-                if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
-                    const checkBoxes = canvas.getElementsByClassName('form-check-input')
-                    for (let checkbox of checkBoxes) {
-                        checkbox.disabled = true;
-                    }
-                }
-            }
-        } else {
-            for (let canvas of canvases) {
-                const checkBoxes = canvas.getElementsByClassName('form-check-input')
-                for (let checkbox of checkBoxes) {
-                    checkbox.disabled = false;
-                }
-            }
-        }
-    })
-
-    $('body').on('click', 'button.addUserPrompt', function() {
-        const html = `<div class="input-group">
+        $('body').on('click', 'button.addUserPrompt', function () {
+            const html = `<div class="input-group">
         <input type="text" class="form-control semantic" placeholder="New user email" >
         <div class="input-group-append">
             <button class="btn btn-primary addUserDone semantic" type="button">Add</button>
         </div></div>`
-        $(this).parent().html(html)
-    })
+            $(this).parent().html(html)
+        })
 
-    function validateEmail(email) {
-    	var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-    	var result = re.test(email.toLowerCase());
-    	if (!result) {
-    		alert("Please enter a valid email.");
-    		return false;
-    	}
-    	return true;
-    }
-    
-    $('body').on('click', '.manageUserContainer', function(e) {
-        const name = e.target.classList
-        if (!name.contains('semantic')) {
-            renderManageUsers()
-
-        }
-    })
-
-    $('body').on('click', 'button.addUserDone', function() {
-        const email = [$(this).parent().prev().val()]
-        const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
-        
-        const index = canvasIds.findIndex(id => id == canvasId)
-        if (canvasUsers[index].includes(email[0])) {
-            alert("Duplicate user email.")
-            $(this).parent().prev().val('')
-            return;
-        }
-        console.log(canvasUsers)
-        //send update request
-        console.log(canvasId)
-        const type = "add"
-        const send = {type, canvasId, email}
-
-        if (validateEmail(JSON.stringify(email))){
-        	console.log("validateEmail: " + validateEmail(JSON.stringify(email)))
-	        $.ajax({
-	            type: "POST",
-	            url: "/manager/user",
-	            data: send,
-	            success: function (data) {
-	                if (data == 'true') {
-	                    const index = canvasIds.findIndex(id => id == canvasId)
-	                    canvasUsers[index].push(email[0])
-	                    Email.send({
-							Host: "smtp.elasticemail.com",
-	            			Username: "wangluya2014@gmail.com",
-	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-	            			To: email,
-	            			From: "wangluya2014@gmail.com",
-	            			Subject: "This is the subject",
-	            			Body: "Testing for register!."
-	          			  });
-	                    renderManageUsers()
-	                } else {
-	                    console.log('fail add user')
-	                }
-	            }
-	        })
-    	}
-    })
-
-
-    function removeUsers() {
-        const selected = $('.form-check-input:checked')
-        if (selected.length == 0) {
-            alert("No User Selected.")
-            return
+        function validateEmail(email) {
+            var re =
+                /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+            var result = re.test(email.toLowerCase());
+            if (!result) {
+                alert("Please enter a valid email.");
+                return false;
+            }
+            return true;
         }
 
-        const usersToRemove = []
-        for (let e of selected) {
-            usersToRemove.push(e.nextElementSibling.innerHTML)
-        }
-        const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
-        for (let i = 1; i < selected.length; i++) {
-				const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0].innerHTML
-        		if (tempId != canvasId) {
-					console.log('Cannot remove users in different canvas simultaneously')
-					return        		
-        		}        
-        }
-        
+        $('body').on('click', '.manageUserContainer', function (e) {
+            const name = e.target.classList
+            if (!name.contains('semantic')) {
+                renderManageUsers()
 
-        // canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-        console.log(canvasUsers)
-        // renderManageUsers()
-        const email = usersToRemove
-        
-        //send POST request
-        const type = "remove"
-        const send = {type, canvasId, email}
-        console.log(send)
-        
-        $.ajax({
-            type: "POST",
-            url: "/manager/user",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    const index = canvasIds.findIndex(id => id == canvasId)
-                    canvasUsers[index] = canvasUsers[index].filter(u => !(usersToRemove.includes(u.toString())))
-                    renderManageUsers()
-                } else {
-                    console.log('fail remove user')
-                }
             }
         })
-    }
+
+        $('body').on('click', 'button.addUserDone', function () {
+            const email = [$(this).parent().prev().val()]
+            const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
+
+            const index = mngUsers.findIndex(id => id == canvasId)
+            if (mngUsers[index].includes(email[0])) {
+                alert("Duplicate user email.")
+                $(this).parent().prev().val('')
+                return;
+            }
+            console.log(mngUsers)
+            //send update request
+            console.log(mngId)
+            const type = "add"
+            const send = {
+                type,
+                canvasId,
+                email
+            }
+
+            if (validateEmail(JSON.stringify(email))) {
+                console.log("validateEmail: " + validateEmail(JSON.stringify(email)))
+                $.ajax({
+                    type: "POST",
+                    url: "/manager/user",
+                    data: send,
+                    success: function (data) {
+                        if (data == 'true') {
+                            const index = mngId.findIndex(id => id == canvasId)
+                            mngUsers[index].push(email[0])
+                            Email.send({
+                                Host: "smtp.elasticemail.com",
+                                Username: "wangluya2014@gmail.com",
+                                Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                                To: email,
+                                From: "wangluya2014@gmail.com",
+                                Subject: "This is the subject",
+                                Body: "Testing for register!."
+                            });
+                            renderManageUsers()
+                        } else {
+                            console.log('fail add user')
+                        }
+                    }
+                })
+            }
+        })
 
 
-    function renderManageCanvas(){
-        let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
-        for (let i = 0; i < mngTitle.length; i++){
-            manageCanvasContent += `<div class="form-check">
+        function removeUsers() {
+            const selected = $('.form-check-input:checked')
+            if (selected.length == 0) {
+                alert("No User Selected.")
+                return
+            }
+
+            const usersToRemove = []
+            for (let e of selected) {
+                usersToRemove.push(e.nextElementSibling.innerHTML)
+            }
+            const canvasId = selected[0].parentElement.parentElement.children[0].getElementsByTagName('span')[0]
+                .innerHTML
+            for (let i = 1; i < selected.length; i++) {
+                const tempId = selected[i].parentElement.parentElement.children[0].getElementsByTagName('span')[0]
+                    .innerHTML
+                if (tempId != canvasId) {
+                    console.log('Cannot remove users in different canvas simultaneously')
+                    return
+                }
+            }
+
+
+            const email = usersToRemove
+
+            //send POST request
+            const type = "remove"
+            const send = {
+                type,
+                canvasId,
+                email
+            }
+            console.log(send)
+
+            $.ajax({
+                type: "POST",
+                url: "/manager/user",
+                data: send,
+                success: function (data) {
+                    if (data == 'true') {
+                        const index = mngId.findIndex(id => id == canvasId)
+                        mngUsers[index] = mngUsers[index].filter(u => !(usersToRemove.includes(u
+                        .toString())))
+                        renderManageUsers()
+                    } else {
+                        console.log('fail remove user')
+                    }
+                }
+            })
+        }
+
+
+        function renderManageCanvas() {
+            let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist"><form>'
+            for (let i = 0; i < mngTitle.length; i++) {
+                manageCanvasContent += `<div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
             <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
         </div>`
-        }
-        manageCanvasContent += '</form></div>'
-        manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
+            }
+            manageCanvasContent += '</form></div>'
+            manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
         <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title" >
         <div class="input-group-append">
             <button class="btn btn-primary" type="button" onclick="addNewCanvas()">Add</button>
         </div></div>`
 
-        $(".modal-title").html("Manage Canvas")
-        $(".modal-body").html(manageCanvasContent)
-        $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-    }
-
-    $('body').on('change', '.form-check-input', function() {
-        var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
-        
-        if (check == 1) {
+            $(".modal-title").html("Manage Canvas")
+            $(".modal-body").html(manageCanvasContent)
             $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
+        }
+
+        $('body').on('change', '.form-check-input', function () {
+            var check = $('#manageCanvasChecklist').find('input[type=checkbox]:checked').length;
+
+            if (check == 1) {
+                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-        } else {
-            $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            } else {
+                $(".modal-footer").html(`<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
-        }
-    })
-
-    function copyCanvas() {
-        const e = $('.form-check-input:checked')[0]
-        const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
-
-        const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
-        const title = old_title + "-copy"
-
-        // current canvas id, new title
-        const send = {canId, title}
-
-        $.ajax({
-            type: "POST",
-            url: "/canvas/copy",
-            data: send,
-            success: function (data) {
-                // get the same canvas with a new id back 
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push(data.users)
-                removeMainSection()
-                renderManageCanvas()
-                renderFbc()
-                }
-            
-        })
-    }
-
-    function addNewCanvas() {
-        const title = $('#newCanvas').val()
-        // send post request
-        const send = {title}
-        console.log(send)
-        $.ajax({
-            type: "POST",
-            url: "/manager/add",
-            data: send,
-            success: function (data) {
-                // if (data == 'true') {
-                canvasIds.push(data.id)
-                canvasTitles.push(title)
-                canvasUsers.push([])
-                removeMainSection()
-                renderManageCanvas()
-                renderFbc()
-                // } else {
-                //     console.log('fail add canvas')
-                }
-            
-        })
-    }
-
-    function removeCanvas() {
-        const selected = $('.form-check-input:checked')
-        const canvasId = []
-        for (let e of selected) {
-
-            const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
-            console.log(canId)
-            canvasId.push(canId)
-        }
-        const send = {canvasId}
-        console.log(send)
-        
-        $.ajax({
-            type: "DELETE",
-            url: "/manager/del",
-            data: send,
-            success: function (data) {
-                if (data == 'true') {
-                    for (let canId of canvasId) {
-                        const indexToRemove = canvasIds.findIndex(id => id == canId)
-                        canvasTitles.splice(indexToRemove, 1)
-                        canvasIds.splice(indexToRemove, 1)
-                        canvasUsers.splice(indexToRemove, 1)
-                    }
-                    renderManageCanvas()
-                    removeMainSection()
-                    renderFbc()
-                } else {
-                    console.log('fail remove canvas')
-                }
             }
         })
-    }
 
-    function removeMainSection() {
-        $('section').html('')
-    }
+        function copyCanvas() {
+            const e = $('.form-check-input:checked')[0]
+            const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
 
-</script>
+            const old_title = $('.form-check-input:checked').next().text().replace(canId, "")
+            const title = old_title + "-copy"
+
+            // current canvas id, new title
+            const send = {
+                canId,
+                title
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/canvas/copy",
+                data: send,
+                success: function (data) {
+                    // get the same canvas with a new id back 
+                    mngId.push(data.id)
+                    mngTitle.push(title)
+                    mngUsers.push(data.users)
+                    removeMainSection()
+                    renderManageCanvas()
+                    renderFbc(mngId, mngTitle, 'myControl')
+                    renderFbc(regId, regTitle, 'notMyControl')
+                }
+
+            })
+        }
+
+        function addNewCanvas() {
+            console.log("add new")
+            const title = $('#newCanvas').val()
+            // send post request
+            const send = {
+                title
+            }
+            console.log(send)
+            $.ajax({
+                type: "POST",
+                url: "/manager/add",
+                data: send,
+                success: function (data) {
+                    // if (data == 'true') {
+                    mngId.push(data.id)
+                    mngTitle.push(title)
+                    mngUsers.push([])
+                    removeMainSection()
+                    renderManageCanvas()
+                    renderFbc(mngId, mngTitle, 'myControl')
+                    renderFbc(regId, regTitle, 'notMyControl')
+                    // } else {
+                    //     console.log('fail add canvas')
+                }
+
+            })
+        }
+
+        function removeCanvas() {
+            console.log("remove canvas")
+            const selected = $('.form-check-input:checked')
+            const canvasId = []
+            for (let e of selected) {
+
+                const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
+                console.log(canId)
+                canvasId.push(canId)
+            }
+
+            const send = {
+                canvasId
+            }
+            console.log(send)
+
+            $.ajax({
+                type: "DELETE",
+                url: "/manager/del",
+                data: send,
+                success: function (data) {
+                    if (data == 'true') {
+                        for (let canId of canvasId) {
+                            const indexToRemove = mngId.findIndex(id => id == canId)
+                            mngTitle.splice(indexToRemove, 1)
+                            mngId.splice(indexToRemove, 1)
+                            mngUsers.splice(indexToRemove, 1)
+                        }
+                        renderManageCanvas()
+                        removeMainSection()
+                        renderFbc(mngId, mngTitle, 'myControl')
+                        renderFbc(regId, regTitle, 'notMyControl')
+                    } else {
+                        console.log('fail remove canvas')
+                    }
+                }
+            })
+        }
+
+        function removeMainSection() {
+            const html = `
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">My Canvas</h3>
+            </div>
+            <div id="myControl" class="">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4 mb-5">
+            <div class="d-flex mb-3">
+                <h3 class="ml-auto mr-auto">Other's Canvas</h3>
+            </div>
+            <div id="notMyControl" class="">
+            </div>
+        </div>`
+            $('section').html(html)
+        }
+    </script>
 </body>
+
 </html>
