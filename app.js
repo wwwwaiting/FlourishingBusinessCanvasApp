@@ -526,7 +526,6 @@ app.get('/library/get', function(req, res){
 			console.log(err);
 		} else {
       var user = result[0];
-      var name = user.name;
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
       var c_list = user.canvas;
       var notification = user.notification;
@@ -547,7 +546,7 @@ app.get('/library/get', function(req, res){
 							var c = result[0];
 							var id = c.id
               var t = c.title;
-              if (c.owner == name){
+              if (c.email == email){
                 var user = c.users;
                 mngId.push(id);
                 mngTitle.push(t);
@@ -676,7 +675,8 @@ app.post('/manager/add', function(req, res){
 
 	// create a new canvas with given owner and title.
 	var canvas = new Canvas({
-		owner: owner,
+    owner: owner,
+    email: email,
     title: title,
     company:'',
 		users: empty,
