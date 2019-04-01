@@ -60,6 +60,7 @@
 
         <div class="btnBox m-3">
             <button type="button" class="btn btn-secondary btn-sm" id="save">Save Changes</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="discard">Discard Changes</button>
         </div>
 
         <div class="changePassword">
@@ -111,6 +112,10 @@
                 }
             });
         }
+        })
+
+        $('#discard').click(() => {
+            window.history.back();
         })
 
         $('#save').on('click', function() {
