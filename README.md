@@ -117,7 +117,7 @@ User can also **double click** a sticky to modify its **color**, **content**, ad
 
 Additionally, when user **single click** a sticky, under the header they will be an extra box on the left side of the page displaying all the stickies under the box where the current selected sticky is in. This is useful when there are too many stickies in a box.
 
-![sticky3](deliverables\sticky3.png)
+![sticky3](deliverables/sticky3.png)
 
 
 
