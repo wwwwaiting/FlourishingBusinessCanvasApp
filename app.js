@@ -193,42 +193,6 @@ app.post('/register', function (req, res) {
             } else if (newlyCreated == null) {
               res.send(err);
             } else {
-<<<<<<< Updated upstream
-              // only when an outside user trying to signup at the first time, then create new user
-              var newRequest = {userEmail: email, userTime:new Date(), userName: name};
-              var user = new User({
-                name: name,
-                email: email,
-                pwd: pwd,
-                role: regUser,
-                canvas: canvasList,
-                occupation: '',
-                status: 1,
-                phone: '',
-                company: '',
-                notification: canvasList
-              });
-              User.create(user, function(err, newlyCreated) {
-                if (err) {
-                  console.log(err);
-                  res.send(err);
-                } else if (newlyCreated == null){
-                  res.send(err);
-                } else {
-                  User.findOneAndUpdate({role:admin},{ $push: { notification :  newRequest }},
-                    function(err, updated){
-                    if (err) {
-                      console.log(err);
-                      res.send(re);
-                    } else if (updated == null){
-                      res.send(fal);
-                    } else{
-                      res.send("1"); 
-                    };
-                  });
-                }
-              });
-=======
               User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } },
                 function (err, updated) {
                   if (err) {
@@ -237,10 +201,9 @@ app.post('/register', function (req, res) {
                   } else if (updated == null) {
                     res.send(fal);
                   } else {
-                    res.send(regUser.toString());
+                    res.send("1");
                   };
                 });
->>>>>>> Stashed changes
             }
           });
         }
@@ -442,13 +405,7 @@ app.delete('/canvas/delete', function (req, res) {
   });
 });
 
-<<<<<<< Updated upstream
 app.post('/canvas/edit', function(req, res){
-
-=======
-app.post('/canvas/edit', function (req, res) {
-  console.log(req.body);
->>>>>>> Stashed changes
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -921,10 +878,6 @@ function getAllCanvas(email, res) {
         if (canvas.length == 0) {
           res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
         }
-<<<<<<< Updated upstream
-        if ( i == canvas.length -1){
-          res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
-=======
         for (var i = 0; i < canvas.length; i++) {
           var c = canvas[i];
           var id = c.id
@@ -939,10 +892,8 @@ function getAllCanvas(email, res) {
             regId.push(id);
           }
           if (i == canvas.length - 1) {
-            console.log({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
             res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
           }
->>>>>>> Stashed changes
         }
       }
       catch (err) {
@@ -981,66 +932,43 @@ app.post('/admin/edit', function (req, res) {
   var type = req.body.type;
   var user = req.body.user;
   var email = req.cookies.email;
-<<<<<<< Updated upstream
-  if (type === 'remove'){
-    // const run = function (){    
-      User.findOneAndDelete({email: user}).exec()
-      .then(async function(result){
-        let count = 1;
-        await async.forEach(result.canvas, async function(canvasId, callback){
-          await Canvas.findOneAndUpdate({_id: canvasId}, {$pull: {users: user}}).exec()
-          .then(async function(result){
-            if(result.email === user){
-              await Canvas.findOneAndDelete({_id: result.id}).exec()
-              .then(async function(result){
-                await async.forEach(result.users, async function(userEmail, callback){
-                  await User.findOneAndUpdate({email: userEmail}, {$pull: {canvas: canvasId}})
+
+  if (type === 'remove'){  
+      User.findOneAndDelete({email: user}, function(err, result){
+        if(err){
+          console.log(err);
+          res.send(err);
+        }else if (result == null){
+          res.send(fal)
+        }else{
+          let can = result.canvas;
+          Canvas.find({_id: {$in : can}}).updateMany({$pull: {users: user}})
+          .then((result)=>{
+            Canvas.find({email:user}, function(err, result){
+              let ids = result.map(result => result.id);
+              Canvas.deleteMany({email:user})
+              .then((result) =>{
+                Sticky.deleteMany({
+                  canvasId: {
+                    $in: ids
+                  }
+                }).then((result) => {
+                  User.find({canvas: {$in : ids}}).updateMany({$pull: {canvas: {$in:ids}}})
+                  .then((result) => {
+                    getAllCanvas(email, res);
+                  })
                 })
               })
-            }
-          })
-          if (count == result.canvas.length){
-            getAllCanvas(email, res); 
-          }
-          count ++;
-        });
-      })
-      .then(undefined, function(err){
-        //Handle error
-        console.log(err);
-        res.send(err);
-      });
-  }else{
-=======
-  if (type === 'remove') {
-    User.findOneAndDelete({ email: user }).exec()
-      .then(async function (result) {
-        var canvasList = result.canvas;
-        console.log("here");
-        console.log(canvasList);
-        await async.forEach(canvasList, function (canvasId, callback) {
-          Canvas.findOneAndUpdate({ _id: canvasId }, { $pull: { users: user } }).exec()
-            .then(function (result) {
-              if (result.email === user) {
-                Canvas.findOneAndDelete({ _id: result.id }).exec()
-                  .then(async function (result) {
-                    var userList = result.users;
-                    await async.forEach(userList, function (userEmail, callback) {
-                      User.findOneAndUpdate({ email: userEmail }, { $pull: { canvas: canvasId } })
-                    })
-                  })
-              }
+              
             })
-        });
-        getAllCanvas(email, res);
+          }).catch((err) => {
+            console.error(err);
+            res.send(fal);
+          })
+        }
+
       })
-      .then(undefined, function (err) {
-        //Handle error
-        console.log(err);
-        res.send(err);
-      })
-  } else {
->>>>>>> Stashed changes
+  }else{
     var user = new User({
       name: '',
       email: user,
