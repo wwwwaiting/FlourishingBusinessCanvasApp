@@ -29,8 +29,8 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" id="mainNav">
-        <div class="container"><h1>Flourishing Business Canvas</h1>
+    <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-light" style="height: 110px" id="mainNav">
+        <div class="container-fluid"><h1>Flourishing Business Canvas</h1>
             <ul class="nav navbar-nav ml-auto text-uppercase">
                 <li class="nav-item ml-2">
                     <button type="button" class="btn btn-light" data-toggle="modal" data-target="#exampleModal" onclick="renderManageUsers()">Users</button>
@@ -97,7 +97,13 @@
     let mngUsers = []
     let notification = null;
     let currentUser = null;
-    $(document).ready(main);
+    $(document).ready(() => {
+        main();
+        $("#post-TwoRow").css({top: $("#mainNav").height() + 20});
+    });
+    $(window).resize(() => {
+        $("#post-TwoRow").css({top: $("#mainNav").height() + 20});
+    });
 
     function listCookies() {
 	    var theCookies = document.cookie.split(';');
@@ -171,7 +177,7 @@
                         <div class="image-constrain">
                             <img src="${imgUrl}" class="card-img-top post-img p-3">
                         </div>
-                        <div class="card-body text-center">
+                        <div class="card-body pt-0 text-center">
                             <h6 class="post-title font-weight-bold font-italic text-truncate">${titles[i]}</h6>
                         </div>
                     </div>

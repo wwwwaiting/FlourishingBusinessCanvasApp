@@ -51,14 +51,16 @@
             </div>
 
             <div class="profilePicture">
+                <p style="position: relative;top: -55px;">Update profile picture:</p>
                 <input type="file" accept="image/*" id="upload"/>
             </div>
         </div>
 
-        <br>
+        <hr>
 
-        <div class="btnBox">
+        <div class="btnBox m-3">
             <button type="button" class="btn btn-secondary btn-sm" id="save">Save Changes</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="discard">Discard Changes</button>
         </div>
 
         <div class="changePassword">
@@ -110,6 +112,10 @@
                 }
             });
         }
+        })
+
+        $('#discard').click(() => {
+            window.history.back();
         })
 
         $('#save').on('click', function() {
