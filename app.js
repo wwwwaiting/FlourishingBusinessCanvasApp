@@ -193,42 +193,6 @@ app.post('/register', function (req, res) {
             } else if (newlyCreated == null) {
               res.send(err);
             } else {
-<<<<<<< Updated upstream
-              // only when an outside user trying to signup at the first time, then create new user
-              var newRequest = {userEmail: email, userTime:new Date(), userName: name};
-              var user = new User({
-                name: name,
-                email: email,
-                pwd: pwd,
-                role: regUser,
-                canvas: canvasList,
-                occupation: '',
-                status: 1,
-                phone: '',
-                company: '',
-                notification: canvasList
-              });
-              User.create(user, function(err, newlyCreated) {
-                if (err) {
-                  console.log(err);
-                  res.send(err);
-                } else if (newlyCreated == null){
-                  res.send(err);
-                } else {
-                  User.findOneAndUpdate({role:admin},{ $push: { notification :  newRequest }},
-                    function(err, updated){
-                    if (err) {
-                      console.log(err);
-                      res.send(re);
-                    } else if (updated == null){
-                      res.send(fal);
-                    } else{
-                      res.send("1"); 
-                    };
-                  });
-                }
-              });
-=======
               User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } },
                 function (err, updated) {
                   if (err) {
@@ -240,7 +204,6 @@ app.post('/register', function (req, res) {
                     res.send(regUser.toString());
                   };
                 });
->>>>>>> Stashed changes
             }
           });
         }
@@ -442,13 +405,8 @@ app.delete('/canvas/delete', function (req, res) {
   });
 });
 
-<<<<<<< Updated upstream
-app.post('/canvas/edit', function(req, res){
-
-=======
 app.post('/canvas/edit', function (req, res) {
   console.log(req.body);
->>>>>>> Stashed changes
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -570,56 +528,44 @@ app.post('/canvas/change', function (req, res) {
 app.get('/library/get', function (req, res) {
   res.clearCookie('id');
   var email = req.cookies.email;
-  User.find({ 'email': email }).exec()
-    .then(async function (result) {
-      try {
-        var user = result[0];
-        var role = user.role;  // 2 regUser, 3 manager, 4 admin
-        let c_list = user.canvas;
+  User.find({
+    email: email
+  }).then((result) => {
+    var user = result[0];
+    var role = user.role;  // 2 regUser, 3 manager, 4 admin
+    let c_list = user.canvas;
 
-        var regTitle = new Array();
-        var regId = new Array();
-        var mngTitle = new Array();
-        var mngId = new Array();
-        var mngUsers = new Array();
+    var regTitle = new Array();
+    var regId = new Array();
+    var mngTitle = new Array();
+    var mngId = new Array();
+    var mngUsers = new Array();
 
-        if (c_list.length != 0) {
-          console.log(c_list);
-          async.forEach(c_list, function (canvasId, libraryGet) {
-            Canvas.find({ _id: canvasId }).exec()
-              .then(async function (result) {
-                console.log(result);
-                try {
-                  var c = result[0];
-                  var id = c.id
-                  var t = c.title;
-                  if (c.email == email) {
-                    var user = c.users;
-                    mngId.push(id);
-                    mngTitle.push(t);
-                    mngUsers.push(user);
-                  } else {
-                    regTitle.push(t);
-                    regId.push(id);
-                  }
-                } catch (err) {
-                  console.log(err);
-                }
-              }).then(function(){
-                if (regId.length + mngId.length == c_list.length){
-                  if (role == regUser) {   // only send regular canvas
-                    res.send({ regTitle: regTitle, regId: regId });
-                  } else if (role == manager) {  // send regular canvas and manager's canvas
-                    res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers });
-                  }
-                }
-              });
-          });
+    if (c_list.length != 0) {
+      Canvas.find({
+        _id: { $in: c_list }
+      }).then((result) => {
+        //result is a list of canvas, split into manager's canvas and other canvas
+        var mng = result.filter(canvas => canvas.email == email)
+        mngTitle = mng.map(canvas => canvas.title)
+        mngId = mng.map(canvas => canvas.id)
+        mngUsers = mng.map(canvas => canvas.users)
+
+        var reg = result.filter(canvas => canvas.email != email)
+        regId = reg.map(canvas => canvas.id)
+        regTitle = reg.map(canvas => canvas.title)
+
+        if (role == regUser) {   // only send regular canvas
+          res.send({ regTitle: regTitle, regId: regId });
+        } else if (role == manager) {  // send regular canvas and manager's canvas
+          res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers });
         }
-      } catch (err) {
-        console.log(err);
-      }
-    });
+        console.log(mng)
+      })
+    }
+  }).catch((err) => {
+    console.error(err);
+  });
 });
 
 // store the canvas id into cookie
@@ -921,10 +867,6 @@ function getAllCanvas(email, res) {
         if (canvas.length == 0) {
           res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
         }
-<<<<<<< Updated upstream
-        if ( i == canvas.length -1){
-          res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
-=======
         for (var i = 0; i < canvas.length; i++) {
           var c = canvas[i];
           var id = c.id
@@ -942,7 +884,6 @@ function getAllCanvas(email, res) {
             console.log({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
             res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
           }
->>>>>>> Stashed changes
         }
       }
       catch (err) {
@@ -981,37 +922,6 @@ app.post('/admin/edit', function (req, res) {
   var type = req.body.type;
   var user = req.body.user;
   var email = req.cookies.email;
-<<<<<<< Updated upstream
-  if (type === 'remove'){
-    // const run = function (){    
-      User.findOneAndDelete({email: user}).exec()
-      .then(async function(result){
-        let count = 1;
-        await async.forEach(result.canvas, async function(canvasId, callback){
-          await Canvas.findOneAndUpdate({_id: canvasId}, {$pull: {users: user}}).exec()
-          .then(async function(result){
-            if(result.email === user){
-              await Canvas.findOneAndDelete({_id: result.id}).exec()
-              .then(async function(result){
-                await async.forEach(result.users, async function(userEmail, callback){
-                  await User.findOneAndUpdate({email: userEmail}, {$pull: {canvas: canvasId}})
-                })
-              })
-            }
-          })
-          if (count == result.canvas.length){
-            getAllCanvas(email, res); 
-          }
-          count ++;
-        });
-      })
-      .then(undefined, function(err){
-        //Handle error
-        console.log(err);
-        res.send(err);
-      });
-  }else{
-=======
   if (type === 'remove') {
     User.findOneAndDelete({ email: user }).exec()
       .then(async function (result) {
@@ -1040,7 +950,6 @@ app.post('/admin/edit', function (req, res) {
         res.send(err);
       })
   } else {
->>>>>>> Stashed changes
     var user = new User({
       name: '',
       email: user,
