@@ -223,6 +223,8 @@ In addition, we have three events:
 
 **To-Do lists, "Trello"**
 
+https://trello.com/en
+
 We are using "Trello" for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
 
 **Prioritizing tasks**
