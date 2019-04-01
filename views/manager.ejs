@@ -462,6 +462,9 @@
             console.log("add new")
             const title = $('#newCanvas').val()
             // send post request
+            if (title == "") {
+                return
+            }
             const send = {
                 title
             }
