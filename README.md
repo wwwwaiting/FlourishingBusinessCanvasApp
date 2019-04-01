@@ -1,7 +1,7 @@
 # Flourishing Business Canvas/Team 9
 
 ## Description 
-​	https://csc301-fbc.herokuapp.com/login
+https://csc301-fbc.herokuapp.com/login
 
 For testing purpose, enter:
 
@@ -116,6 +116,10 @@ Once a sticky is created, users can drag it to their desired boxes. The sticky w
 User can also **double click** a sticky to modify its **color**, **content**, add **comment** or **delete** it entirely.
 
 Additionally, when user **single click** a sticky, under the header they will be an extra box on the left side of the page displaying all the stickies under the box where the current selected sticky is in. This is useful when there are too many stickies in a box.
+
+![sticky3](deliverables\sticky3.png)
+
+
 
 Furthermore, on the right side of the header, users can input the **title** of the FBC and **name** of the creator, **export** the FBC as json, svg, png or pdf. Or **search** within the canvas. 
 
