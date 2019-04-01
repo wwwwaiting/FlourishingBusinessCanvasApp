@@ -560,7 +560,6 @@ app.get('/library/get', function (req, res) {
         } else if (role == manager) {  // send regular canvas and manager's canvas
           res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers });
         }
-        console.log(mng)
       })
     }
   }).catch((err) => {
@@ -580,77 +579,54 @@ app.post('/manager/user', function (req, res) {
   var type = req.body.type;
   var id = req.body.canvasId;
   var email = req.body.email;
-  var notification = new Array();
-  Canvas.find({ 'id': id }, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (type == "add") {
-        //check if user is in the db
-        User.find({ 'email': email }, function (err, result) {
-          if (err) {
-            console.log(err);
-          } else if (result.length == 0) {
-            //user not in the db
-            console.log("not in db")
-            var canvasList = new Array();
-            var user = new User({
-              name: '',
-              email: email,
-              pwd: '',
-              role: regUser,
-              canvas: canvasList,
-              occupation: '',
-              status: 2,
-              phone: '',
-              company: '',
-              notification: notification
-            });
-            User.create(user, function (err, result) {
-              if (err) {
-                console.log(err);
-                res.send(fal);
-              } else {
-                Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } }, function (err, result) {
-                  if (err) {
-                    console.log(err);
-                  }
-                });
-                res.send(tru);  // send true when finish create user in db.
-              }
-            });
-          } else {
-            //user in db
-            console.log("in db");
-            Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } }, function (err, result) {
-              if (err) {
-                console.log(err);
-                res.send(fal);
-              } else {
-                User.findOneAndUpdate({ email: email }, { $push: { canvas: id } }, function (err, result) { });
-                res.send(tru);	 // send true when add user into canvas's user list.
-              }
-            });
-          }
-        });
-      } else if (type == "remove") {
-        // assume user is already in the db
-        Canvas.findOneAndUpdate({ _id: id }, { $pull: { users: email } }, function (err, result) {
-          if (err) {
-            console.log(err);
-            res.send(fal);
-          } else {
-            res.send(tru);	 // send true when remove user from canvas's user list.
-          }
-        });
-        User.findOneAndUpdate({ email: email }, { $pull: { canvas: id } }, function () {
-          if (err) {
-            console.log(err)
-          }
-        });
-      }
+  var empty = new Array();
+  Canvas.find({
+    id: id
+  }).then((result) => {
+    if (type == "add") {
+      User.find({
+        email: email
+      }).then((result) => {
+        if (result.length == 0) {  // user in not in database
+          var user = new User({
+            name: '',
+            email: email,
+            pwd: '',
+            role: regUser,
+            canvas: empty,
+            occupation: '',
+            status: 2,
+            phone: '',
+            company: '',
+            notification: empty
+          });
+          User.create(user).then((result) => {
+            Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } })
+              .then((result) => {
+                res.send(tru)
+              })
+          })
+        } else {  // user in database
+          Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } })
+            .then((result) => {
+              User.findOneAndUpdate({ email: email }, { $push: { canvas: id } })
+                .then((result) => {
+                  res.send(tru)
+                })
+            })
+        }
+      })
+    } else if (type == "remove") {
+      User.findOneAndUpdate({ email: email }, { $pull: { canvas: id } })
+      Canvas.findOneAndUpdate({ _id: id }, { $pull: { users: email } })
+        .then((result) => {
+          res.send(tru)
+        })
     }
-  });
+  }).catch((err) => {
+    console.log(err)
+    res.send(fal)
+  })
 });
 
 // add canvas from manager page
@@ -674,19 +650,12 @@ app.post('/manager/add', function (req, res) {
   });
 
   // add canvas to database
-  Canvas.create(canvas, function (err, result) {  //give back new canvas id.{id}
-    if (err) {
-      console.log(err);
-    } else {
-      User.findOneAndUpdate({ email: email }, { $push: { canvas: result.id } }, function (err, result) {
-        if (err) {
-          console.log(err);
-        }
-      });
-      res.send({ id: result.id });
-    }
-  });
-
+  Canvas.create(canvas).then((result) => {
+    User.findOneAndUpdate({ email: email }, { $push: { canvas: result.id } })
+    res.send({id:result.id})
+  }).catch((err) => {
+    console.log(err)
+  })
 });
 
 // delete canvas from manager page
