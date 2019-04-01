@@ -10,11 +10,11 @@
 
 #### Changes from previous iteration
 
-We are happy with all of our decisions made in the previous iterations. The list of the most significant process decisions made by our team are listed below:
+We are satisfied with all of our decisions made in the previous iterations. The list of the most significant process decisions made by our team are listed below:
 
 **Using the kanban methodology**
 
-Throughout our programming process, we chose "Trello" as our mainly used task listing app for listing all the features that we need to finish. Every time a new deliverable started, we held a meeting with all of our team members to decide what we need to finish by the end of the deliverable. Then each of our sub groups started working and checking off the tasks once they had finished. We were really efficient this way in deliverable 2 because even though the list of tasks we listed at the beginning of the meeting might not be entirely accurate or enough, all of our team members had a general idea of what was needed to get done and could add more or edit the tasks to the actual task that we needed to do, if they realized that it was needed as they were coding.
+Throughout our programming process in deliverable 2, we chose "Trello" as our mainly used task listing app to organize all the features that we need to implement. Every time a new deliverable started, we held a meeting with all of our team members to decide what we need to finish by the end of the deliverable. Then, each of our sub groups started working and checking off the tasks once they had finished. We were really efficient this way in deliverable 2 because even though the list of tasks we listed at the beginning of the meeting might not be entirely accurate or enough, all of our team members had a general idea of what was needed to get done. Indeed, the members were able to add more tasks or transform abstract tasks to actual concrete tasks in case they discovered additional features required as they were coding.
 
 Therefore, we are planning to continue using kanban in deliverable 3.
 
@@ -22,15 +22,15 @@ Therefore, we are planning to continue using kanban in deliverable 3.
 
 We split our group members into 3 teams in deliverable 2: Front end(Canvas), Front end(User pages) and Back end.
 
-Because of that, not only we were able to follow up the project progress by communicating within the subgroups, we also reduced the chance of conflicting issues since each team had at most 3 people working on it.
+Because of that, not only were we able to follow up the project progress by communicating within the subgroups, but also reduced the chance of conflicting issues since each team had at most 3 people working on it. Potential conflicts were resolved through active communications among the sub group members.
 
 Therefore, we are planning to continue working as three subgroups.
 
-**Working in the same room for the ease of communicating between front end and back end teams: **
+**Working in the same room for the ease of communicating between front end and back end teams:**
 
 We chose to work on the project with all members in-person at the end of deliverable 2. 
 
-Because of that, we were able to communicate between front end and back end directly about how data would be fetched, stored, and sent. Both teams quickly made adjustments to ensure the correctness of data transfer between pages.
+Because of that, we were able to communicate between front end and back end directly about how data would be fetched, stored, and sent. Both teams quickly made adjustments to ensure the correctness of data transfer between pages. Any issues were discussed immediately and decisions were made in timely manner.
 
 Therefore, we are planning to continue working in the same room as frequently as possible.
 
