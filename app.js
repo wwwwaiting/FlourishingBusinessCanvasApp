@@ -200,7 +200,7 @@ app.post('/register', function(req, res) {
                     } else if (updated == null){
                       res.send(fal);
                     } else{
-                      res.send(regUser.toString()); 
+                      res.send("1"); 
                     };
                   });
                 }
@@ -403,7 +403,7 @@ app.delete('/canvas/delete', function(req, res){
 });
 
 app.post('/canvas/edit', function(req, res){
-  console.log(req.body);
+
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -890,7 +890,6 @@ function getAllCanvas(email, res){
           regId.push(id);
         }
         if ( i == canvas.length -1){
-          console.log({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
           res.send({regTitle: regTitle, regId: regId, mngTitle:mngTitle, mngId:mngId, mngUsers:mngUsers, notification: notification});
         }
       }
@@ -932,32 +931,33 @@ app.post('/admin/edit', function(req, res){
   var user = req.body.user;			
   var email = req.cookies.email;
   if (type === 'remove'){
-    User.findOneAndDelete({email: user}).exec()
-    .then(async function(result){
-      var canvasList = result.canvas;
-      console.log("here");
-      console.log(canvasList);
-      await async.forEach(canvasList, function(canvasId, callback){
-        Canvas.findOneAndUpdate({_id: canvasId}, {$pull: {users: user}}).exec()
-        .then(function(result){
-          if(result.email === user){
-            Canvas.findOneAndDelete({_id: result.id}).exec()
-            .then(async function(result){
-              var userList = result.users;
-              await async.forEach(userList,function(userEmail, callback){
-                User.findOneAndUpdate({email: userEmail}, {$pull: {canvas: canvasId}})
+    // const run = function (){    
+      User.findOneAndDelete({email: user}).exec()
+      .then(async function(result){
+        let count = 1;
+        await async.forEach(result.canvas, async function(canvasId, callback){
+          await Canvas.findOneAndUpdate({_id: canvasId}, {$pull: {users: user}}).exec()
+          .then(async function(result){
+            if(result.email === user){
+              await Canvas.findOneAndDelete({_id: result.id}).exec()
+              .then(async function(result){
+                await async.forEach(result.users, async function(userEmail, callback){
+                  await User.findOneAndUpdate({email: userEmail}, {$pull: {canvas: canvasId}})
+                })
               })
-            })
+            }
+          })
+          if (count == result.canvas.length){
+            getAllCanvas(email, res); 
           }
-        })
-      }); 
-      getAllCanvas(email, res);
-    })
-    .then(undefined, function(err){
-      //Handle error
-      console.log(err);
-      res.send(err);
-    })
+          count ++;
+        });
+      })
+      .then(undefined, function(err){
+        //Handle error
+        console.log(err);
+        res.send(err);
+      });
   }else{
     var user = new User({
       name: '',
