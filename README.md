@@ -1,6 +1,16 @@
 # Flourishing Business Canvas/Team 9
 
 ## Description 
+​	https://csc301-fbc.herokuapp.com/login
+
+For testing purpose, enter:
+
+1. username: userA@gmail.com password: 123 to log in as a regular user
+2. username: userB@gmail.com password: 123 to log in as a manager
+3. username: userC@gmail.com password: 123 to log in as a regular user
+4. username: userD@gmail.com password: 123 to log in as a manager
+5.  username: andrew@ecotonesoftware.com password: admin to log in as an admin
+
 ​	Our website provides FBC template and online access to users. The FBC will be mainly used by business architects and will provide them with tools to easily generate, analyze and share business ideas. The regular users who are enrolled in the same canvas are able make use of canvas by adding, removing, editing and rearranging stickies on the canvas. Besides the regular FBC features mentioned above, users can also change the name of the FBC, the owner, and the organization it belongs to and search for or comment on any specific sticky. In addition, FBCs can be exported in various formats such as JSON, PDF, PNG, etc.
 
 ​	After users successfully signed up their accounts, they can be logged in as **manager**, if they have received our partner's invitation email. Or a regular **user**, if they are invited by their managers. 
@@ -13,7 +23,7 @@
     The end users used to build and use traditional physical FBCs in their office. Since FBCs are likely to be modified often, the limitation of having to be on the same location was one of the major discomfort our users had. Our online FBC provides online access which allows users to view/change/modify contents of the canvas **remotely and simultaneously**, overcoming the physical limitations.
 
 2.  Resolved storage limitations
-   The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
+      The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
 
 3. Search Benefit
    Searching for a specific sticky becomes a time-consuming task with the physical canvas as the number of stickies increases, The search function in our website will allow users to **search for stickies conveniently in short time**.
