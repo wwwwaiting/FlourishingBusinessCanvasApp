@@ -1,44 +1,29 @@
 # Flourishing Business Canvas/Team 9
 
-> _Note:_ This document is intended to be relatively short. Be concise and precise. Assume the reader has no prior knowledge of your application and is non-technical. 
-
 ## Description 
- * Provide a high-level description of your application and it's value from an end-user's perspective
+​	Our website provides FBC template and online access to users. The FBC will be mainly used by business architects and will provide them with tools to easily generate, analyze and share business ideas. The regular users who are enrolled in the same canvas are able make use of canvas by adding, removing, editing and rearranging stickies on the canvas. Besides the regular FBC features mentioned above, users can also change the name of the FBC, the owner, and the organization it belongs to and search for or comment on any specific sticky. In addition, FBCs can be exported in various formats such as JSON, PDF, PNG, etc.
 
-   **High-level description**
+​	After users successfully signed up their accounts, they can be logged in as **manager**, if they have received our partner's invitation email. Or a regular **user**, if they are invited by their managers. 
 
-Our website provides FBC template and online access to users. The FBC will be mainly used by business architects and will provide them with tools to easily generate, analyze and share business ideas. The regular users who are enrolled in the same canvas are able make use of canvas by adding, removing, editing and rearranging stickies on the canvas. Besides the regular FBC features mentioned above, users can also change the name of the FBC, the owner, and the organization it belongs to and search for or comment on any specific sticky. In addition, FBCs can be exported in various formats such as JSON, PDF, PNG, etc.
+​	A **manager** has access to features such as managing (a.k.a. creating and deleting) canvases, managing (a.k.a. adding and removing) users of each canvas. All users (**manager** & regular **user**) are able to edit the canvases that they are enrolled in.
 
-After users successfully signed up their accounts, they can be logged in as **manager**, if they have received our partner's invitation email. Or a regular **user**, if they are invited by their managers. 
+​	The main value from an end-user's perspective is the improved workflow efficiency as well as real-time data synchronization that our website helps them to achieve. They will now invite their colleagues to use our online FBC template to work on their business ideas. Following are details of value added to the end users, who we define to be business architects using physical canvas.
 
-A **manager** has access to features such as managing (a.k.a. creating and deleting) canvases, managing (a.k.a. adding and removing) users of each canvas. All users (**manager** & regular **user**) are able to edit the canvases that they are enrolled in.
+1. Resolved physical limitations
+    The end users used to build and use traditional physical FBCs in their office. Since FBCs are likely to be modified often, the limitation of having to be on the same location was one of the major discomfort our users had. Our online FBC provides online access which allows users to view/change/modify contents of the canvas **remotely and simultaneously**, overcoming the physical limitations.
 
-​	**Value from end-user's perspective**
+2.  Resolved storage limitations
+   The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
 
-The main value from an end-user's perspective is the improved workflow efficiency as well as real-time data synchronization that our website helps them to achieve. They will now invite their colleagues to use our online FBC template to work on their business ideas. Following are details of value added to the end users, who we define to be business architects using physical canvas.
+3. Search Benefit
+   Searching for a specific sticky becomes a time-consuming task with the physical canvas as the number of stickies increases, The search function in our website will allow users to **search for stickies conveniently in short time**.
 
-1) Resolved physical limitations
- The end users used to build and use traditional physical FBCs in their office. Since FBCs are likely to be modified often, the limitation of having to be on the same location was one of the major discomfort our users had. Our online FBC provides online access which allows users to view/change/modify contents of the canvas **remotely and simultaneously**, overcoming the physical limitations.
+4. Stickies with multiple functionalities
+   Our online FBC provides stickies with multiple functionalities such as allowing to modify contents on the existing stickies and attaching multiple comments on the stickies with time and user log. These functionalities will allow users to **save discussion and improve thought process on the stickies** as their FBC progresses.
 
-2) Resolved storage limitations
- The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
-
-3) Search Benefit
- Searching for a specific sticky becomes a time-consuming task with the physical canvas as the number of stickies increases, The search function in our website will allow users to **search for stickies conveniently in short time**.
-
-4) Stickies with multiple functionalities
- Our online FBC provides stickies with multiple functionalities such as allowing to modify contents on the existing stickies and attaching multiple comments on the stickies with time and user log. These functionalities will allow users to **save discussion and improve thought process on the stickies** as their FBC progresses.
-
- 
- * What is the problem you're trying to solve?
-
- * Is there any context required to understand **why** the application solves this problem?
-
-The contest is that users are now using physical FBC to solve their need. The main problem about having it physical is that users can no longer access the FBC once they are out of where the FBC is placed, and it is unrealistic to have a copy and distribute it to every member of the group not only because it is costly but also the FBC is likely to be changed frequently and thus hard to keep everyone informed and updated. The users would choose our product to solve the problem because of the functionalities we provide compared to the physical model such as quick setup of the FBC, multiple access for users to view and modify the canvas online simultaneously, tracked past discussions, and ability to sort and search the model efficiently. 
+​	The contest is that users are now using physical FBC to solve their need. The main problem about having it physical is that users can no longer access the FBC once they are out of where the FBC is placed, and it is unrealistic to have a copy and distribute it to every member of the group not only because it is costly but also the FBC is likely to be changed frequently and thus hard to keep everyone informed and updated. The users would choose our product to solve the problem because of the functionalities we provide compared to the physical model such as quick setup of the FBC, multiple access for users to view and modify the canvas online simultaneously, tracked past discussions, and ability to sort and search the model efficiently. 
 
 ## Key Features
- * Described the key features in the application that the user can access
-
 **Sticky**
 
 Once a sticky is created, users can drag it to their desired boxes. The sticky will automatically positioned meaning if it is dragged to the middle of two boxes, it will be moved in to the box that is the closest to it.
@@ -63,14 +48,8 @@ Manager can **add** a new canvas by entering the title of the new canvas, or **r
 
 All users can change their profile information in the library page.
 
-
-
- * Feel free to provide a breakdown or detail for each feature that is most appropriate for your application
-
 ## Instructions
- * Clear instructions for how to use the application from the end-user's perspective
-
-**Log in/Sign up page***
+**Log in/Sign up page**
 
 This is the first page users will reach in our website. 
 
@@ -129,10 +108,4 @@ User can also **double click** a sticky to modify its **color**, **content**, ad
 Additionally, when user **single click** a sticky, under the header they will be an extra box on the left side of the page displaying all the stickies under the box where the current selected sticky is in. This is useful when there are too many stickies in a box.
 
 Furthermore, on the right side of the header, users can input the **title** of the FBC and **name** of the creator, **export** the FBC as json, svg, png or pdf. Or **search** within the canvas. 
-
- * How do you access it? Are accounts pre-created or does a user register? Where do you start? etc. 
-
-Users who receive invitation emails from our partner (admin) will register as manager by entering the email which they receive the invitation. For other regular users, they'll need to wait for approval once they finish signing up. 
-
- * Provide clear steps for using each feature described above
 
