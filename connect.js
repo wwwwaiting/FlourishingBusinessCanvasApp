@@ -7,7 +7,5 @@ var options = {
 };
 
 
-//var url = "mongodb://csc301:csc301partner@ds247648.mlab.com:47648/csc301db";
-//var url = "mongodb+srv://leeestephen:qb2Z42TWDYj34qZ@cluster0-w2ffd.mongodb.net/fbc_db?retryWrites=true";
-var url = "mongodb+srv://csc301:csc301partner@cluster0-3vsmn.mongodb.net/301?retryWrites=true";
+var url = "mongodb://csc301:csc301partner@ds247648.mlab.com:47648/csc301db";
 var db = mongoose.connect(url,options);
