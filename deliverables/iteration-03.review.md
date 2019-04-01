@@ -1,4 +1,4 @@
-# Flourishing Business Canvas/TEAM NAME
+# Flourishing Business Canvas/TEAM 9
 
 
 ## Iteration 03 - Review & Retrospect
@@ -95,7 +95,7 @@ We reallocated many of our buttons and improved many of our functions so either 
 
 In our deliverable 1, we originally thought that each stickies should have a link which links to the details of a sticky, such as "What partnerships are required", "What skills are required", "Metrics", etc. 
 
-However, we decided to implement it differently so it hopefully would look more elegant.
+However, as we were getting close to finish our product, we noticed that if we implemented the way we originally thought, each time users clicked the link, they would have to click the go back button on the website in order to go back to the canvas page, which is really inefficient. Instead, we added an information button which showed the details of a sticky once users clicked it.
 
 The screenshot is shown below.
 
