@@ -146,6 +146,11 @@
                     mngId = data.mngId
                     mngUsers = data.mngUsers
 
+                    for (let arr of mngUsers) {
+                        const index = arr.indexOf(currentUser)
+                        arr.splice(index, 1)
+                    }
+
                     console.log(mngId)
                     console.log(mngUsers)
                     console.log(mngTitle)
@@ -226,6 +231,7 @@
                     `<div class="manageUsersCanvas"><h5>${mngTitle[i]}<span style="display: none">${mngId[i]}</span></h5>`
                 for (let j = 0; j < mngUsers[i].length; j++) {
                     if ((mngUsers[i][j]) == currentUser) {
+                        console.log("currentUser in ManageUsers array")
                         continue;
                     }
                     manageUsersContent += `<div class="form-check">
