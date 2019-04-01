@@ -1,8 +1,4 @@
-# YOUR PRODUCT/TEAM NAME
-
- > _Note:_ This document is meant to be written during (or shortly after) your initial planning meeting.     
- >
- > > It does not really make sense for you to edit this document much (if at all) while working on the project - Instead, at the end of the planning phase, you can refer back to this document and decide which parts of your plan you are happy with and which parts you would like to change.
+# Flourishing Business Canvas/TEAM 9
 
 
 ## Iteration 03
@@ -13,17 +9,6 @@
 ## Process
 
 #### Changes from previous iteration
-
-List the most significant changes you made to your process (if any).
-
- * At most 3 items
- * Start with the most significant change
- * For each change, explain why you are making it and what you are hoping to achieve from it
- * Ideally, for each change, you will define a clear success metric (i.e. something you can measure at the end of the iteration to determine whether the change you made was successful)
-
- > *Note:* If you are not making any changes to your process, it means that you are happy with all of the decisions you made in the previous iterations.
- >
- > > In this case, list what you consider to be the most significant process decisions your team made. For each decision, explain why you consider it successful, and what success metric you are using (or could use) to assert that the decision is successful.
 
 We are happy with all of our decisions made in the previous iterations. The list of the most significant process decisions made by our team are listed below:
 
@@ -48,8 +33,6 @@ We chose to work on the project with all members in-person at the end of deliver
 Because of that, we were able to communicate between front end and back end directly about how data would be fetched, stored, and sent. Both teams quickly made adjustments to ensure the correctness of data transfer between pages.
 
 Therefore, we are planning to continue working in the same room as frequently as possible.
-
-
 
  #### Roles & responsibilities
 
@@ -238,16 +221,6 @@ In addition, we have three events:
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to organize your team.       
-
- * Artifacts can be To-Do lists, Task boards, schedule(s), etc.
- * We want to understand:
-   * How do you keep track of what needs to get done?
-   * How do you prioritize tasks?
-   * How do tasks get assigned to team members?
-
-
-
 **To-Do lists, "Trello"**
 
 We are using "Trello" for managing weekly workload, assigning work to team members, and tracking issues. Trello provides a digital board which is highly customizable, and it helps us to list our unfinished tasks, finished tasks, and identify tasks needed to be reviewed. We will organize the work based on scrum principles and prioritize certain tasks based on partner needs.
@@ -263,33 +236,92 @@ We split our team into 3 subgroups: Front end(Canvas), Front end(User pages) and
 Each of the subgroups will work on the most important tasks of their part listed in "Trello" and to the least important.
 
 
-
-
 #### Deployment and Github Workflow
 
-Describe your Git / GitHub workflow. Essentially, we want to understand how your team members shares a codebase, avoid conflicts and deploys the application.
+Before we started the actual coding, we had a group meeting to split our team into subgroups, each working on one major part of the project (the breakdown is detailed below). To ensure the completeness of each part within the desired time, we have at least two people working on the same category so that they can reach out and offer help to one another.
 
- * Be concise, yet precise. For example, "we use pull-requests" is not a precise statement since it leaves too many open questions - Pull-requests from where to where? Who reviews the pull-requests? Who is responsible for merging them? etc.
- * If applicable, specify any naming conventions or standards you decide to adopt.
- * Describe your overall deployment process from writing code to viewing a live applicatioon
- * What deployment tool(s) are you using and why
- * Don't forget to **explain why** you chose this workflow or particular aspects of it!
+We split our project into three parts:
+1) Front-end(Fabric) Members: Junkai, Jay, and Frank
+Junkai, Jay, and Frank worked on building the FBC application page, where users put stickies onto the virtual canvas.
+2) Front-end(User pages) Members: Xuhui and Xinyi
+Xuhui and Xinyi worked on building registration, log in, user profile, as well as the library page for users/managers to keep track of and access all canvas projects that they have participated in, if applicable.
+3) Back-end Members: Fanxuan and Luya
+Fanxuan and Luya worked on back-end development to receive data sent from the front-end, interpret the meaning of the data, manipulate the data to get relevant information that needs to be updated on the database, and send data back to the front-end for displaying purposes.
+Our database is designed to store user information, canvas information, and the relationship between users and canvases.
 
+We split our work this way so that not too many members are working on the same part of our project which helps us avoid conflicts on our code as well as maximize efficiency.
 
+We create sub-branches on Git based on the functionality for tracking purpose which is explained below.
+
+- Front-end
+
+  - comment
+    the comment system under each stickies
+
+  - canvas+fabric
+    user library page including ejs and css, and FBC canvas page
+
+  - manage-user-validate-email
+
+    regex check when entering user's email
+
+  - multiuser
+    to perform multi user synchronization 
+
+- Back-end
+
+  - backend
+    back-end files, database, and other merged front-end pages in ejs version for testing the correctness of whether front-end and back-end are linked properly
+
+We started our deliverable by creating the comment branch, where our front end and back end group work on the comment system of stickies together. (Backend need to store stickies' comments information, while front end need to test all possible actions for comment) 
+
+Then, we added multiuser branch to implement multi user synchronization. Once finished, we created a pull request and had the group member that also worked on this branch review it and merged to master.
+
+Later, we merged the comment branch to master as well by also creating pull request and had the member of the same reviewed the work.
+
+Once we finished testing our master, we started merging canvas+fabric and manage-user-validate-email into master as well, both branches are for the view and functionality on the library and canvas page. When we merged, we created a pull request and let the other member reviewed it.
+
+For deployment tools, we have node.js for local and heroku for online. 
+We use node.js because our project does not have intensive operations but only connections between server and clients. Node.js as a platform that is capable of handling a huge number of simultaneous connections best suits for our need.
+We use heroku not only because it is widely popular but also the fact that it is easy to set up by simply pushing our codes to the heroku git repository. 
 
 ## Product
 
 #### Goals and tasks
 
- * Describe your goals for this iteration and the tasks that you will have to complete in order to achieve these goals.
- * Order the items from most to least important.
- * Feel free (but not obligated) to specify some/all tasks as user stories.
+**Goal:**
+For Deliverable 3, our main goal is to finish building our minimum viable product which multiple users can access the website at the same time, as well as admin able to send invitation and approve users who want to register.
+
+Tasks (Ranking from the most important to the least):
+1) **Admin page**
+
+An admin page for our partner to approve/decline the users who want to register, invite users to become a manager, and manage all users in the website, etc. So our website can finally be running as it should, since it is a private website which requires admin's approval/invitation to use the website.
+
+2) **Multiple user synchronization**
+
+Multiple users can access the same canvas page at the same time, and once a user performs any kind of valid action, such as adding or removing a sticky, rearranging it to a different box, the other users will be able to see it.
+
+3) **Copy feature on the library page**
+
+A copy feature is implemented so the manager and admin can now copy an existing canvas if they need.
+
+4) **Reallocating and improving view**
+
+We reallocated many of our buttons and improved many of our functions so either they became more user friendly or looked better, such as adding a regex check when entering an email, move users directly to log in page if they have not yet signed in to the website, improving the view of creating a sticky, etc.
 
 #### Artifacts
 
-List/describe the artifacts you will produce in order to present your project idea.
+**Sketch**
 
- * Artifacts can be text, code, images, videos, interactive mock-ups and/or any other useful artifact you can think of.
- * Make sure to explain the purpose of each artifact (i.e. Why is it on your to-do list? Why is it useful for your team?)
- * Be concise, yet precise.         
-   For example: "Build the website" is not precise at all, but "Build a static home page and upload it somewhere, so that it is publicly accessible" is much clearer.
+Since we want our work to satisfy as an MVP, we want our work to be as user friendly as possible.
+
+To achieve that, we drew sketches for our group members so that have an idea how they should place the buttons.
+
+**Admin page**
+
+We will build an admin page where admin can approve/decline the users who want to register, invite users to become a manager, and manage all users in the website, etc. This is needed to present our project idea because our product is meant to be a private page, therefore an admin page is essential as a key component of the MVP.
+
+**Multiple user synchronization**
+
+We will implement multiple user synchronization for our project since FBC is designed for a group of colleagues to discuss their ideas. 
+
