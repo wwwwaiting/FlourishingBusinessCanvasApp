@@ -611,7 +611,7 @@ app.post('/manager/add', function (req, res) {
     email: email,
     title: title,
     company: '',
-    users: empty,
+    users: [email],
     stickies: empty,
     createDate: time,
     editHistory: empty
@@ -619,8 +619,11 @@ app.post('/manager/add', function (req, res) {
 
   // add canvas to database
   Canvas.create(canvas).then((result) => {
-    User.findOneAndUpdate({ email: email }, { $push: { canvas: result.id } })
-    res.send({id:result.id})
+    console.log(result.id)
+    User.find({ email: email }).update({ $push: { canvas: result.id } })
+    .then(function(){
+      res.send({id:result.id})
+    })
   }).catch((err) => {
     console.log(err)
   })
