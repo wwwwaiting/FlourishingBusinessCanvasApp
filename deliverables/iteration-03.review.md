@@ -44,10 +44,7 @@ We did not merge our sub branches to master once we had finished some part of ou
 
 **Sharing single database among all sub groups**
 
-We only set up a single database that is shared by all the sub groups, 
-When testing for removing accounts on the back end, we first removed all the accounts that can be logged into our website. This caused other team members not being to log in and test other functionalities, which was inefficient for our team. We should have kept some accounts so all of us could test at the same time.  
-
-
+As a group, we only set up a single database that was shared by all of the sub groups. This resulted in substantial inefficiency and working hours lost. For instance, if one of the sub groups needed to test on certain edge cases such as removing users on canvas that has empty user list, the sub group had to remove all the users beforehand. However, this resulted in other sub groups working with user accounts on different feature to be stuck until the users are restored to the canvas. Since multiple features were involved with users and canvases on manager page, subgroups working on other pages with canvas and user data had to spend substantial time waiting and the productivity was quite low. The alternative we think we can use for next iteration is to create separate mock database as we work separately on each feature and have shared data base on master. 
 
 
 #### Planned changes
