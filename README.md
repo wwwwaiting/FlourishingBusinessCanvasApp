@@ -23,7 +23,7 @@ For testing purpose, enter:
     The end users used to build and use traditional physical FBCs in their office. Since FBCs are likely to be modified often, the limitation of having to be on the same location was one of the major discomfort our users had. Our online FBC provides online access which allows users to view/change/modify contents of the canvas **remotely and simultaneously**, overcoming the physical limitations.
 
 2.  Resolved storage limitations
-      The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
+    The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
 
 3. Search Benefit
    Searching for a specific sticky becomes a time-consuming task with the physical canvas as the number of stickies increases, The search function in our website will allow users to **search for stickies conveniently in short time**.
