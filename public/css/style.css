@@ -183,7 +183,7 @@ textarea {
     z-index: 1020; /* Stay on top */
     width: 12rem;
     height: calc(100% - 170px);
-    top: 148px;
+    top: 152px;
     left: 0;
     overflow: hidden;
 }

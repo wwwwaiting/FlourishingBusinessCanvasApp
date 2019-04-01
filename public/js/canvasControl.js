@@ -1767,14 +1767,14 @@ socket.on('stickyUpdateOptional', function stickyUpdateOptional(result) {
 $('#canvasHeader').on('show.bs.collapse', function() {
   $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M7 14l5-5 5 5z" /></svg>`);
-  $('#sidepanel').css("height", "calc(100% - 120px)");
-  $('#sidepanel').css("top", "102px");
+  $('#sidepanel').css("height", "calc(100% - 170px)");
+  $('#sidepanel').css("top", "152px");
 });
 $('#canvasHeader').on('hide.bs.collapse', function() {
   $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M7 10l5 5 5-5z" /></svg>`);
-  $('#sidepanel').css("height", "calc(100% - 75px)");
-  $('#sidepanel').css("top", "57px");
+  $('#sidepanel').css("height", "calc(100% - 125px)");
+  $('#sidepanel').css("top", "107px");
 });
 
 let inputExtended = false;
