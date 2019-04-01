@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Administrative page</title>
+    <title>Flourishing Business Canvas | Admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -351,6 +351,13 @@
         })
     }
 
+    $('body').on('click', '.manageUserContainer', function(e) {
+        const name = e.target.classList
+        if (!name.contains('semantic')) {
+            renderManageUsers()
+        }
+    })
+
     $('body').on('change', '#manageUsersList', function() {
         const length = $('#manageUsersList').find('input[type=checkbox]').length
 
@@ -456,6 +463,7 @@
                             Body: "Testing for adding new users as admin!"
                         });
                         getInvitation()
+                        alert("Successfully invited a new user!")
                     } else {
                         console.log('fail to add user')
                     }
@@ -468,22 +476,24 @@
         let manageCanvasContent = '<div class="modal-body manageCanvasContainer" id="manageCanvasChecklist">'
         for (let i = 0; i < mngTitle.length; i++){
             manageCanvasContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
-        </div>`
+            <input class="form-check-input semantic" type="checkbox">
+            <label class="form-check-label">${mngTitle[i]}<span style="display:none">${mngId[i]}</span></label>
+            </div>`
         }
         for (let i = 0; i < regTitle.length; i++){
             manageCanvasContent += `<div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-            <label class="form-check-label" for="defaultCheck1">${regTitle[i]}<span style="display:none">${regId[i]}</span></label>
-        </div>`
+            <input class="form-check-input semantic" type="checkbox">
+            <label class="form-check-label">${regTitle[i]}<span style="display:none">${regId[i]}</span></label>
+            </div>`
         }
 
-        manageCanvasContent += `<div id="newCanvasInputContainer" class="input-group">
-        <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title" >
+        manageCanvasContent += `</div>
+        <div id="newCanvasInputContainer" class="input-group">
+        <input id="newCanvas" type="text" class="form-control" placeholder="New canvas title">
         <div class="input-group-append">
             <button class="btn btn-primary" type="button" onclick="addNewCanvas()">Add</button>
-        </div></div>`
+        </div>
+        </div>`
 
         $(".modal-title").html("Manage Canvas")
         $(".modal-body").html(manageCanvasContent)
@@ -491,6 +501,13 @@
                     <button type="button" class="btn btn-primary" onclick="copyCanvas()">Copy</button>
                     <button type="button" class="btn btn-primary" onclick="removeCanvas()">Remove</button>`)
     }
+
+    $('body').on('click', '.manageCanvasContainer', function(e) {
+        const name = e.target.classList
+        if (!name.contains('semantic')) {
+            renderManageCanvas()
+        }
+    })
 
     $('body').on('change', '#manageCanvasChecklist', function() {
         const length = $('#manageCanvasChecklist').find('input[type=checkbox]').length
@@ -611,92 +628,6 @@
         </div>`
             $('section').html(html)
     }
-
-    // $('body').on('change', '.form-check-input', function() {
-    //     const canvases = document.getElementsByClassName('manageUsersCanvas')
-    //     if ($(this).is(':checked')) {
-    //         const canvasId = $(this).parent().parent().find('span').text()
-    //         console.log(canvasId)
-    //         // all the canvas divs in manage user form
-            
-    //         for (let canvas of canvases) {
-    //             if (canvas.getElementsByTagName('span')[0].innerHTML != canvasId) {
-    //                 const checkBoxes = canvas.getElementsByClassName('form-check-input')
-    //                 for (let checkbox of checkBoxes) {
-    //                     checkbox.disabled = true;
-    //                 }
-    //             }
-    //         }
-    //     } else {
-    //         for (let canvas of canvases) {
-    //             const checkBoxes = canvas.getElementsByClassName('form-check-input')
-    //             for (let checkbox of checkBoxes) {
-    //                 checkbox.disabled = false;
-    //             }
-    //         }
-    //     }
-    // })
-
-    $('body').on('click', 'button.addUserPrompt', function() {
-        const html = `<div class="input-group">
-        <input type="text" class="form-control semantic" placeholder="New user email" >
-        <div class="input-group-append">
-            <button class="btn btn-primary addUserDone semantic" type="button">Add</button>
-        </div></div>`
-        $(this).parent().html(html)
-    })
-    
-    $('body').on('click', '.manageUserContainer', function(e) {
-        const name = e.target.classList
-        if (!name.contains('semantic')) {
-            renderManageUsers()
-
-        }
-    })
-
-    $('body').on('click', 'button.addUserDone', function() {
-        const email = [$(this).parent().prev().val()]
-        const canvasId = $(this).parent().parent().parent().parent().children().find('span').text();
-        
-        const index = canvasIds.findIndex(id => id == canvasId)
-        if (canvasUsers[index].includes(email[0])) {
-            alert("Duplicate user email.")
-            $(this).parent().prev().val('')
-            return;
-        }
-        console.log(canvasUsers)
-        //send update request
-        console.log(canvasId)
-        const type = "add"
-        const send = {type, canvasId, email}
-
-        if (validateEmail(JSON.stringify(email))){
-        	console.log("validateEmail: " + validateEmail(JSON.stringify(email)))
-	        $.ajax({
-	            type: "POST",
-	            url: "/manager/user",
-	            data: send,
-	            success: function (data) {
-	                if (data == 'true') {
-	                    const index = canvasIds.findIndex(id => id == canvasId)
-	                    canvasUsers[index].push(email[0])
-	                    Email.send({
-							Host: "smtp.elasticemail.com",
-	            			Username: "wangluya2014@gmail.com",
-	            			Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
-	            			To: email,
-	            			From: "wangluya2014@gmail.com",
-	            			Subject: "This is the subject",
-	            			Body: "Testing for register!."
-	          			  });
-	                    renderManageUsers()
-	                } else {
-	                    console.log('fail add user')
-	                }
-	            }
-	        })
-    	}
-    })
 
 </script>
 </body>

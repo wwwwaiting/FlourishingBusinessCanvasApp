@@ -1,6 +1,6 @@
 "use strict";
 
-console.log("canvasControl.js");
+// console.log("canvasControl.js");
 
 var socket = io();
 
@@ -117,14 +117,6 @@ function initialize_canvas(data) {
       }
       this.lastPosX = lastX;
       this.lastPosY = lastY;
-    } else {
-      // let temp = canvas.getActiveObject()
-      // let temp0 = temp.item(0);
-      // let temp1 = temp.item(1);
-      // backUpSticky = [temp.height, temp.width, temp.left, temp.top,
-      //                 temp0.height, temp0.width, temp0.left, temp0.top,
-      //                 temp1.height, temp1.width, temp1.left, temp1.top];
-
     }
     $('#editDiv').html('')
   });
@@ -155,38 +147,8 @@ function initialize_canvas(data) {
       this.lastPosX = clientX;
       this.lastPosY = clientY;
     }
-    // else {
-    //     const e = opt.e
-    //     const positionClass = returnMouseClass(e.clientY,e.clientX)
-    //     if (positionClass != undefined){
-    //         showMouseSidepanel(positionClass);
-    //     } else {
-    //         $('.collapse').collapse('hide');
-    //     }
-    //
-    // }
   });
   canvas.on('mouse:up', function(opt) {
-    // TODO: when mouse:up, send data to backend
-    if (canvas.getActiveObject()) {
-      let sticky = canvas.getActiveObject();
-      // console.log(backUpSticky);
-      // console.log(sticky);
-      // sticky.height = backUpSticky[0];
-      // sticky.width = backUpSticky[1];
-      // sticky.left = backUpSticky[2];
-      // sticky.top = backUpSticky[3];
-      // sticky.item(0).height = backUpSticky[4];
-      // sticky.item(0).width = backUpSticky[5];
-      // sticky.item(0).left = backUpSticky[6];
-      // sticky.item(0).top = backUpSticky[7];
-      // sticky.item(1).height = backUpSticky[8];
-      // sticky.item(1).width = backUpSticky[9];
-      // sticky.item(1).left = backUpSticky[10];
-      // sticky.item(1).top = backUpSticky[11];
-      canvas.renderAll();
-      backUpSticky = "";
-    }
     canvas.setCursor('default');
     this.isDragging = false;
     this.selection = true;
@@ -211,9 +173,7 @@ function initialize_canvas(data) {
     canvas.renderAll()
   });
   canvas.on('selection:cleared', () => {
-    // console.log('cleared!')
     $('#collapseSidepanel').collapse('hide');
-    // $('.collapse').collapse('dispose');
   })
 }
 
@@ -308,7 +268,6 @@ function convertDisplay(sticky) {
   const width = sticky.width * sticky.scaleX;
   const height = sticky.height * sticky.scaleY;
   let printText = sticky.content;
-  // console.log(printText);
   if (printText.length > Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15)) {
     printText = printText.slice(0, Math.floor((width - stickyPadding) / 10) * Math.floor((height - stickyPadding) / 15) - 3);
     printText = printText + '...';
@@ -350,22 +309,12 @@ function showSidepanel(stickySelected) {
   $('#sidepanel-title').text(stickyBoxName);
   const stickyClass = returnClass(stickySelected)
   $('#sidepanel-list').html('')
-  // canvas.getObjects().forEach(sticky => {
-  //     if (sticky.intersectsWithObject(testRect)) {
-  //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
-  //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
-  //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
-  //             <p class="mb-1">${sticky.get('content')}</p>
-  //         </div></a>`);
-  //     }
-  // });
   canvas.getObjects().forEach(sticky => {
     let titleText = 'Sticky';
     if (sticky.get('title').length > 0) {
       titleText = sticky.get('title');
     }
     if (returnClass(sticky) == stickyClass) {
-      // console.log(sticky.item(0).get('fill'));
       $('#sidepanel-list').append(`<a id="sideSticky-${sticky.get('stickyId')}" class="list-group-item bg-light list-group-item-action p-1 border-0" onmouseover="sidepanelStickyHoverOver(this)" onmouseout="sidepanelStickyHoverOut(this)" onclick="sidepanelClick(this)">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">${titleText}</h6>
@@ -379,19 +328,9 @@ function showSidepanel(stickySelected) {
 function showMouseSidepanel(stickyBoxName) {
   $('#sidepanel-title').text(stickyBoxName);
   const stickyClass = stickyBoxName;
-  $('#sidepanel-list').html('')
-  // canvas.getObjects().forEach(sticky => {
-  //     if (sticky.intersectsWithObject(testRect)) {
-  //         $('#sidepanel-list').append(`<a class="list-group-item list-group-item-action p-2">
-  //         <div class="p-2 rounded" style="{ background-color: ${sticky.item(0).get('fill')}; }">
-  //             <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
-  //             <p class="mb-1">${sticky.get('content')}</p>
-  //         </div></a>`);
-  //     }
-  // });
+  $('#sidepanel-list').html('');
   canvas.getObjects().forEach(sticky => {
     if (returnClass(sticky) == stickyClass) {
-      // console.log(sticky.item(0).get('fill'));
       $('#sidepanel-list').append(`<a class="list-group-item list-group-item-light list-group-item-action p-2">
             <div class="p-2 rounded" style= "background-color: ${sticky.item(0).get('fill')};">
                 <h6 class="mb-1">Sticky ${sticky.get('stickyId')}</h5>
@@ -465,10 +404,6 @@ const Sticky = fabric.util.createClass(fabric.Group, {
     this.set("isMoving", false);
     this.set("isResizing", false);
 
-    // // Sticky content (text)
-    // this.content = textboxValue;
-    // this.comments = []
-
     // Sticky fabric object (named as shape)
 
     this.on('selected', () => {
@@ -478,10 +413,6 @@ const Sticky = fabric.util.createClass(fabric.Group, {
 
     this.item(1).text = convertDisplay(this);
 
-    // this.on('mousedown', doubleClicked(this, function (sticky) {
-    //     $('#editDiv').html('')
-    //     displayEditForm(sticky)
-    // }));
     this.on('mousedblclick', function() {
       displayEditForm(this)
     });
@@ -502,7 +433,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
       smoothMoveH(this, left);
       smoothMoveV(this, top);
       this.setCoords()
-      console.log('L:' + this.left + ', T:' + this.top);
+      // console.log('L:' + this.left + ', T:' + this.top);
       if (stickyIsResizing) {
 
         socket.emit('stickyUpdateSize', {
@@ -526,7 +457,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             stickyId: this.stickyId
           },
           success: function(resultData) {
-            console.log(resultData)
+            // console.log(resultData)
           },
           error: function() {
             alert("Something went wrong")
@@ -545,7 +476,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             stickyId: this.stickyId
           },
           success: function(resultData) {
-            console.log(resultData)
+            // console.log(resultData)
           },
           error: function() {
             alert("Something went wrong")
@@ -573,7 +504,7 @@ const Sticky = fabric.util.createClass(fabric.Group, {
             stickyId: this.stickyId
           },
           success: function(resultData) {
-            console.log(resultData)
+            // console.log(resultData)
           },
           error: function() {
             alert("Something went wrong")
@@ -606,12 +537,10 @@ const Sticky = fabric.util.createClass(fabric.Group, {
       stickyCt.set('width', width - stickyPadding); //20 as padding
       stickyCt.set('height', height - stickyPadding); //20 as padding
       stickyCt.setCoords();
-      // console.log(sticky.content);
       stickyCt.text = convertDisplay(sticky);
       sticky.setCoords();
       stickyIsResizing = true;
     }))
-    // numberOfStickies++;
     currLeft += 10;
     currTop += 10;
   },
@@ -682,29 +611,6 @@ const getContentJson = function() {
   return contentJson;
 }
 
-// const getStickyObjJson = function () {
-//     const stickyObjJson = {
-//         left: currLeft,
-//         top: currTop,
-//         width: stickyOgWidth,
-//         height: stickyOgHeight,
-//         originX: 'left',
-//         originY: 'top',
-//     };
-//
-//     return stickyObjJson;
-// }
-
-// function getShape(textboxValue) {
-//     const stickyBackground = new fabric.Rect(new getBackgroundJson());
-//     const stickyContent = new fabric.Textbox(textboxValue, new getContentJson());
-//     const stickyObj = new fabric.Group([stickyBackground, stickyContent], new getStickyObjJson());
-//     const stickyCt = stickyObj.item(1);
-//     stickyCt.set('width', stickyObj.width - stickyPadding); //20 as padding
-//     stickyCt.set('height', stickyObj.height - stickyPadding); //20 as padding
-//     return stickyObj;
-// }
-
 function createSticky() {
   const newSticky = new Sticky();
   canvas.add(newSticky);
@@ -743,7 +649,7 @@ function createSticky() {
       }
     },
     success: function(resultData) {
-      console.log(resultData);
+      // console.log(resultData);
       newSticky.set('stickyId', resultData.id);
       showSidepanel(newSticky);
 
@@ -805,7 +711,7 @@ function focusOnSticky(sticky) {
   const y = -(sticky.top - canvas.height / 2);
   const rightLimit = -(canvas.width / 2) + sticky.width + 60;
   const leftLimit = canvas.width / 2 - sidepanelWidth - 20;
-  console.log(x - lastVPX, y - lastVPY, leftLimit, rightLimit);
+  // console.log(x - lastVPX, y - lastVPY, leftLimit, rightLimit);
   if (x - lastVPX > leftLimit || x - lastVPX < rightLimit) {
     const vpObj = {
       vpx: lastVPX,
@@ -860,7 +766,7 @@ function exportSvg() {
   const href = 'data:image/svg+xml,' + canvas.toSVG(null, function(svg) {
     return svg.replace(/(filter: .*;)/g, 'filter:;');
   });
-  console.log(href)
+  // console.log(href)
   downloadPopup(href);
 }
 
@@ -1042,7 +948,7 @@ function toggleStickyDetailBody(sticky) {
 
 // handling all the editing/deleting/comments of sticky
 function displayEditForm(sticky) {
-  console.log(sticky)
+  // console.log(sticky)
   const html = `
     <div id="editForm" class="modal-content" style="background-color:${sticky.item(0).fill}">
         <div class="modal-header border-0" id="editFormHeader">
@@ -1120,7 +1026,7 @@ function displayEditForm(sticky) {
           stickyId: sticky.stickyId
         },
         success: function(resultData) {
-          console.log(resultData)
+          // console.log(resultData)
         },
         error: function() {
           alert("Something went wrong")
@@ -1141,7 +1047,7 @@ function displayEditForm(sticky) {
   // Reconstructing previous comments
   for (let i = 0; i < sticky.comments.length; i++) {
     const c = sticky.comments[i]
-    console.log(c);
+    // console.log(c);
     const li = document.createElement('dl')
     const buttonId = `delComment${i}`
     li.innerHTML = `<span class="userWrap">${c.user}</span><span class="dateWrap">${new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat)}</span><span class="commentWrap">${c.content}</span><button id='${buttonId}' class="delComment border-0" style="background-color: transparent" type="button" data-dismiss="modal" aria-label="Close">×</button>`
@@ -1165,7 +1071,7 @@ function displayEditForm(sticky) {
             stickyId: sticky.stickyId
           },
           success: function(resultData) {
-            console.log(resultData)
+            // console.log(resultData)
             sticky.comments.splice(index, 1)
             socket.emit('stickyUpdateComment', {
               change: sticky.get('comments'),
@@ -1217,7 +1123,7 @@ function displayEditForm(sticky) {
           const index = sticky.comments.findIndex(c => (c.user == user && c.content == content && new Date(c.modifiedTime).toLocaleDateString("en-US", dataFormat) == date))
           if (index >= 0) {
             const commentData = sticky.comments[index]
-            console.log(commentData);
+            // console.log(commentData);
             $.ajax({
               type: 'POST',
               url: "/canvas/edit",
@@ -1228,7 +1134,7 @@ function displayEditForm(sticky) {
                 stickyId: sticky.stickyId
               },
               success: function(resultData) {
-                console.log(resultData);
+                // console.log(resultData);
                 sticky.comments.splice(index, 1)
                 socket.emit('stickyUpdateComment', {
                   change: sticky.get('comments'),
@@ -1272,7 +1178,7 @@ function displayEditForm(sticky) {
         stickyId: sticky.stickyId
       },
       success: function(resultData) {
-        console.log(resultData)
+        // console.log(resultData)
       },
       error: function() {
         alert("Something went wrong")
@@ -1294,13 +1200,12 @@ function displayEditForm(sticky) {
     textarea.rows = '4';
     textarea.cols = '40';
     textarea.className = 'textbox';
-    textarea.id = 'textarea;'
-    textarea.style.backgroundColor = sticky.item(0).fill
+    textarea.id = 'textarea';
+    textarea.style.backgroundColor = sticky.item(0).fill;
     textarea.innerHTML = sticky.content;
+    $("#textboxContainer").html(textarea);
+    $("#textarea").focus();
 
-    textarea.autofocus = "autofocus";
-
-    $("#textboxContainer").html(textarea)
 
     textarea.onkeydown = function(e) {
       let key = e.keyCode;
@@ -1317,7 +1222,7 @@ function displayEditForm(sticky) {
             stickyId: sticky.stickyId
           },
           success: function(resultData) {
-            console.log(resultData)
+            // console.log(resultData)
           },
           error: function() {
             alert("Something went wrong")
@@ -1616,88 +1521,13 @@ function getCanvasInfo() {
 $(window).resize(handleWindowResize);
 $(document).ready(getCanvasInfo);
 
-
-
-// $('#editBtn').click(function () {
-//     if ($(this).text() == 'Edit') {
-//         console.log($(this).text())
-//         $(this).text('Done')
-//         const textarea = document.createElement('textarea');
-//         textarea.rows = '4';
-//         textarea.cols = '40';
-//         textarea.className = 'textbox';
-//         textarea.id = 'textarea;'
-//         textarea.style.backgroundColor = 'rgb(236,232,238)';
-//         const prevText = $('#textboxP').text()
-//         textarea.innerHTML = prevText;
-//         $("#textboxContainer").html(textarea)
-
-//         textarea.onkeydown = function (e) {
-//             let key = e.keyCode;
-//             if (key == '13') {
-//                 stickyContentEdit(sticky)
-//                 // send post request
-//                 $.ajax({
-//                     type: 'POST',
-//                     url: "/canvas/edit",
-//                     data: {
-//                         type: "content",
-//                         change: sticky.content,
-//                         canvasId: canvas.canvasId,
-//                         stickyId: sticky.stickyId
-//                     },
-//                     success: function (resultData) {
-//                         console.log(resultData)
-//                     },
-//                     error: function () {
-//                         alert("Something went wrong")
-//                     }
-//                 });
-//                 showSidepanel(sticky);
-//             }
-//         }
-//     } else {
-//         stickyContentEdit(sticky)
-//         // send post request
-//         $.ajax({
-//             type: 'POST',
-//             url: "/canvas/edit",
-//             data: {
-//                 type: "content",
-//                 change: sticky.content,
-//                 canvasId: canvas.canvasId,
-//                 stickyId: sticky.stickyId
-//             },
-//             success: function (resultData) {
-//                 console.log(resultData)
-//             },
-//             error: function () {
-//                 alert("Something went wrong")
-//             }
-//         });
-//         showSidepanel(sticky);
-//         // sticky.content = $('.textbox').val()
-//         // sticky.shape.item(1).text = convertDisplay(sticky)
-//         // const stickyCt = sticky.shape.item(1);
-//         // stickyCt.set('width', sticky.shape.width - stickyPadding); //20 as padding
-//         // stickyCt.set('height', sticky.shape.height - stickyPadding); //20 as padding
-//         // stickyCt.setCoords()
-//         // canvas.renderAll();
-//         // // $(this)[0].id = 'editBtn'
-//         // $('#editBtn').text('Edit');
-//         // const p = document.createElement('p');
-//         // p.className = 'textbox';
-//         // $('#textboxContainer').html(p)
-//     }
-// })
-
 socket.on('testLog', testLog);
 
 function testLog(gotResult) {
   console.log('got: ', gotResult);
 }
 socket.on('stickyUpdateSize', function stickyUpdateSize(result) {
-  console.log('got: ', result);
+  // console.log('got: ', result);
   const changingSticky = canvas.getObjects().find(sticky => sticky.get('stickyId') == result.stickyId);
   changingSticky.set('width', result.width);
   changingSticky.set('height', result.height);
@@ -1767,14 +1597,16 @@ socket.on('stickyUpdateOptional', function stickyUpdateOptional(result) {
 $('#canvasHeader').on('show.bs.collapse', function() {
   $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M7 14l5-5 5 5z" /></svg>`);
-  $('#sidepanel').css("height", "calc(100% - 120px)");
-  $('#sidepanel').css("top", "102px");
+  $('#sidepanel').css("height", "calc(100% - 170px)");
+  $('#sidepanel').css("top", "152px");
+  $('#editDiv').css("top", "162px");
 });
 $('#canvasHeader').on('hide.bs.collapse', function() {
   $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M7 10l5 5 5-5z" /></svg>`);
-  $('#sidepanel').css("height", "calc(100% - 75px)");
-  $('#sidepanel').css("top", "57px");
+  $('#sidepanel').css("height", "calc(100% - 125px)");
+  $('#sidepanel').css("top", "107px");
+  $('#editDiv').css("top", "117px");
 });
 
 let inputExtended = false;
@@ -1823,7 +1655,7 @@ $('body').on('click', function(e) {
 })
 
 $('#stickyInfo').on('click', function(e) {
-  console.log($(e.target));
+  // console.log($(e.target));
   if (($(e.target).hasClass('stickyInfoInput')) && !inputExtended) {
     extendNewStickyInput()
   } else if ($(e.target).parent().attr('id') == 'stickyColorRow') {

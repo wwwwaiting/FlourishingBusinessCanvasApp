@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>User page</title>
+    <title>Flourishing Business Canvas | User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -96,8 +96,12 @@
                  regTitle = data.regTitle
                  regId = data.regId
                  console.log(regTitle)
-         		 console.log(regId)
-        		 renderFbc()
+                  console.log(regId)
+                 if (regId != undefined){
+                    renderFbc()
+                 } else {
+                    window.location.href = "/login"
+                 }
              }
          })
         }

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Manager page</title>
+    <title>Flourishing Business Canvas | Manager</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/user.css">
     <!-- Bootstrap CSS -->
@@ -161,8 +161,12 @@
                     console.log(mngUsers)
                     console.log(mngTitle)
                     console.log(regTitle)
-                    renderFbc(mngId, mngTitle, 'myControl')
-                    renderFbc(regId, regTitle, 'notMyControl')
+                    if (regId != undefined) {
+                        renderFbc(mngId, mngTitle, 'myControl')
+                        renderFbc(regId, regTitle, 'notMyControl')
+                    } else {
+                        window.location.href = "/login"
+                    }
                 }
             })
         }
