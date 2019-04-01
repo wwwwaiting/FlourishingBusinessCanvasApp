@@ -119,11 +119,11 @@ app.post('/login', function (req, res) {
   var pwd = req.body.pwd;
   var name;
   // need to find the user with requested email in 'approved' status
-  User.find({ 'email': email, 'status': 2 }, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    } else if (result.length === 0) {
+  User.find({
+    email:email,
+    status:2
+  }).then((result) => {
+    if (result.length == 0){
       console.log('user does not exist or does not have the authorization to login!');
       res.send(denied);
     } else {
@@ -137,11 +137,13 @@ app.post('/login', function (req, res) {
         res.cookie('email', email);
         res.send(role.toString());
       } else {
-        res.send(fal);
+        res.send(fal)
       }
     }
-  }
-  );
+  }).catch((err) =>{
+    console.log(err)
+    res.send(err)
+  })
 });
 
 
@@ -154,21 +156,15 @@ app.post('/register', function (req, res) {
 
   // the initial status of an approved user does not have password
   // the functionality of register is actually updating the user name and password
-  User.findOneAndUpdate({ 'email': email, 'pwd': '', 'status': 2 }, { name: name, pwd: pwd }, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    }
+  User.findOneAndUpdate({ 'email': email, 'pwd': '', 'status': 2 }, { name: name, pwd: pwd })
+  .then((result) => {
     // if there is no user in initial status it can be multiple situations
     // it can be an outside using is trying to login to this website
     // or an outside user is signing up more than once
     // or the password has been updated, so there is no need to signup again
-    else if (result === null) {
-      User.find({ email: email }, function (err, registered) {
-        if (err) {
-          console.log(err);
-          res.send(err);
-        } else if (registered.length !== 0) {
+    if (result === null){
+      User.find({email:email}).then((result)=>{
+        if (result.length !== 0){
           console.log('The email has been registered in the system!');
           res.send(fal);
         } else {
@@ -186,36 +182,30 @@ app.post('/register', function (req, res) {
             company: '',
             notification: canvasList
           });
-          User.create(user, function (err, newlyCreated) {
-            if (err) {
-              console.log(err);
-              res.send(err);
-            } else if (newlyCreated == null) {
-              res.send(err);
-            } else {
-              User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } },
-                function (err, updated) {
-                  if (err) {
-                    console.log(err);
-                    res.send(re);
-                  } else if (updated == null) {
-                    res.send(fal);
-                  } else {
-                    res.send("1");
-                  };
-                });
+          User.create(user).then((result)=>{
+            if (result == null){
+              res.send(err)
             }
-          });
+            User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } })
+            .then((result)=>{
+              if (result == null){
+                res.send(fal)
+              }
+              res.send("1");
+            })
+          })
         }
-      });
+      })
     } else {
       res.cookie('name', name);    //cookie now store both name and email
       res.cookie('email', email);
       var resp = result.role;
       res.send(resp.toString());
     }
-
-  });
+  }).catch((err)=>{
+    console.log(err)
+    res.send(err)
+  })
 });
 
 // ------------------------------------------- CANVAS PAGE ------------------------------------------------
@@ -223,13 +213,12 @@ app.post('/register', function (req, res) {
 // get canvas at the beginning
 app.get('/canvas/get', function (req, res) {
   var canvasId = req.cookies.id;
-  var stickyList = [];
   Canvas.find({ _id: canvasId }, function (err, result) {
     if (err) {
       console.log(err);
     } else if (result.length !== 0) {
       var canvas = result[0];
-      var result = {
+      var re = {
         'canvasId': canvasId,
         'owner': canvas.owner,
         'company': canvas.company,
@@ -238,29 +227,10 @@ app.get('/canvas/get', function (req, res) {
       };
       // constract the sticky list that the result need
       var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
-      let count = 1;
-      if (stickies.length == 0) {
-        result.stickies = stickyList;
-        res.send(result);
-      } else {
-        for (i = 0; i < stickies.length; i++) {
-          let ID = stickies[i];
-          Sticky.find({ _id: ID }, function (err, sti) {
-            if (err) {
-              console.log(err);
-              res.send(err);
-            } else if (sti.length !== 0) {
-              var sticky = sti[0];
-              stickyList.push(sticky);
-              if (count === stickies.length) {
-                result.stickies = stickyList;
-                res.send(result);
-              }
-              count++;
-            }
-          });
-        }
-      }
+      Sticky.find({_id:{$in : stickies}}).then((sti) =>{
+        re.stickies = sti;
+        res.send(re);
+      })
     }
   });
 });
@@ -456,7 +426,6 @@ app.post('/canvas/edit', function(req, res){
         } else if (result == null) {
           res.send(fal);
         } else {
-          console.log(result)
           createHistory(email, type, newDate, canvas, res);
         }
       });
@@ -527,56 +496,43 @@ app.post('/canvas/change', function (req, res) {
 app.get('/library/get', function (req, res) {
   res.clearCookie('id');
   var email = req.cookies.email;
-  User.find({ 'email': email }).exec()
-    .then(async function (result) {
-      try {
-        var user = result[0];
-        var role = user.role;  // 2 regUser, 3 manager, 4 admin
-        let c_list = user.canvas;
+  User.find({
+    email: email
+  }).then((result) => {
+    var user = result[0];
+    var role = user.role;  // 2 regUser, 3 manager, 4 admin
+    let c_list = user.canvas;
 
-        var regTitle = new Array();
-        var regId = new Array();
-        var mngTitle = new Array();
-        var mngId = new Array();
-        var mngUsers = new Array();
+    var regTitle = new Array();
+    var regId = new Array();
+    var mngTitle = new Array();
+    var mngId = new Array();
+    var mngUsers = new Array();
 
-        if (c_list.length != 0) {
-          console.log(c_list);
-          async.forEach(c_list, function (canvasId, libraryGet) {
-            Canvas.find({ _id: canvasId }).exec()
-              .then(async function (result) {
-                console.log(result);
-                try {
-                  var c = result[0];
-                  var id = c.id
-                  var t = c.title;
-                  if (c.email == email) {
-                    var user = c.users;
-                    mngId.push(id);
-                    mngTitle.push(t);
-                    mngUsers.push(user);
-                  } else {
-                    regTitle.push(t);
-                    regId.push(id);
-                  }
-                } catch (err) {
-                  console.log(err);
-                }
-              }).then(function(){
-                if (regId.length + mngId.length == c_list.length){
-                  if (role == regUser) {   // only send regular canvas
-                    res.send({ regTitle: regTitle, regId: regId });
-                  } else if (role == manager) {  // send regular canvas and manager's canvas
-                    res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers });
-                  }
-                }
-              });
-          });
+    if (c_list.length != 0) {
+      Canvas.find({
+        _id: { $in: c_list }
+      }).then((result) => {
+        //result is a list of canvas, split into manager's canvas and other canvas
+        var mng = result.filter(canvas => canvas.email == email)
+        mngTitle = mng.map(canvas => canvas.title)
+        mngId = mng.map(canvas => canvas.id)
+        mngUsers = mng.map(canvas => canvas.users)
+
+        var reg = result.filter(canvas => canvas.email != email)
+        regId = reg.map(canvas => canvas.id)
+        regTitle = reg.map(canvas => canvas.title)
+
+        if (role == regUser) {   // only send regular canvas
+          res.send({ regTitle: regTitle, regId: regId });
+        } else if (role == manager) {  // send regular canvas and manager's canvas
+          res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers });
         }
-      } catch (err) {
-        console.log(err);
-      }
-    });
+      })
+    }
+  }).catch((err) => {
+    console.error(err);
+  });
 });
 
 // store the canvas id into cookie
@@ -591,77 +547,54 @@ app.post('/manager/user', function (req, res) {
   var type = req.body.type;
   var id = req.body.canvasId;
   var email = req.body.email;
-  var notification = new Array();
-  Canvas.find({ 'id': id }, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      if (type == "add") {
-        //check if user is in the db
-        User.find({ 'email': email }, function (err, result) {
-          if (err) {
-            console.log(err);
-          } else if (result.length == 0) {
-            //user not in the db
-            console.log("not in db")
-            var canvasList = new Array();
-            var user = new User({
-              name: '',
-              email: email,
-              pwd: '',
-              role: regUser,
-              canvas: canvasList,
-              occupation: '',
-              status: 2,
-              phone: '',
-              company: '',
-              notification: notification
-            });
-            User.create(user, function (err, result) {
-              if (err) {
-                console.log(err);
-                res.send(fal);
-              } else {
-                Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } }, function (err, result) {
-                  if (err) {
-                    console.log(err);
-                  }
-                });
-                res.send(tru);  // send true when finish create user in db.
-              }
-            });
-          } else {
-            //user in db
-            console.log("in db");
-            Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } }, function (err, result) {
-              if (err) {
-                console.log(err);
-                res.send(fal);
-              } else {
-                User.findOneAndUpdate({ email: email }, { $push: { canvas: id } }, function (err, result) { });
-                res.send(tru);	 // send true when add user into canvas's user list.
-              }
-            });
-          }
-        });
-      } else if (type == "remove") {
-        // assume user is already in the db
-        Canvas.findOneAndUpdate({ _id: id }, { $pull: { users: email } }, function (err, result) {
-          if (err) {
-            console.log(err);
-            res.send(fal);
-          } else {
-            res.send(tru);	 // send true when remove user from canvas's user list.
-          }
-        });
-        User.findOneAndUpdate({ email: email }, { $pull: { canvas: id } }, function () {
-          if (err) {
-            console.log(err)
-          }
-        });
-      }
+  var empty = new Array();
+  Canvas.find({
+    id: id
+  }).then((result) => {
+    if (type == "add") {
+      User.find({
+        email: email
+      }).then((result) => {
+        if (result.length == 0) {  // user in not in database
+          var user = new User({
+            name: '',
+            email: email,
+            pwd: '',
+            role: regUser,
+            canvas: [id],
+            occupation: '',
+            status: 2,
+            phone: '',
+            company: '',
+            notification: empty
+          });
+          User.create(user).then((result) => {
+            Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } })
+              .then((result) => {
+                res.send(tru)
+              })
+          })
+        } else {  // user in database
+          Canvas.findOneAndUpdate({ _id: id }, { $push: { users: email } })
+            .then((result) => {
+              User.findOneAndUpdate({ email: email }, { $push: { canvas: id } })
+                .then((result) => {
+                  res.send(tru)
+                })
+            })
+        }
+      })
+    } else if (type == "remove") {
+      User.findOneAndUpdate({ email: email }, { $pull: { canvas: id } })
+      Canvas.findOneAndUpdate({ _id: id }, { $pull: { users: email } })
+        .then((result) => {
+          res.send(tru)
+        })
     }
-  });
+  }).catch((err) => {
+    console.log(err)
+    res.send(fal)
+  })
 });
 
 // add canvas from manager page
@@ -685,19 +618,12 @@ app.post('/manager/add', function (req, res) {
   });
 
   // add canvas to database
-  Canvas.create(canvas, function (err, result) {  //give back new canvas id.{id}
-    if (err) {
-      console.log(err);
-    } else {
-      User.findOneAndUpdate({ email: email }, { $push: { canvas: result.id } }, function (err, result) {
-        if (err) {
-          console.log(err);
-        }
-      });
-      res.send({ id: result.id });
-    }
-  });
-
+  Canvas.create(canvas).then((result) => {
+    User.findOneAndUpdate({ email: email }, { $push: { canvas: result.id } })
+    res.send({id:result.id})
+  }).catch((err) => {
+    console.log(err)
+  })
 });
 
 // delete canvas from manager page
@@ -906,33 +832,21 @@ function getAllCanvas(email, res) {
 
 app.get('/admin/users', function (req, res) {
   var email = req.cookies.email;
-  User.find({ email: email }).exec()
-    .then(async function () {
-      try {
-        const users = await User.find({ status: 2 }).exec();
-        var Users = new Array();
-        for (let i = 0; i < users.length; i++) {
-          var c = users[i];
-          if (c.email !== email) {
-            Users.push(c.email);
-          }
-          if (i == users.length - 1) {
-            res.send(Users);
-          }
-        }
-      }
-      catch (err) {
-        console.log(err);
-        res.send(err);
-      }
-    });
+  User.find({status :2})
+  .then((result) =>{
+    var re = result.filter(result => (result.email !== email)).map(result => result.email);
+    res.send(re);
+
+  }).catch((err) => {
+    console.error(err);
+    res.send(err);
+  })
 });
 
 app.post('/admin/edit', function (req, res) {
   var type = req.body.type;
   var user = req.body.user;
   var email = req.cookies.email;
-
   if (type === 'remove'){  
       User.findOneAndDelete({email: user}, function(err, result){
         if(err){
