@@ -1294,13 +1294,12 @@ function displayEditForm(sticky) {
     textarea.rows = '4';
     textarea.cols = '40';
     textarea.className = 'textbox';
-    textarea.id = 'textarea;'
-    textarea.style.backgroundColor = sticky.item(0).fill
+    textarea.id = 'textarea';
+    textarea.style.backgroundColor = sticky.item(0).fill;
     textarea.innerHTML = sticky.content;
+    $("#textboxContainer").html(textarea);
+    $("#textarea").focus();
 
-    textarea.autofocus = "autofocus";
-
-    $("#textboxContainer").html(textarea)
 
     textarea.onkeydown = function(e) {
       let key = e.keyCode;
@@ -1769,12 +1768,14 @@ $('#canvasHeader').on('show.bs.collapse', function() {
     <path d="M7 14l5-5 5 5z" /></svg>`);
   $('#sidepanel').css("height", "calc(100% - 170px)");
   $('#sidepanel').css("top", "152px");
+  $('#editDiv').css("top", "162px");
 });
 $('#canvasHeader').on('hide.bs.collapse', function() {
   $('#collapseBtn').html(`<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M7 10l5 5 5-5z" /></svg>`);
   $('#sidepanel').css("height", "calc(100% - 125px)");
   $('#sidepanel').css("top", "107px");
+  $('#editDiv').css("top", "117px");
 });
 
 let inputExtended = false;
