@@ -10,14 +10,6 @@
 
 #### Decisions that turned out well
 
-List process-related (i.e. team organization) decisions that, in retrospect, turned out to be successful.
-
-
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Explain why (i.e. give a supporting argument) you consider a decision to be successful.
- * Feel free to refer/link to process artifact(s).
-
 **Used the app called "Trello" to list all the important features that we need to implement in our first meeting:**
 
 The planning and designing process was completed the same way we did in deliverable 2 using Trello. Before we started programming anything, we had a group meeting and listed everything we would like to implement for deliverable 3 and divided the groups into sub groups with appropriate allocation of human resources to roles and responsibilities. 
@@ -32,12 +24,6 @@ This decision turned out to be successful because by the end of deliverable 3, w
 
 #### Decisions that did not turn out as well as we hoped
 
-List process-related (i.e. team organization) decisions that, in retrospect, were not as successful as you thought they would be.
-
- * 2 - 4 decisions.
- * Ordered from most to least important.
- * Feel free to refer/link to process artifact(s).
-
 **Did not merge to master as frequently as we should:**
 
 We did not merge our sub branches to master once we had finished some part of our work, instead both of our front end and back end team kept working on their major sub branches. This caused our master to be not testable until all of us started merging. Although the intermediate progress were tested by connecting the backend and front end, the features were not tested altogether as they would not be merged until master was merged. The conflicts arising from merging the features in the master branch after completion was difficult to resolve as it was not easy to remember the exact intention of the code that was written long time ago even with the comments. From this expereince, we were able to learn that features should be merged together once we are confident that it is fully completed to keep the master up to date so that all of our group members can be aware of our progress.
@@ -49,11 +35,6 @@ As a group, we only set up a single database that was shared by all of the sub g
 
 #### Planned changes
 
-List any process-related changes you are planning to make (if there are any)
-
- * Ordered from most to least important.
- * Explain why you are making a change.
-
 Whenever we finish coding a specific part of our product and push to the sub branch. We should start a pull request right the way and let one of the other members who is working for the same part review it, and merge to our master branch. By creating pull request frequently, all of our members will consistently get the newest version of our product which will not only make our testing easier, but will also address the conflicts, if they are any right the way.
 
 We are making a change because we realize that we barely had any conflicting issues because we were able to always work with all of our team members in the same room. However, if any of our members was absent, it would have been really hard for them to understand what is the current progress of our product because we didn't merge to master frequently enough.
@@ -62,10 +43,6 @@ We are making a change because we realize that we barely had any conflicting iss
 ## Product - Review
 
 #### Goals and/or tasks that were met/completed:
-
- * From most to least important.
- * Refer/link to artifact(s) that show that a goal/task was met/completed.
- * If a goal/task was not part of the original iteration plan, please mention it.
 
 **Admin page:**
 
@@ -86,10 +63,6 @@ We reallocated many of our buttons and improved many of our functions so either 
 
 
 #### Goals and/or tasks that were planned but not met/completed:
-
- * From most to least important.
- * For each goal/task, explain why it was not met/completed.      
-   e.g. Did you change your mind, or did you just not get to it yet?
 
 **Sticky content has links that can be redirected:**
 
@@ -116,12 +89,6 @@ We originally thought that there should be a button that shows the edit history 
 ## Meeting Highlights
 
 Going into the next iteration, our main insights are:
-
- * 2 - 4 items
- * Short (no more than one short paragraph per item)
- * High-level concepts that should guide your work for the next iteration.
- * These concepts should help you decide on where to focus your efforts.
- * Can be related to product and/or process.
 
 **Merge to master frequently**
 
