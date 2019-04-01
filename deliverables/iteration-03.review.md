@@ -20,15 +20,15 @@ List process-related (i.e. team organization) decisions that, in retrospect, tur
 
 **Used the app called "Trello" to list all the important features that we need to implement in our first meeting:**
 
-Same as what we did in deliverable 2, before we started writing anything, we had a group meeting and listed everything we would like to implement for deliverable 3. 
+The planning and designing process was completed the same way we did in deliverable 2 using Trello. Before we started programming anything, we had a group meeting and listed everything we would like to implement for deliverable 3 and divided the groups into sub groups with appropriate allocation of human resources to roles and responsibilities. 
 
-This decision turned out to be successful because we had gotten used using "Trello" after deliverable 2, using the same app not only saves the effort of adapting into new things but also let all of our members aware of what we needed to finish this time.
+This decision turned out to be successful because we had gotten used using "Trello" after deliverable 2. Using the same app not only saved the effort and time required for adapting into new artifact, but also allowed all of our members to be aware of what we needed to finish in deliverable 3.
 
 **Fully focused on finishing the minimum viable product then kept expanding our functionalities:**
 
-Back in deliverable 2, we tried to implement as many features that were asked from our partner as we could. This time however, we decided to choose finishing the MVP as our main purpose than implementing the new features that were suggested by our partner.
+Back in deliverable 2, we tried to implement as many features that were asked from our partner as we could. This time however, we decided to choose finishing the MVP as our main purpose than implementing the new features that were suggested by our partner. Major focus was on turning our product to be more user-friendly and flawless in terms of maintenance and accuracy of operation.
 
-This decision turned out to be successful because by the end of deliverable 3, we were able to polish up all minimum features that were needed for our product. We might have ran out of time if we focused on building new features. 
+This decision turned out to be successful because by the end of deliverable 3, we were able to polish up all minimum features that were needed for our product. If we focused on building new features, there were high probability of foregoing existing flaws and errors that were not caught in deliverable 2. 
 
 #### Decisions that did not turn out as well as we hoped
 
