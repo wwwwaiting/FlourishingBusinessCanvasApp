@@ -119,11 +119,11 @@ app.post('/login', function (req, res) {
   var pwd = req.body.pwd;
   var name;
   // need to find the user with requested email in 'approved' status
-  User.find({ 'email': email, 'status': 2 }, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    } else if (result.length === 0) {
+  User.find({
+    email:email,
+    status:2
+  }).then((result) => {
+    if (result.length == 0){
       console.log('user does not exist or does not have the authorization to login!');
       res.send(denied);
     } else {
@@ -137,11 +137,13 @@ app.post('/login', function (req, res) {
         res.cookie('email', email);
         res.send(role.toString());
       } else {
-        res.send(fal);
+        res.send(fal)
       }
     }
-  }
-  );
+  }).catch((err) =>{
+    console.log(err)
+    res.send(err)
+  })
 });
 
 
@@ -154,21 +156,15 @@ app.post('/register', function (req, res) {
 
   // the initial status of an approved user does not have password
   // the functionality of register is actually updating the user name and password
-  User.findOneAndUpdate({ 'email': email, 'pwd': '', 'status': 2 }, { name: name, pwd: pwd }, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    }
+  User.findOneAndUpdate({ 'email': email, 'pwd': '', 'status': 2 }, { name: name, pwd: pwd })
+  .then((result) => {
     // if there is no user in initial status it can be multiple situations
     // it can be an outside using is trying to login to this website
     // or an outside user is signing up more than once
     // or the password has been updated, so there is no need to signup again
-    else if (result === null) {
-      User.find({ email: email }, function (err, registered) {
-        if (err) {
-          console.log(err);
-          res.send(err);
-        } else if (registered.length !== 0) {
+    if (result.length == 0){
+      User.find({email:email}).then((result)=>{
+        if (result.length == 0){
           console.log('The email has been registered in the system!');
           res.send(fal);
         } else {
@@ -186,36 +182,30 @@ app.post('/register', function (req, res) {
             company: '',
             notification: canvasList
           });
-          User.create(user, function (err, newlyCreated) {
-            if (err) {
-              console.log(err);
-              res.send(err);
-            } else if (newlyCreated == null) {
-              res.send(err);
-            } else {
-              User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } },
-                function (err, updated) {
-                  if (err) {
-                    console.log(err);
-                    res.send(re);
-                  } else if (updated == null) {
-                    res.send(fal);
-                  } else {
-                    res.send(regUser.toString());
-                  };
-                });
+          User.create(user).then((result)=>{
+            if (result == null){
+              res.send(err)
             }
-          });
+            User.findOneAndUpdate({ role: admin }, { $push: { notification: newRequest } })
+            .then((result)=>{
+              if (result == null){
+                res.send(fal)
+              }
+              res.send(regUser.toString())
+            })
+          })
         }
-      });
+      })
     } else {
       res.cookie('name', name);    //cookie now store both name and email
       res.cookie('email', email);
       var resp = result.role;
       res.send(resp.toString());
     }
-
-  });
+  }).catch((err)=>{
+    console.log(err)
+    res.send(err)
+  })
 });
 
 // ------------------------------------------- CANVAS PAGE ------------------------------------------------
@@ -593,7 +583,7 @@ app.post('/manager/user', function (req, res) {
             email: email,
             pwd: '',
             role: regUser,
-            canvas: empty,
+            canvas: [id],
             occupation: '',
             status: 2,
             phone: '',
