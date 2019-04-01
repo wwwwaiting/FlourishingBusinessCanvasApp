@@ -15,8 +15,21 @@ A **manager** has access to features such as managing (a.k.a. creating and delet
 
 ​	**Value from end-user's perspective**
 
-The main value from an end-user's perspective is the improved workflow efficiency as well as real-time data synchronization that our website helps them to achieve. They will now invite their colleagues to use our online FBC template to work on their business ideas rather than building a traditional physical FBC in their office. Since FBCs are likely to be modified often and the fact that users might not be able to meet together at the same physical location all the time, **users will be able to view/change/discuss it even if they are at different places** by having a cloud version of FBC. Also, the physical canvas has limitation on the amount of data (stickies) to be shared. Besides that, it is hard to rearrange or remove some of the stickies when it reaches a certain quantity. **Our website extends the amount of data stored significantly and make the edit process easier and more organized**. Furthermore, it is time-consuming to search for a specific sticky on a physical FBC. The search function in our website solves this issue. Additionally, the comment system under each sticky is a place for users to **save their thoughtful discussions which might be useful later as their FBC progresses**.  
+The main value from an end-user's perspective is the improved workflow efficiency as well as real-time data synchronization that our website helps them to achieve. They will now invite their colleagues to use our online FBC template to work on their business ideas. Following are details of value added to the end users, who we define to be business architects using physical canvas.
 
+1) Resolved physical limitations
+ The end users used to build and use traditional physical FBCs in their office. Since FBCs are likely to be modified often, the limitation of having to be on the same location was one of the major discomfort our users had. Our online FBC provides online access which allows users to view/change/modify contents of the canvas **remotely and simultaneously**, overcoming the physical limitations.
+
+2) Resolved storage limitations
+ The physical canvas has limitation on the amount of data (stickies) to be stored and shared. Besides that, rearranging, organizing, and removing some of the stickies when the number of stickies reaches moderate quantity were other difficulty arising from storage limitations of physical canvas. Our FBC website **extends the amount of data stored** significantly and **allow edit process much eaiser and more organized**.
+
+3) Search Benefit
+ Searching for a specific sticky becomes a time-consuming task with the physical canvas as the number of stickies increases, The search function in our website will allow users to **search for stickies conveniently in short time**.
+
+4) Stickies with multiple functionalities
+ Our online FBC provides stickies with multiple functionalities such as allowing to modify contents on the existing stickies and attaching multiple comments on the stickies with time and user log. These functionalities will allow users to **save discussion and improve thought process on the stickies** as their FBC progresses.
+
+ 
  * What is the problem you're trying to solve?
 
  * Is there any context required to understand **why** the application solves this problem?
