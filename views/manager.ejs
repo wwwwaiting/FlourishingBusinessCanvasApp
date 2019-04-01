@@ -480,12 +480,11 @@
         function removeCanvas() {
             console.log("remove canvas")
             const selected = $('.form-check-input:checked')
-            const canvasId = []
-            for (let e of selected) {
+            const canvasId = selected.nextElementSibling.getElementsByTagName('span')[0].innerHTML;
 
-                const canId = e.nextElementSibling.getElementsByTagName('span')[0].innerHTML
-                console.log(canId)
-                canvasId.push(canId)
+            if (canvasId === undefined){
+                alert("No canvas selected");
+                return;
             }
 
             const send = {
