@@ -162,9 +162,9 @@ app.post('/register', function (req, res) {
     // it can be an outside using is trying to login to this website
     // or an outside user is signing up more than once
     // or the password has been updated, so there is no need to signup again
-    if (result.length == 0){
+    if (result === null){
       User.find({email:email}).then((result)=>{
-        if (result.length == 0){
+        if (result.length !== 0){
           console.log('The email has been registered in the system!');
           res.send(fal);
         } else {
@@ -191,7 +191,7 @@ app.post('/register', function (req, res) {
               if (result == null){
                 res.send(fal)
               }
-              res.send(regUser.toString())
+              res.send("1");
             })
           })
         }
@@ -213,13 +213,12 @@ app.post('/register', function (req, res) {
 // get canvas at the beginning
 app.get('/canvas/get', function (req, res) {
   var canvasId = req.cookies.id;
-  var stickyList = [];
   Canvas.find({ _id: canvasId }, function (err, result) {
     if (err) {
       console.log(err);
     } else if (result.length !== 0) {
       var canvas = result[0];
-      var result = {
+      var re = {
         'canvasId': canvasId,
         'owner': canvas.owner,
         'company': canvas.company,
@@ -228,29 +227,10 @@ app.get('/canvas/get', function (req, res) {
       };
       // constract the sticky list that the result need
       var stickies = canvas.stickies; // list of sticky ID, use each of the id to find the actual Sticky
-      let count = 1;
-      if (stickies.length == 0) {
-        result.stickies = stickyList;
-        res.send(result);
-      } else {
-        for (i = 0; i < stickies.length; i++) {
-          let ID = stickies[i];
-          Sticky.find({ _id: ID }, function (err, sti) {
-            if (err) {
-              console.log(err);
-              res.send(err);
-            } else if (sti.length !== 0) {
-              var sticky = sti[0];
-              stickyList.push(sticky);
-              if (count === stickies.length) {
-                result.stickies = stickyList;
-                res.send(result);
-              }
-              count++;
-            }
-          });
-        }
-      }
+      Sticky.find({_id:{$in : stickies}}).then((sti) =>{
+        re.stickies = sti;
+        res.send(re);
+      })
     }
   });
 });
@@ -395,8 +375,7 @@ app.delete('/canvas/delete', function (req, res) {
   });
 });
 
-app.post('/canvas/edit', function (req, res) {
-  console.log(req.body);
+app.post('/canvas/edit', function(req, res){
   var email = req.cookies.email;
   var canvas = req.body.canvasId;
   var sticky = req.body.stickyId;
@@ -447,7 +426,6 @@ app.post('/canvas/edit', function (req, res) {
         } else if (result == null) {
           res.send(fal);
         } else {
-          console.log(result)
           createHistory(email, type, newDate, canvas, res);
         }
       });
@@ -840,7 +818,6 @@ function getAllCanvas(email, res) {
             regId.push(id);
           }
           if (i == canvas.length - 1) {
-            console.log({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
             res.send({ regTitle: regTitle, regId: regId, mngTitle: mngTitle, mngId: mngId, mngUsers: mngUsers, notification: notification });
           }
         }
@@ -855,60 +832,57 @@ function getAllCanvas(email, res) {
 
 app.get('/admin/users', function (req, res) {
   var email = req.cookies.email;
-  User.find({ email: email }).exec()
-    .then(async function () {
-      try {
-        const users = await User.find({ status: 2 }).exec();
-        var Users = new Array();
-        for (let i = 0; i < users.length; i++) {
-          var c = users[i];
-          if (c.email !== email) {
-            Users.push(c.email);
-          }
-          if (i == users.length - 1) {
-            res.send(Users);
-          }
-        }
-      }
-      catch (err) {
-        console.log(err);
-        res.send(err);
-      }
-    });
+  User.find({status :2})
+  .then((result) =>{
+    var re = result.filter(result => (result.email !== email)).map(result => result.email);
+    res.send(re);
+
+  }).catch((err) => {
+    console.error(err);
+    res.send(err);
+  })
 });
 
 app.post('/admin/edit', function (req, res) {
   var type = req.body.type;
   var user = req.body.user;
   var email = req.cookies.email;
-  if (type === 'remove') {
-    User.findOneAndDelete({ email: user }).exec()
-      .then(async function (result) {
-        var canvasList = result.canvas;
-        console.log("here");
-        console.log(canvasList);
-        await async.forEach(canvasList, function (canvasId, callback) {
-          Canvas.findOneAndUpdate({ _id: canvasId }, { $pull: { users: user } }).exec()
-            .then(function (result) {
-              if (result.email === user) {
-                Canvas.findOneAndDelete({ _id: result.id }).exec()
-                  .then(async function (result) {
-                    var userList = result.users;
-                    await async.forEach(userList, function (userEmail, callback) {
-                      User.findOneAndUpdate({ email: userEmail }, { $pull: { canvas: canvasId } })
-                    })
+  if (type === 'remove'){  
+      User.findOneAndDelete({email: user}, function(err, result){
+        if(err){
+          console.log(err);
+          res.send(err);
+        }else if (result == null){
+          res.send(fal)
+        }else{
+          let can = result.canvas;
+          Canvas.find({_id: {$in : can}}).updateMany({$pull: {users: user}})
+          .then((result)=>{
+            Canvas.find({email:user}, function(err, result){
+              let ids = result.map(result => result.id);
+              Canvas.deleteMany({email:user})
+              .then((result) =>{
+                Sticky.deleteMany({
+                  canvasId: {
+                    $in: ids
+                  }
+                }).then((result) => {
+                  User.find({canvas: {$in : ids}}).updateMany({$pull: {canvas: {$in:ids}}})
+                  .then((result) => {
+                    getAllCanvas(email, res);
                   })
-              }
+                })
+              })
+              
             })
-        });
-        getAllCanvas(email, res);
+          }).catch((err) => {
+            console.error(err);
+            res.send(fal);
+          })
+        }
+
       })
-      .then(undefined, function (err) {
-        //Handle error
-        console.log(err);
-        res.send(err);
-      })
-  } else {
+  }else{
     var user = new User({
       name: '',
       email: user,

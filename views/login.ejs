@@ -195,8 +195,8 @@ $('#register_submit').on('click', function () {
       data: sent,
       success: function (data) {
         if (data == 'false') {
-          alert("Oops, the specified email address has been registered in the system");
-          ent.getElementsByClassName('req-email')[0].value = '';
+          alert("Oops, the specified email address has been registered or declined in the system!");
+          document.getElementsByClassName('req-email')[0].value = '';
         } else if (data == '2') {
           window.location.href = "/user";
         } else if (data == '3') {
