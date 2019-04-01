@@ -17,6 +17,7 @@ var async = require('async');
 const User = mongoose.model('User');
 const Sticky = mongoose.model('Sticky');
 const Canvas = mongoose.model('Canvas');
+mongoose.set('useFindAndModify', false);
 mongoose.Promise = global.Promise;
 const PORT = process.env.PORT || 3000;
 
@@ -110,7 +111,7 @@ app.get('/password', function(req, res){
 	res.render('password', {name:req.cookies.name, email:req.cookies.email});
 });
 
-
+// ------------------------------------- LOGIN AND REGISTER ------------------------------------------------
 
 // user login request
 app.post('/login', function(req, res) {
@@ -216,6 +217,8 @@ app.post('/register', function(req, res) {
     
     });
 });
+
+// ------------------------------------------- CANVAS PAGE ------------------------------------------------
 
 // get canvas at the beginning
 app.get('/canvas/get', function(req, res){
@@ -519,6 +522,8 @@ app.post('/canvas/change', function(req, res){
   });
 });
 
+// -------------------------------------------- USER AND MANAGER PAGE ---------------------------------------
+
 // get canvas from library page
 app.get('/library/get', function(req, res){
 	res.clearCookie('id');
@@ -530,7 +535,6 @@ app.get('/library/get', function(req, res){
       var user = result[0];
       var role = user.role;  // 2 regUser, 3 manager, 4 admin
       let c_list = user.canvas;
-      var notification = user.notification;
 
 			var regTitle = new Array();
       var regId = new Array();
@@ -738,6 +742,8 @@ app.delete('/manager/del', function(req, res){
   });
 });
 
+// ---------------------------------------------- PROFILE PAGE --------------------------------------------------
+
 // get user information for profile page
 app.get('/profile/get', function(req, res){
 	var email = req.cookies.email;
@@ -797,6 +803,8 @@ app.post('/pwd/edit', function(req, res){
 		}
 	});
 });
+
+// ---------------------------------------------- ADMINISTATOR PAGE --------------------------------------------------
 
 // get notifications of the register request
 app.get('/admin/notification', function(req, res){
