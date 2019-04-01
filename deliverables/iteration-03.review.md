@@ -40,13 +40,11 @@ List process-related (i.e. team organization) decisions that, in retrospect, wer
 
 **Did not merge to master as frequently as we should:**
 
-We did not merge our sub branches to master once we had finished some part of our work, instead both of our front end and back end team kept working on their major sub branches. This caused our master to be not testable until all of us started merging. We should have merged frequently so our master branch is as up to date as possible so all of our team members can have an idea of our progress.
+We did not merge our sub branches to master once we had finished some part of our work, instead both of our front end and back end team kept working on their major sub branches. This caused our master to be not testable until all of us started merging. Although the intermediate progress were tested by connecting the backend and front end, the features were not tested altogether as they would not be merged until master was merged. The conflicts arising from merging the features in the master branch after completion was difficult to resolve as it was not easy to remember the exact intention of the code that was written long time ago even with the comments. From this expereince, we were able to learn that features should be merged together once we are confident that it is fully completed to keep the master up to date so that all of our group members can be aware of our progress.
 
-**Removing all accounts in our back end when testing:**
+**Sharing single database among all sub groups**
 
-When testing for removing accounts on the back end, we first removed all the accounts that can be logged into our website. This caused other team members not being to log in and test other functionalities, which was inefficient for our team. We should have kept some accounts so all of us could test at the same time.  
-
-
+As a group, we only set up a single database that was shared by all of the sub groups. This resulted in substantial inefficiency and working hours lost. For instance, if one of the sub groups needed to test on certain edge cases such as removing users on canvas that has empty user list, the sub group had to remove all the users beforehand. However, this resulted in other sub groups working with user accounts on different feature to be stuck until the users are restored to the canvas. Since multiple features were involved with users and canvases on manager page, subgroups working on other pages with canvas and user data had to spend substantial time waiting and the productivity was quite low. The alternative we think we can use for next iteration is to create separate mock database as we work separately on each feature and have shared data base on master. 
 
 
 #### Planned changes
