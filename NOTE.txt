@@ -1,0 +1,11 @@
+# Note for further development
+
+1. Change the database URL in `connect.js`. (need to be mongodb)
+2. Follow the example in line 349 and then fill in the email 
+   related info in the empty string (line 342) in `views/manager.ejs`
+3. Follow the example in line 289 and then fill in the email 
+   related info in the empty string (line 281) in `views/admin.ejs`
+
+Technical:
+- we are using Node JS to serve as our backend.
+- we are using MongoDB to serve as our database.
