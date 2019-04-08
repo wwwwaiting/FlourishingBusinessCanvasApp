@@ -7,5 +7,7 @@ var options = {
 };
 
 
+// Change the database here.
+// var url = "mongodb://csc301:csc301partner@ds247648.mlab.com:47648/csc301db";
 var url = "mongodb://csc301:csc301partner@ds247648.mlab.com:47648/csc301db";
 var db = mongoose.connect(url,options);
