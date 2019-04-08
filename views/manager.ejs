@@ -339,13 +339,21 @@
                             const index = mngId.findIndex(id => id == canvasId)
                             mngUsers[index].push(email[0])
                             Email.send({
-                                Host: "smtp.elasticemail.com",
-                                Username: "wangluya2014@gmail.com",
-                                Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                                Host: "",
+                                Username: "",
+                                Password: "",
                                 To: email,
-                                From: "wangluya2014@gmail.com",
-                                Subject: "This is the subject",
-                                Body: "Testing for register!."
+                                From: "",
+                                Subject: "",
+                                Body: ""
+                                // Example: (https://smtpjs.com/)
+                                // Host: "smtp.elasticemail.com",
+                                // Username: "wangluya2014@gmail.com",
+                                // Password: "818b6867-983b-46fb-839b-eb03ecbf5f3c",
+                                // To: email,
+                                // From: "wangluya2014@gmail.com",
+                                // Subject: "This is the subject",
+                                // Body: "Testing for register!."
                             });
                             renderManageUsers()
                         } else {
