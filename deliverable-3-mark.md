@@ -20,3 +20,15 @@ _Reminder:_ The 0-4 marking scale means:
  * 1 : Below Expectations (50%)
  * 0 : Missing (0%)
 
+Product
+- Meets expectations
+
+README.md
+- Meets expectations
+
+plan.md
+- Meets expectations
+
+review.md
+- Meets expectations
+- Try to frame decisions that did not turn well as actual decisions that lead to undesirable outcomes
